@@ -1,1 +1,23 @@
-/*# sourceMappingURL=sessiontable.css.map */
+.pdt-grid {
+  display: flex;
+}
+.pdt-grid-item {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.pdt-topRow {
+  display: flex;
+  gap: 8px;
+}
+.pdt-topRow .pdt-search {
+  flex: 1;
+}
+
+.pdt-page-controls-top {
+  margin-top: 4px;
+  display: flex;
+}
+.pdt-page-controls-top .page-controls-status {
+  margin: 2px;
+}/*# sourceMappingURL=sessiontable.css.map */

@@ -1,16 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/sessiontable.css">
     <title>Session Table</title>
 </head>
+
 <body>
     <div class="pdt-main">
         <h1>Session Table</h1>
-        <!--TODO: in a grid mark 3 clickable options: Attendee Table, Presenter Table, Home-->
+        <div class="pdt-grid">
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="./attendee-table.html">Attendee Table</a>
+            </div>
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="./presenter-table.html">Presenter Table</a>
+            </div>
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="../index.html">Home</a>
+            </div>
+        </div>
+        <div class="pdt-topRow">
+            <input class="pdt-search" type="text" placeholder="Search sessions">
+            <input class="pdt-add-session" type="button" value="Add Session">
+        </div>
+
+        <div class="pdt-page-controls-top">
+            <button class="page-controls-button" disabled="disabled">Prev</button>
+            <p class="page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
+            <button class="page-controls-button" >Next</button>
+        </div>
+
+        <!-- TODO: Make a skeleton of a table
+         - headers: Date, Session Title, Length, Session Type, CEU Weight, CEU Considerations, Quality for CEUs, Event Type, Parent Event, Organizer, Attendees, Actions
+         
+        
+        -->
 
     </div>
 </body>
+
 </html>

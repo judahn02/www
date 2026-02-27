@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"sessiontable.css"}
+{"version":3,"sources":["../scss/sessiontable.scss","sessiontable.css"],"names":[],"mappings":"AAAA;EACI,aAAA;ACCJ;ADCI;EACI,gBAAA;EACA,iBAAA;ACCR;;ADGA;EACI,aAAA;EACA,QAAA;ACAJ;ADEI;EACI,OAAA;ACAR;;ADIA;EACI,eAAA;EACA,aAAA;ACDJ;ADUI;EACI,WAAA;ACRR","file":"sessiontable.css"}

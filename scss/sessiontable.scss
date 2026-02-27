@@ -1,0 +1,33 @@
+.pdt-grid {
+    display: flex;
+
+    &-item {
+        margin-left: 2px;
+        margin-right: 2px;
+    }
+}
+
+.pdt-topRow {
+    display: flex;
+    gap: 8px;
+
+    .pdt-search {
+        flex: 1;
+    }
+}
+
+.pdt-page-controls-top {
+    margin-top: 4px ;
+    display: flex ;
+
+    .page-controls-button {
+
+    }
+    .page-controls-button:disabled {
+
+    }
+
+    .page-controls-status {
+        margin:2px ;
+    }
+}
