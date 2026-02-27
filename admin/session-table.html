@@ -30,14 +30,79 @@
         <div class="pdt-page-controls-top">
             <button class="page-controls-button" disabled="disabled">Prev</button>
             <p class="page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
-            <button class="page-controls-button" >Next</button>
+            <button class="page-controls-button">Next</button>
         </div>
 
-        <!-- TODO: Make a skeleton of a table
-         - headers: Date, Session Title, Length, Session Type, CEU Weight, CEU Considerations, Quality for CEUs, Event Type, Parent Event, Organizer, Attendees, Actions
-         
-        
-        -->
+        <div class="pdt-session-table-wrapper">
+            <table class="pdt-session-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Session Title</th>
+                        <th>Length</th>
+                        <th>Session Type</th>
+                        <th>CEU Weight</th>
+                        <th>CEU Considerations</th>
+                        <th>Quality for CEUs</th>
+                        <th>Event Type</th>
+                        <th>Parent Event</th>
+                        <th>Organizer</th>
+                        <th>Attendees</th>
+                        <th class="pdt-actions-column">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>03/14/2026</td>
+                        <td>Opening Keynote</td>
+                        <td>60 min</td>
+                        <td>Lecture</td>
+                        <td>1.0</td>
+                        <td>General credit</td>
+                        <td>Approved</td>
+                        <td>Conference</td>
+                        <td>Spring Summit</td>
+                        <td>Admin Team</td>
+                        <td>45</td>
+                        <td class="pdt-actions-column">
+                            <button class="pdt-details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>03/14/2026</td>
+                        <td>Clinical Workshop A</td>
+                        <td>90 min</td>
+                        <td>Workshop</td>
+                        <td>1.5</td>
+                        <td>Hands-on requirement</td>
+                        <td>Pending</td>
+                        <td>Breakout</td>
+                        <td>Spring Summit</td>
+                        <td>Education Team</td>
+                        <td>28</td>
+                        <td class="pdt-actions-column">
+                            <button class="pdt-details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>03/15/2026</td>
+                        <td>Closing Panel</td>
+                        <td>45 min</td>
+                        <td>Panel</td>
+                        <td>0.75</td>
+                        <td>Ethics included</td>
+                        <td>Approved</td>
+                        <td>Conference</td>
+                        <td>Spring Summit</td>
+                        <td>Program Lead</td>
+                        <td>52</td>
+                        <td class="pdt-actions-column">
+                            <button class="pdt-details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
     </div>
 </body>

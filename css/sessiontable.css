@@ -20,4 +20,13 @@
 }
 .pdt-page-controls-top .page-controls-status {
   margin: 2px;
+}
+
+.pdt-session-table-wrapper {
+  overflow-x: auto;
+}
+.pdt-session-table-wrapper .pdt-actions-column .pdt-details-button {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
 }/*# sourceMappingURL=sessiontable.css.map */

@@ -17,17 +17,31 @@
 }
 
 .pdt-page-controls-top {
-    margin-top: 4px ;
-    display: flex ;
+    margin-top: 4px;
+    display: flex;
 
-    .page-controls-button {
+    .page-controls-button {}
 
-    }
-    .page-controls-button:disabled {
-
-    }
+    .page-controls-button:disabled {}
 
     .page-controls-status {
-        margin:2px ;
+        margin: 2px;
+    }
+}
+
+// TODO: please get the arrow and 'Details' on the same row
+.pdt-session-table-wrapper {
+    overflow-x: auto;
+
+    .pdt-session-table {
+
+    }
+
+    .pdt-actions-column {
+        .pdt-details-button {
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+        }
     }
 }
