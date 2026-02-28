@@ -1,82 +1,71 @@
 .pdt-grid {
     display: flex;
+}
 
-    &-item {
-        margin-left: 2px;
-        margin-right: 2px;
-    }
+.pdt-grid-item {
+    margin-left: 2px;
+    margin-right: 2px;
 }
 
 .pdt-topRow {
     display: flex;
     gap: 8px;
-
-    .pdt-search {
-        flex: 1;
-    }
 }
 
-.pdt-page-controls-top {
+.pdt-search {
+    flex: 1;
+}
+
+.pdt-page-controls-top,
+.pdt-page-controls-bottom {
     margin-top: 4px;
     display: flex;
-
-    .page-controls-button {}
-
-    .page-controls-button:disabled {}
-
-    .page-controls-status {
-        margin: 2px;
-    }
 }
 
-.pdt-page-controls-bottom {
-    @extend .pdt-page-controls-top ;
+.pdt-page-controls-button {}
+
+.pdt-page-controls-button:disabled {}
+
+.pdt-page-controls-status {
+    margin: 2px;
 }
 
-// TODO: please get the arrow and 'Details' on the same row
 .pdt-session-table-wrapper {
     overflow-x: auto;
+}
 
-    .pdt-session-table {
-        th,
-        td {
-            padding: 8px 12px ;
-        }
-
-        .pdt-actions-column {
-            .pdt-details-button {
-                display: inline-flex;
-                align-items: center;
-                white-space: nowrap;
-            }
-        }
-
-        .pdt-details-row {
-
-            .pdt-details-panel {
-                background-color: aqua;
-                text-align: right;
-
-                .pdt-buttons {}
-
-            }
-
-            .pdt-details-people {
-                text-align: left;
-                display: flex;
-                flex-wrap: wrap;
-                gap: 8px ;
-
-                .person {
-                    width: 210px ;
-                    margin: 2px ;
-                    padding: 4px;
-                    border: 2px solid #000;
-                    border-radius: 6px;
-                    flex: 0 0 220px;
-                    
-                }
-            }
-        }
+.pdt-session-table {
+    th,
+    td {
+        padding: 8px 12px;
     }
+}
+
+.pdt-details-button {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.pdt-details-panel {
+    background-color: aqua;
+    text-align: right;
+}
+
+.pdt-buttons {}
+
+.pdt-details-people {
+    text-align: left;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pdt-person-card {
+    width: 210px;
+    margin: 2px;
+    padding: 4px;
+    border: 2px solid #000;
+    border-radius: 6px;
+    flex: 0 0 220px;
 }

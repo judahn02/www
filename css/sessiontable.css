@@ -10,7 +10,7 @@
   display: flex;
   gap: 8px;
 }
-.pdt-topRow .pdt-search {
+.pdt-search {
   flex: 1;
 }
 
@@ -18,33 +18,33 @@
   margin-top: 4px;
   display: flex;
 }
-.pdt-page-controls-top .page-controls-status, .pdt-page-controls-bottom .page-controls-status {
+.pdt-page-controls-status {
   margin: 2px;
 }
 
 .pdt-session-table-wrapper {
   overflow-x: auto;
 }
-.pdt-session-table-wrapper .pdt-session-table th,
-.pdt-session-table-wrapper .pdt-session-table td {
+.pdt-session-table th,
+.pdt-session-table td {
   padding: 8px 12px;
 }
-.pdt-session-table-wrapper .pdt-session-table .pdt-actions-column .pdt-details-button {
+.pdt-details-button {
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
 }
-.pdt-session-table-wrapper .pdt-session-table .pdt-details-row .pdt-details-panel {
+.pdt-details-panel {
   background-color: aqua;
   text-align: right;
 }
-.pdt-session-table-wrapper .pdt-session-table .pdt-details-row .pdt-details-people {
+.pdt-details-people {
   text-align: left;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-.pdt-session-table-wrapper .pdt-session-table .pdt-details-row .pdt-details-people .person {
+.pdt-person-card {
   width: 210px;
   margin: 2px;
   padding: 4px;
