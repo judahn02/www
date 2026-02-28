@@ -268,13 +268,13 @@
     <div class="pdt-session-attendees">
         <h2>Edit Attendees</h2>
         <div class="pdt-section-divider" aria-hidden="true"></div>
-        <p>Session</p>
-        <p>How to Be Boardly for ASLTA?</p>
-        <div class="pdt-search">
+        <p class="pdt-session-attendees__label">Session</p>
+        <p class="pdt-session-attendees__session-name">How to Be Boardly for ASLTA?</p>
+        <div class="pdt-session-attendees__search">
             <input type="search" name="attendee-search" id="attendee-search">
         </div>
         <h3>Attendees</h3>
-        <table class="pdt-attendees-table">
+        <table class="pdt-session-attendees__table">
             <thead>
                 <tr>
                     <th>Attendee</th>
@@ -283,11 +283,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="pdt-session-attendees__search-row">
                     <!-- I am changing this a little, now it spans the whole row and once a name is entred, it shows at top.-->
                     <td colspan="3"><input type="text" name="search-attendee" id="search-attendee"></td>
                 </tr>
-                <tr>
+                <tr class="pdt-session-attendees__row">
                     <td>Avery Collins</td>
                     <td>
                         <select name="attendee_status_1" id="attendee_status_1">
@@ -297,9 +297,9 @@
                             <option value="master">Master</option>
                         </select>
                     </td>
-                    <td><button type="button">X</button></td>
+                    <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
                 </tr>
-                <tr>
+                <tr class="pdt-session-attendees__row">
                     <td>Mason Reed</td>
                     <td>
                         <select name="attendee_status_2" id="attendee_status_2">
@@ -309,9 +309,9 @@
                             <option value="master">Master</option>
                         </select>
                     </td>
-                    <td><button type="button">X</button></td>
+                    <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
                 </tr>
-                <tr>
+                <tr class="pdt-session-attendees__row">
                     <td>Olivia Turner</td>
                     <td>
                         <select name="attendee_status_3" id="attendee_status_3">
@@ -321,9 +321,9 @@
                             <option value="master">Master</option>
                         </select>
                     </td>
-                    <td><button type="button">X</button></td>
+                    <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
                 </tr>
-                <tr>
+                <tr class="pdt-session-attendees__row">
                     <td>Ethan Brooks</td>
                     <td>
                         <select name="attendee_status_4" id="attendee_status_4">
@@ -333,9 +333,9 @@
                             <option value="master">Master</option>
                         </select>
                     </td>
-                    <td><button type="button">X</button></td>
+                    <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
                 </tr>
-                <tr>
+                <tr class="pdt-session-attendees__row">
                     <td>Sophia Bennett</td>
                     <td>
                         <select name="attendee_status_5" id="attendee_status_5">
@@ -345,7 +345,7 @@
                             <option value="master">Master</option>
                         </select>
                     </td>
-                    <td><button type="button">X</button></td>
+                    <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
                 </tr>
             </tbody>
         </table>
