@@ -2,11 +2,13 @@
 
 .pdt-session-modal {
     
-    .pdt-line-1, .pdt-line-5, .pdt-line-6 {
+    .pdt-session-modal__date-length-row,
+    .pdt-session-modal__session-event-row,
+    .pdt-session-modal__ceu-row {
         @include core.split-row;
     }
 
-    .pdt-line-8 {
+    .pdt-session-modal__actions {
         @include core.actions-right;
     }
 

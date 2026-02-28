@@ -1,7 +1,7 @@
 @use 'core-components' as core;
 
 .pdt-attendee-check {
-    .pdt-line-1 {
+    .pdt-attendee-check__actions {
         @include core.actions-right;
     }
 }

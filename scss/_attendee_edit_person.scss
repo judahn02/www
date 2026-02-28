@@ -2,11 +2,12 @@
 
 .pdt_edit_person {
 
-    .pdt-line-1, .pdt-line-2 {
+    .pdt-edit-person__name-row,
+    .pdt-edit-person__contact-row {
         @include core.split-row;
     }
 
-    .pdt-line-3 {
+    .pdt-edit-person__actions {
         @include core.actions-right;
     }
 }

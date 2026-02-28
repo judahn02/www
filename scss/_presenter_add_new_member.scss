@@ -2,11 +2,12 @@
 
 .pdt-add-new-member {
 
-    .pdt-line-1, .pdt-line-2 {
+    .pdt-add-new-member__name-row,
+    .pdt-add-new-member__contact-row {
         @include core.split-row;
     }
 
-    .pdt-line-3 {
+    .pdt-add-new-member__actions {
         @include core.actions-right;
     }
 }
