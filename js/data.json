@@ -1,0 +1,18 @@
+{
+    "exampleD" : [
+        ["Avery Collins", "avery.collins@example.com", "Not Assigned"],
+        ["Mason Reed", "mason.reed@example.com", "None"],
+        ["Olivia Turner", "olivia.turner@example.com", "Master"],
+        ["Ethan Brooks", "ethan.brooks@example.com", "Not Assigned"],
+        ["Sophia Bennett", "sophia.bennett@example.com", "None"],
+        ["Lucas Hayes", "lucas.hayes@example.com", "Master"],
+        ["Isabella Foster", "isabella.foster@example.com", "Not Assigned"],
+        ["Noah Simmons", "noah.simmons@example.com", "None"],
+        ["Mia Richardson", "mia.richardson@example.com", "Master"],
+        ["James Powell", "james.powell@example.com", "Not Assigned"],
+        ["Charlotte Hughes", "charlotte.hughes@example.com", "None"],
+        ["Benjamin Ward", "benjamin.ward@example.com", "Master"],
+        ["Amelia Price", "amelia.price@example.com", "Not Assigned"],
+        ["Henry Cox", "henry.cox@example.com", "None"]
+    ]
+}
