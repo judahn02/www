@@ -18,6 +18,10 @@
   margin-top: 8px;
   background-color: #000000;
 }
+.pdt-session-attendees .pdt-submit {
+  text-align: right;
+}
+
 .pdt-main .pdt-grid {
   display: flex;
 }
