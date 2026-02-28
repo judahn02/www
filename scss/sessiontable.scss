@@ -1,41 +1,9 @@
+@use "core-layout";
+@use "core-components" as core;
 @use "session-modal";
 @use "session-attendees" ;
 
-
 .pdt-main {
-
-    .pdt-grid {
-        display: flex;
-    }
-
-    .pdt-grid-item {
-        margin-left: 2px;
-        margin-right: 2px;
-    }
-
-    .pdt-topRow {
-        display: flex;
-        gap: 8px;
-    }
-
-    .pdt-search {
-        flex: 1;
-    }
-
-    .pdt-page-controls-top,
-    .pdt-page-controls-bottom {
-        margin-top: 4px;
-        display: flex;
-    }
-
-    .pdt-page-controls-button {}
-
-    .pdt-page-controls-button:disabled {}
-
-    .pdt-page-controls-status {
-        margin: 2px;
-    }
-
     .pdt-session-table-wrapper {
         overflow-x: auto;
     }
@@ -49,8 +17,7 @@
     }
 
     .pdt-details-button {
-        display: inline-flex;
-        align-items: center;
+        @include core.inline-button;
         white-space: nowrap;
     }
 
@@ -76,6 +43,4 @@
         border-radius: 6px;
         flex: 0 0 220px;
     }
-
-
 }

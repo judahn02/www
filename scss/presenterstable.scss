@@ -1,36 +1,9 @@
+@use 'core-layout';
 @use 'presenter_add_new_member' ;
 @use 'presenter_attendee_check' ;
 
 .pdt-main {
-    .pdt-grid {
-        display: flex;
-    }
-
-    .pdt-grid-item {
-        margin-left: 2px;
-        margin-right: 2px;
-    }
-
-    .pdt-topRow {
-        display: flex;
-        gap: 8px;
-    }
-
-    .pdt-search {
-        flex: 1;
-    }
-
-    .pdt-page-controls-top,
-    .pdt-page-controls-bottom {
-        margin-top: 4px;
-        display: flex;
-    }
-
     .pdt-page-controls-button {}
 
     .pdt-page-controls-button:disabled {}
-
-    .pdt-page-controls-status {
-        margin: 2px;
-    }
 }

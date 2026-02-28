@@ -1,19 +1,13 @@
-.pdt-session-modal {
+@use 'core-components' as core;
 
-    .pdt-section-divider {
-        width: 100%;
-        height: 1px;
-        margin-top: 8px;
-        background-color: #000000;
-    }
+.pdt-session-modal {
     
     .pdt-line-1, .pdt-line-5, .pdt-line-6 {
-        display: flex ;
-        justify-content: space-between;
+        @include core.split-row;
     }
 
     .pdt-line-8 {
-        text-align: right;
+        @include core.actions-right;
     }
 
 }

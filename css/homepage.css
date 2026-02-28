@@ -1,3 +1,26 @@
+.pdt-main .pdt-grid {
+  display: flex;
+}
+.pdt-main .pdt-grid-item {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+.pdt-main .pdt-topRow {
+  display: flex;
+  gap: 8px;
+}
+.pdt-main .pdt-search {
+  flex: 1;
+}
+.pdt-main .pdt-page-controls-top,
+.pdt-main .pdt-page-controls-bottom {
+  margin-top: 4px;
+  display: flex;
+}
+.pdt-main .pdt-page-controls-status {
+  margin: 2px;
+}
+
 .pdt-main .pdt-db-config, .pdt-main .pdt-tutorials {
   margin: 4px;
   padding: 4px;

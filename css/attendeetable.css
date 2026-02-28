@@ -1,27 +1,3 @@
-.pdt-add-new-member .pdt-section-divider {
-  width: 100%;
-  height: 1px;
-  margin-top: 8px;
-  background-color: #000000;
-}
-.pdt-add-new-member .pdt-line-1, .pdt-add-new-member .pdt-line-2 {
-  display: flex;
-  justify-content: space-between;
-}
-.pdt-add-new-member .pdt-line-3 {
-  text-align: right;
-}
-
-.pdt-presenter-check .pdt-section-divider {
-  width: 100%;
-  height: 1px;
-  margin-top: 8px;
-  background-color: #000000;
-}
-.pdt-presenter-check .pdt-line-1 {
-  text-align: right;
-}
-
 .pdt-main .pdt-grid {
   display: flex;
 }
@@ -43,4 +19,23 @@
 }
 .pdt-main .pdt-page-controls-status {
   margin: 2px;
+}
+
+.pdt-section-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 8px;
+  background-color: #000000;
+}
+
+.pdt-add-new-member .pdt-line-1, .pdt-add-new-member .pdt-line-2 {
+  display: flex;
+  justify-content: space-between;
+}
+.pdt-add-new-member .pdt-line-3 {
+  text-align: right;
+}
+
+.pdt-presenter-check .pdt-line-1 {
+  text-align: right;
 }/*# sourceMappingURL=attendeetable.css.map */

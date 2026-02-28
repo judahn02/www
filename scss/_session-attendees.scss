@@ -1,11 +1,6 @@
-.pdt-session-attendees {
-    .pdt-section-divider {
-        width: 100%;
-        height: 1px;
-        margin-top: 8px;
-        background-color: #000000;
-    }
+@use 'core-components' as core;
 
+.pdt-session-attendees {
     .pdt-session-attendees__label {
         margin-bottom: 4px;
     }
@@ -28,7 +23,6 @@
     }
 
     .pdt-session-attendees__delete-button {
-        display: inline-flex;
-        align-items: center;
+        @include core.inline-button;
     }
 }
