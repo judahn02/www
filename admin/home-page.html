@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/homepage.css">
+    <title>Professional Development Tracking</title>
+</head>
+
+<body>
+    <div class="pdt-main">
+        <h1>Admin Home Dashboard</h1>
+
+        <div class="pdt-grid">
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="./session-table.html">Session Table</a>
+            </div>
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="./presenter-table.html">Presenter Table</a>
+            </div>
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="../attendee-table.html">Attendee Table</a>
+            </div>
+        </div>
+
+        <div class="pdt-db-config">
+            <h3>DB Configuration Settings</h3>
+            <form action="">
+                <p>DB URI</p>
+                <input type="text">
+                <p>DB Name</p>
+                <input type="text">
+                <br>
+                <button type="submit">Save Credentials</button>
+            </form>
+            
+            <button>Generate KeyPairs</button>
+        </div>
+
+        <div class="pdt-tutorials">
+            <h3>Short Tutorial/ Guide</h3>
+            <ul class="pdt-tutorials__list">
+                <li class="pdt-tutorials__item"><a class="pdt-tutorials__link" href="">link </a></li>
+                <li class="pdt-tutorials__item"><a class="pdt-tutorials__link" href="">link </a></li>
+                <li class="pdt-tutorials__item"><a class="pdt-tutorials__link" href="">link </a></li>
+                <li class="pdt-tutorials__item"><a class="pdt-tutorials__link" href="">link </a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
