@@ -1,15 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/presenterstable.css">
-    <title>Presenters Table</title>    
+    <title>Presenters Table</title>
 </head>
+
 <body>
     <div class="pdt-main">
-        
+        <h1>Presenters Table</h1>
+        <div class="pdt-grid">
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="./session-table.html">Session Table</a>
+            </div>
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="./attendee-table.html">Attendee Table</a>
+            </div>
+            <div class="pdt-grid-item">
+                <a class="pdt-grid-link" href="../index.html">Home</a>
+            </div>
+        </div>
+
+        <div class="pdt-topRow">
+            <input class="pdt-search" type="search" placeholder="Search by... name/email/phone/wp-id">
+            <input class="pdt-add-member" type="button" value="+ Add Presenter">
+        </div>
+
+        <div class="pdt-page-controls-top">
+            <button class="pdt-page-controls-button" disabled="disabled">Prev</button>
+            <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
+            <button class="pdt-page-controls-button">Next</button>
+        </div>
+
+        <div class="pdt-presenter-table-wrapper">
+            <table class="pdt-presenter-table">
+                <thead>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Registered Session Count</th>
+                    <th>ARMember ID</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                    <tr class="pdt-presenter-table__row">
+                        <td class="pdt-presenter-table__cell">Avery Collins</td>
+                        <td class="pdt-presenter-table__cell">avery.collins@example.com</td>
+                        <td class="pdt-presenter-table__cell">(555) 201-4401</td>
+                        <td class="pdt-presenter-table__cell">3</td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__link-button" type="button">Link Account</button>
+                        </td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                    <tr class="pdt-presenter-table__row">
+                        <td class="pdt-presenter-table__cell">Mason Reed</td>
+                        <td class="pdt-presenter-table__cell">mason.reed@example.com</td>
+                        <td class="pdt-presenter-table__cell">(555) 318-7720</td>
+                        <td class="pdt-presenter-table__cell">7</td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__link-button" type="button">Link Account</button>
+                        </td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                    <tr class="pdt-presenter-table__row">
+                        <td class="pdt-presenter-table__cell">Olivia Turner</td>
+                        <td class="pdt-presenter-table__cell">olivia.turner@example.com</td>
+                        <td class="pdt-presenter-table__cell">(555) 402-9913</td>
+                        <td class="pdt-presenter-table__cell">5</td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__link-button" type="button">Link Account</button>
+                        </td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                    <tr class="pdt-presenter-table__row">
+                        <td class="pdt-presenter-table__cell">Ethan Brooks</td>
+                        <td class="pdt-presenter-table__cell">ethan.brooks@example.com</td>
+                        <td class="pdt-presenter-table__cell">(555) 587-2264</td>
+                        <td class="pdt-presenter-table__cell">9</td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__link-button" type="button">Link Account</button>
+                        </td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                    <tr class="pdt-presenter-table__row">
+                        <td class="pdt-presenter-table__cell">Sophia Bennett</td>
+                        <td class="pdt-presenter-table__cell">sophia.bennett@example.com</td>
+                        <td class="pdt-presenter-table__cell">(555) 644-1805</td>
+                        <td class="pdt-presenter-table__cell">2</td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__link-button" type="button">Link Account</button>
+                        </td>
+                        <td class="pdt-presenter-table__cell">
+                            <button class="pdt-presenter-table__details-button" type="button">↓ Details</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pdt-page-controls-bottom">
+            <button class="pdt-page-controls-button" disabled="disabled">Prev</button>
+            <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
+            <button class="pdt-page-controls-button">Next</button>
+        </div>
     </div>
-    
+
+    <div class="pdt-add-new-member">
+        <h2>Add New Presenter</h2>
+        <div class="pdt-section-divider"></div>
+
+        <button>Are they a registered Attendee?</button>
+
+        <form action="">
+            <div class="pdt-line-1">
+                <div class="pdt-first">
+                    <p>First name</p>
+                    <input type="text" name="f_name" id="f_name">
+                </div>
+                <div class="pdt-last">
+                    <p>Last name</p>
+                    <input type="text" name="l_name" id="l_name">
+                </div>
+            </div>
+            <div class="pdt-line-2">
+                <div class="pdt-email">
+                    <p>Email</p>
+                    <input type="text" name="email" id="email">
+                </div>
+                <div class="pdt-ph-number">
+                    <p>Phone Number</p>
+                    <input type="text" name="ph_number" id="ph_number">
+                </div>
+            </div>
+
+            <div class="pdt-section-divider"></div>
+
+            <div class="pdt-line-3">
+                <button>Cancel</button>
+                <button>Save Presenter</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="pdt-attendee-check">
+        <h2>Existing Attendee Check</h2>
+
+        <div class="pdt-section-divider"></div>
+
+        <form action="">
+            <p>Attendee name</p>
+            <input type="text" name="p_name" id="p_name">
+            <p><small>Start typing an attendee name...</small></p>
+
+            <div class="pdt-section-divider"></div>
+
+            <div class="pdt-line-1">
+                <button>Cancel</button>
+                <button>Mark as Presenter</button>
+            </div>
+        </form>
+    </div>
+
 </body>
+
 </html>
