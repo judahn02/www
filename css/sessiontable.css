@@ -18,8 +18,25 @@
   margin-top: 8px;
   background-color: #000000;
 }
-.pdt-session-attendees .pdt-submit {
-  text-align: right;
+.pdt-session-attendees .pdt-session-attendees__label {
+  margin-bottom: 4px;
+}
+.pdt-session-attendees .pdt-session-attendees__session-name {
+  margin-top: 0;
+}
+.pdt-session-attendees .pdt-session-attendees__search {
+  margin-bottom: 12px;
+}
+.pdt-session-attendees .pdt-session-attendees__table {
+  width: 100%;
+}
+.pdt-session-attendees .pdt-session-attendees__table th,
+.pdt-session-attendees .pdt-session-attendees__table td {
+  padding: 8px 12px;
+}
+.pdt-session-attendees .pdt-session-attendees__delete-button {
+  display: inline-flex;
+  align-items: center;
 }
 
 .pdt-main .pdt-grid {
