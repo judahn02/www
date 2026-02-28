@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/attendeepage.css">
+    <title>Attendee Page</title>
+</head>
+
+<body>
+    <div class="pdt-main">
+        <div class="pdt-header">
+            <div class="pdt-person-icon">
+                <div class="pdt-person-icon__initials" aria-hidden="true">J.D</div>
+            </div>
+            <div class="pdt-person-title">
+                <h2>John Doe</h2>
+                <p>email@email.com</p>
+            </div>
+            <div class="pdt-header-buttons">
+                <button>Edit Person</button>
+                <button>Administrative Service</button>
+            </div>
+        </div>
+
+        <div class="pdt-p-summary">
+            <h3>Progress Summary</h3>
+            <div class="pdt-sum-row">
+                <p><b>Total Hours all-time:</b>1.5</p>
+                <p><b>Most recent session:</b>A New Way to Teach ASL Lterature | 2024-06-01 |</p>
+            </div>
+            <small>
+                Total Hours in the last 11 years(s): 1.5
+            </small>
+            <br>
+            <div class="pdt-p-summary__slider">
+                <input type="range" name="progress-years" id="pdt-progress-years" min="1" max="11" value="11">
+            </div>
+            <button>Export Report</button>
+        </div>
+
+        <div class="pdt-person-results">
+            <h3>Training & Conference History</h3>
+
+            <div class="pdt-topRow">
+                <input class="pdt-search" type="search" placeholder="Search sessions">
+                <input class="pdt-button" type="button" value="All">
+                <input class="pdt-button" type="button" value="Workshops">
+                <input class="pdt-button" type="button" value="Training">
+                <input class="pdt-button" type="button" value="Confrence">
+            </div>
+        </div>
+
+        <div class="pdt-session-table-wrapper">
+            <table class="pdt-session-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Session Title</th>
+                        <th>Type</th>
+                        <th>Hours</th>
+                        <th>CEU Capable</th>
+                        <th>CEU Weight</th>
+                        <th>Parent Event</th>
+                        <th>Event Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="pdt-session-table__row">
+                        <td>2024-06-01</td>
+                        <td>A New Way to Teach ASL Literature</td>
+                        <td>
+                            <div class="pdt-session-table__type">Workshop</div>
+                        </td>
+                        <td>1.5h</td>
+                        <td>Yes</td>
+                        <td>1.50</td>
+                        <td>Summer Institute</td>
+                        <td>Training</td>
+                    </tr>
+                    <tr class="pdt-session-table__row">
+                        <td>2023-11-14</td>
+                        <td>Language Access in Practice</td>
+                        <td>
+                            <div class="pdt-session-table__type">Panel</div>
+                        </td>
+                        <td>1.0h</td>
+                        <td>Yes</td>
+                        <td>1.00</td>
+                        <td>Regional Forum</td>
+                        <td>Conference</td>
+                    </tr>
+                    <tr class="pdt-session-table__row">
+                        <td>2022-08-22</td>
+                        <td>Interpreter Ethics Review</td>
+                        <td>
+                            <div class="pdt-session-table__type">Lecture</div>
+                        </td>
+                        <td>2.0h</td>
+                        <td>Yes</td>
+                        <td>2.00</td>
+                        <td>Ethics Series</td>
+                        <td>Training</td>
+                    </tr>
+                    <tr class="pdt-session-table__row">
+                        <td>2021-04-09</td>
+                        <td>Community Outreach Basics</td>
+                        <td>
+                            <div class="pdt-session-table__type">Roundtable</div>
+                        </td>
+                        <td>0.5h</td>
+                        <td>No</td>
+                        <td>0.00</td>
+                        <td>Volunteer Day</td>
+                        <td>Workshop</td>
+                    </tr>
+                    <tr class="pdt-session-table__row">
+                        <td>2020-10-30</td>
+                        <td>Digital Tools for ASL Classrooms</td>
+                        <td>
+                            <div class="pdt-session-table__type">Breakout</div>
+                        </td>
+                        <td>1.2h</td>
+                        <td>Yes</td>
+                        <td>1.20</td>
+                        <td>Fall Summit</td>
+                        <td>Conference</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="pdt-admin-service">
+        <h2>Administrative Service</h2>
+        <div class="pdt-section-divider" aria-hidden="true"></div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Type</th>
+                    <th>CEU Weight</th>
+                    <th>Delete?</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="5">
+                        <small>No administrative service entries found.</small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2024-01-15</td>
+                    <td>2024-03-15</td>
+                    <td>Board Member</td>
+                    <td>0.50</td>
+                    <td><button type="button">X</button></td>
+                </tr>
+                <tr>
+                    <td>2023-06-01</td>
+                    <td>2023-08-31</td>
+                    <td>Committee Chair</td>
+                    <td>0.75</td>
+                    <td><button type="button">X</button></td>
+                </tr>
+                <tr>
+                    <td>2022-09-10</td>
+                    <td>2022-12-20</td>
+                    <td>Mentorship Lead</td>
+                    <td>0.40</td>
+                    <td><button type="button">X</button></td>
+                </tr>
+                <tr>
+                    <td>2021-02-05</td>
+                    <td>2021-05-28</td>
+                    <td>Workshop Coordinator</td>
+                    <td>0.60</td>
+                    <td><button type="button">X</button></td>
+                </tr>
+                <tr>
+                    <td>2020-10-01</td>
+                    <td>2020-12-18</td>
+                    <td>Advisory Panel</td>
+                    <td>0.30</td>
+                    <td><button type="button">X</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="pdt-section-divider" aria-hidden="true"></div>
+
+        <div class="pdt-submit">
+            <button>Cancel</button>
+            <button>Save Session</button>
+        </div>
+    </div>
+
+    <div class="pdt_edit_person">
+        <h3>Edit Person</h3>
+        <div class="pdt-section-divider" aria-hidden="true"></div>
+        <form action="">
+            <div class="pdt-line-1">
+                <div class="pdt-first">
+                    <p>First name</p>
+                    <input type="text" name="f_name" id="f_name">
+                </div>
+                <div class="pdt-last">
+                    <p>Last name</p>
+                    <input type="text" name="l_name" id="l_name">
+                </div>
+            </div>
+            <div class="pdt-line-2">
+                <div class="pdt-email">
+                    <p>Email</p>
+                    <input type="text" name="email" id="email">
+                </div>
+                <div class="pdt-ph-number">
+                    <p>Phone Number</p>
+                    <input type="text" name="ph_number" id="ph_number">
+                </div>
+            </div>
+
+            <div class="pdt-section-divider"></div>
+
+            <div class="pdt-line-3">
+                <button>Cancel</button>
+                <button>Save Presenter</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

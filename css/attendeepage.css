@@ -1,0 +1,72 @@
+.pdt-admin-service .pdt-section-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 8px;
+  background-color: #000000;
+}
+.pdt-admin-service .pdt-submit {
+  text-align: right;
+}
+
+.pdt_edit_person .pdt-section-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 8px;
+  background-color: #000000;
+}
+.pdt_edit_person .pdt-line-1, .pdt_edit_person .pdt-line-2 {
+  display: flex;
+  justify-content: space-between;
+}
+.pdt_edit_person .pdt-line-3 {
+  text-align: right;
+}
+
+.pdt-main {
+  margin: 6px;
+  border: 2px solid #000;
+}
+.pdt-main .pdt-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+.pdt-main .pdt-header .pdt-person-icon {
+  flex: 0 0 auto;
+}
+.pdt-main .pdt-header .pdt-person-icon__initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: 2px solid #000;
+  border-radius: 50%;
+}
+.pdt-main .pdt-header .pdt-person-title {
+  flex: 1 1 auto;
+  text-align: left;
+}
+.pdt-main .pdt-header .pdt-header-buttons {
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+.pdt-main .pdt-p-summary {
+  margin: 6px;
+  border: 2px solid #000;
+  padding: 6px;
+}
+.pdt-main .pdt-p-summary .pdt-sum-row {
+  display: flex;
+  justify-content: space-evenly;
+}
+.pdt-main .pdt-topRow {
+  display: flex;
+  gap: 8px;
+}
+.pdt-main .pdt-search {
+  flex: 1;
+}/*# sourceMappingURL=attendeepage.css.map */
