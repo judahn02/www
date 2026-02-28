@@ -42,3 +42,21 @@ What is the system of approach?
 2. Add needed spots for features.
 3. Add CSS
 4. Go to the next page.
+
+
+
+# For addtional AI Context
+
+You wanted much less up-front styling than I initially inferred.
+You wanted boilerplate HTML first, then CSS only when strictly needed.
+You were fine using proper semantic table elements instead of forcing everything into divs.
+You preferred minimal edits to the exact TODO, not a fuller “first pass” of the page.
+You wanted me to avoid expanding the scope beyond the specific placeholder/task at hand.
+You were feeling out the structure as you built, so the right approach was incremental and reversible, not “complete the whole visual block.”
+So the practical adjustment was:
+
+from “build the section as a styled static mockup”
+to “make the smallest possible HTML change, then add only the CSS required to unblock layout”
+The main thing I had to correct was scope. I read the README as permission to do a broader static-demo pass, but your actual working style was more stepwise and lower-ceremony than that.
+
+

@@ -1,50 +1,68 @@
-.pdt-grid {
+.pdt-session-modal .pdt-section-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 8px;
+  background-color: #000000;
+}
+.pdt-session-modal .pdt-line-1, .pdt-session-modal .pdt-line-5, .pdt-session-modal .pdt-line-6 {
+  display: flex;
+  justify-content: space-between;
+}
+.pdt-session-modal .pdt-line-8 {
+  text-align: right;
+}
+
+.pdt-session-attendees .pdt-section-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 8px;
+  background-color: #000000;
+}
+.pdt-main .pdt-grid {
   display: flex;
 }
-.pdt-grid-item {
+.pdt-main .pdt-grid-item {
   margin-left: 2px;
   margin-right: 2px;
 }
-
-.pdt-topRow {
+.pdt-main .pdt-topRow {
   display: flex;
   gap: 8px;
 }
-.pdt-search {
+.pdt-main .pdt-search {
   flex: 1;
 }
-
-.pdt-page-controls-top, .pdt-page-controls-bottom {
+.pdt-main .pdt-page-controls-top,
+.pdt-main .pdt-page-controls-bottom {
   margin-top: 4px;
   display: flex;
 }
-.pdt-page-controls-status {
+.pdt-main .pdt-page-controls-status {
   margin: 2px;
 }
-
-.pdt-session-table-wrapper {
+.pdt-main .pdt-session-table-wrapper {
   overflow-x: auto;
 }
-.pdt-session-table th,
-.pdt-session-table td {
+.pdt-main .pdt-session-table th,
+.pdt-main .pdt-session-table td {
   padding: 8px 12px;
 }
-.pdt-details-button {
+.pdt-main .pdt-details-button {
   display: inline-flex;
   align-items: center;
   white-space: nowrap;
 }
-.pdt-details-panel {
+.pdt-main .pdt-details-panel {
   background-color: aqua;
   text-align: right;
 }
-.pdt-details-people {
+.pdt-main .pdt-details-people {
   text-align: left;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-.pdt-person-card {
+.pdt-main .pdt-person-card {
   width: 210px;
   margin: 2px;
   padding: 4px;

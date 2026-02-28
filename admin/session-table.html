@@ -23,7 +23,7 @@
             </div>
         </div>
         <div class="pdt-topRow">
-            <input class="pdt-search" type="text" placeholder="Search sessions">
+            <input class="pdt-search" type="search" placeholder="Search sessions">
             <input class="pdt-add-session" type="button" value="Add Session">
         </div>
 
@@ -191,6 +191,92 @@
             <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
             <button class="pdt-page-controls-button">Next</button>
         </div>
+    </div>
+    <div class="pdt-session-modal">
+        <h2>Add New Session</h2>
+        <div class="pdt-section-divider" aria-hidden="true"></div>
+        <form action="">
+            <div class="pdt-line-1">
+                <div class="pdt-date">
+                    <p>Date</p>
+                    <input type="date" name="date" id="date">
+                </div>
+                <div class="pdt-Length">
+                    <p>Length (minutes)</p>
+                    <input type="text" name="length" id="length">
+                </div>
+            </div>
+            <div class="pdt-line-2">
+                <p>Organizer</p>
+                <input type="text" name="Organizer" id="organizer">
+            </div>
+            <div class="pdt-line-3">
+                <p>Session Title</p>
+                <input type="text" name="session_title" id="session_title">
+            </div>
+            <div class="pdt-line-4">
+                <p>Parent Event</p>
+                <input type="text" name="parent_event" id="parent_event"
+                    placeholder="Part of confrence or larger event? Otherwise leave blank">
+            </div>
+            <div class="pdt-line-5">
+                <div class="pdt-session-type">
+                    <p>Session Type</p>
+                    <select name="session_type" id="session_type">
+                        <option value="lecture">Lecture</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="panel">Panel</option>
+                        <option value="breakout">Breakout</option>
+                        <option value="roundtable">Roundtable</option>
+                    </select>
+                </div>
+                <div class="pdt-event-type">
+                    <p>Event Type</p>
+                    <select name="event_type" id="event_type">
+                        <option value="lecture">Lecture</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="panel">Panel</option>
+                        <option value="breakout">Breakout</option>
+                        <option value="roundtable">Roundtable</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pdt-line-6">
+                <div class="pdt-ceu-weight">
+                    <p>CEU Weight</p>
+                    <input type="text" name="CEU Weight" id="CEU Weight" disabled="disabled" placeholder="0.00">
+                </div>
+                <div class="pdt-event-type">
+                    <p>Qualify for CEUs?</p>
+                    <select name="qual_for_CEU" id="qual_for_ceu">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pdt-line-7">
+                <p>Presenter(s)</p>
+                <input type="text" name="presenters" id="presenters" placeholder="Enter presenter names">
+            </div>
+            <div class="pdt-section-divider"></div>
+            <div class="pdt-line-8">
+                <button>Cancel</button>
+                <button>Save Session</button>
+            </div>
+        </form>
+    </div>
+    <div class="pdt-session-attendees">
+        <h2>Edit Attendees</h2>
+        <div class="pdt-section-divider" aria-hidden="true"></div>
+        <p>Session</p>
+        <p>How to Be Boardly for ASLTA?</p>
+        <div class="pdt-search">
+            <input type="search" name="attendee-search" id="attendee-search">
+        </div>
+        <h3>Attendees</h3>
+        <!--TODO: Make a table with 3 columns, and 5 rows
+        Collumns: Attendee, Certification Status at time of Attending, Delete?
+        it will be Name, Drop down, and button with x-->
     </div>
 </body>
 
