@@ -1,4 +1,10 @@
 .pdt-main {
+
+    margin: 15px;
+    margin-top: 30px;
+    border: 3px solid #e11d48;
+    border-radius: 16px;
+
     .pdt-grid {
         display: flex;
     }
@@ -25,5 +31,50 @@
 
     .pdt-page-controls-status {
         margin: 2px;
+    }
+
+    button {
+        background-color: #e11d48;
+        border: 1px solid #e11d48;
+        border-radius: 6px;
+        padding: 4px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #fff;
+        cursor: pointer ;
+    }
+    button:hover {
+        @extend button ;
+        background-color: #c0183c;
+        border: 1px solid #c0183c;
+    }
+
+    .pdt-button {
+        @extend button;
+    }
+
+    .pdt-search {
+        border: 1px solid #bfc6d2;
+        border-radius: 3px;
+    }
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+
+        thead {
+            border-bottom: 2px solid #e11d48;
+        }
+        
+
+        tbody tr:nth-child(even) {
+            
+            background-color: #fef2f2;
+        }
+
+        tbody tr:nth-child(odd) {
+            
+            background-color: #ffffff;
+        }
     }
 }
