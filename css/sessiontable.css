@@ -28,11 +28,13 @@
   background-color: #000000;
 }
 
-.pdt-session-modal .pdt-line-1, .pdt-session-modal .pdt-line-5, .pdt-session-modal .pdt-line-6 {
+.pdt-session-modal .pdt-session-modal__date-length-row,
+.pdt-session-modal .pdt-session-modal__session-event-row,
+.pdt-session-modal .pdt-session-modal__ceu-row {
   display: flex;
   justify-content: space-between;
 }
-.pdt-session-modal .pdt-line-8 {
+.pdt-session-modal .pdt-session-modal__actions {
   text-align: right;
 }
 

@@ -51,4 +51,40 @@
         }
 
     }
+
+    
+    .pdt-session-table-wrapper {
+        overflow-x: auto;
+        margin-left: 4px;
+        margin-right: 4px;
+        .pdt-session-table {
+            width: 1500px;
+            table-layout: fixed;
+            margin: 4px ;
+            text-align: center;
+
+            th,
+            td {
+                // white-space: nowrap;
+                padding: 4px ;
+
+                .pdt-session-table__expansion {
+
+                    .pdt-flags {
+                        margin: 4px ;
+                        border: 2px solid #000 ;
+                        padding: 4px ;
+                        text-align: right;
+                    }
+
+                    .pdt-comment {
+                        @extend .pdt-flags ;
+                        white-space: normal;
+                        overflow-wrap: anywhere;
+                    }
+                }
+            }
+
+        }
+    }
 }

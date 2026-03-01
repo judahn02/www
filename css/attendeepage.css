@@ -32,11 +32,12 @@
   text-align: right;
 }
 
-.pdt_edit_person .pdt-line-1, .pdt_edit_person .pdt-line-2 {
+.pdt_edit_person .pdt-edit-person__name-row,
+.pdt_edit_person .pdt-edit-person__contact-row {
   display: flex;
   justify-content: space-between;
 }
-.pdt_edit_person .pdt-line-3 {
+.pdt_edit_person .pdt-edit-person__actions {
   text-align: right;
 }
 
@@ -80,4 +81,32 @@
 .pdt-main .pdt-p-summary .pdt-sum-row {
   display: flex;
   justify-content: space-evenly;
+}
+.pdt-main .pdt-session-table-wrapper {
+  overflow-x: auto;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.pdt-main .pdt-session-table-wrapper .pdt-session-table {
+  width: 1500px;
+  table-layout: fixed;
+  margin: 4px;
+  text-align: center;
+}
+.pdt-main .pdt-session-table-wrapper .pdt-session-table th,
+.pdt-main .pdt-session-table-wrapper .pdt-session-table td {
+  padding: 4px;
+}
+.pdt-main .pdt-session-table-wrapper .pdt-session-table th .pdt-session-table__expansion .pdt-flags, .pdt-main .pdt-session-table-wrapper .pdt-session-table th .pdt-session-table__expansion .pdt-comment,
+.pdt-main .pdt-session-table-wrapper .pdt-session-table td .pdt-session-table__expansion .pdt-flags,
+.pdt-main .pdt-session-table-wrapper .pdt-session-table td .pdt-session-table__expansion .pdt-comment {
+  margin: 4px;
+  border: 2px solid #000;
+  padding: 4px;
+  text-align: right;
+}
+.pdt-main .pdt-session-table-wrapper .pdt-session-table th .pdt-session-table__expansion .pdt-comment,
+.pdt-main .pdt-session-table-wrapper .pdt-session-table td .pdt-session-table__expansion .pdt-comment {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }/*# sourceMappingURL=attendeepage.css.map */

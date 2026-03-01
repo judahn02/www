@@ -28,14 +28,15 @@
   background-color: #000000;
 }
 
-.pdt-add-new-member .pdt-line-1, .pdt-add-new-member .pdt-line-2 {
+.pdt-add-new-member .pdt-add-new-member__name-row,
+.pdt-add-new-member .pdt-add-new-member__contact-row {
   display: flex;
   justify-content: space-between;
 }
-.pdt-add-new-member .pdt-line-3 {
+.pdt-add-new-member .pdt-add-new-member__actions {
   text-align: right;
 }
 
-.pdt-attendee-check .pdt-line-1 {
+.pdt-attendee-check .pdt-attendee-check__actions {
   text-align: right;
 }/*# sourceMappingURL=presenterstable.css.map */
