@@ -10,4 +10,8 @@
     .pdt-submit {
         @include core.actions-right;
     }
+
+    .pdt-comment {
+        margin-bottom: 15px ;
+    }
 }
