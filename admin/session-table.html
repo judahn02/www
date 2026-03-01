@@ -43,7 +43,9 @@
                         <th>Session Type</th>
                         <th>CEU Weight</th>
                         <th>CEU Considerations</th>
-                        <th>Quality for CEUs</th>
+                        <th>Qualify for CEUs?</th> 
+                        <th>RID Qualified?</th>
+                        <th>When/Who RID Submission?</th>
                         <th>Event Type</th>
                         <th>Parent Event</th>
                         <th>Organizer</th>
@@ -53,6 +55,9 @@
                 </thead>
                 <tbody>
                     <tr>
+                        <td colspan="14">Sessions Loading or Error, please stand by.</td>
+                    </tr>
+                    <tr>
                         <td>03/14/2026</td>
                         <td>Opening Keynote</td>
                         <td>60 min</td>
@@ -60,6 +65,8 @@
                         <td>1.0</td>
                         <td>General credit</td>
                         <td>Approved</td>
+                        <td>Yes</td>
+                        <td>Not Submitted</td>
                         <td>Conference</td>
                         <td>Spring Summit</td>
                         <td>Admin Team</td>
@@ -69,85 +76,101 @@
                         </td>
                     </tr>
                     <tr class="pdt-details-row">
-                        <td colspan="12">
+                        <td colspan="14">
                             <div class="pdt-details-panel">
                                 <div class="pdt-buttons">
+                                    <p>Locked by Jason Zinza | Unlocked by Jason Zinza -</p>
+                                    <button>Lock | Unlock</button>
                                     <button>Sort</button>
                                     <button>Edit Details</button>
                                     <button>Edit Sessions</button>
                                 </div>
                                 <div class="pdt-details-people">
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Avery Collins</p>
                                         <p>avery.collins@example.com</p>
                                         <p>Not Assigned</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Mason Reed</p>
                                         <p>mason.reed@example.com</p>
                                         <p>None</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Olivia Turner</p>
                                         <p>olivia.turner@example.com</p>
                                         <p>Master</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Ethan Brooks</p>
                                         <p>ethan.brooks@example.com</p>
                                         <p>Not Assigned</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Sophia Bennett</p>
                                         <p>sophia.bennett@example.com</p>
                                         <p>None</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Lucas Hayes</p>
                                         <p>lucas.hayes@example.com</p>
                                         <p>Master</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Isabella Foster</p>
                                         <p>isabella.foster@example.com</p>
                                         <p>Not Assigned</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Noah Simmons</p>
                                         <p>noah.simmons@example.com</p>
                                         <p>None</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Mia Richardson</p>
                                         <p>mia.richardson@example.com</p>
                                         <p>Self Paced not assigned</p>
                                         <p>Master</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>James Powell</p>
                                         <p>james.powell@example.com</p>
                                         <p>2002-01-01 to Ongoing</p>
                                         <p>Not Assigned</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Charlotte Hughes</p>
                                         <p>charlotte.hughes@example.com</p>
                                         <p>2002-01-01 to 2002-02-01</p>
                                         <p>None</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Benjamin Ward</p>
                                         <p>benjamin.ward@example.com</p>
                                         <p>Self Paced not assigned</p>
                                         <p>Master</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Amelia Price</p>
                                         <p>amelia.price@example.com</p>
                                         <p>2002-01-01 to Ongoing</p>
                                         <p>Not Assigned</p>
                                     </div>
                                     <div class="pdt-person-card">
+                                        <button class="pdt-person-card__icon" type="button" aria-label="comments">c</button>
                                         <p>Henry Cox</p>
                                         <p>henry.cox@example.com</p>
                                         <p>2002-01-01 to 2002-02-01</p>
@@ -165,6 +188,8 @@
                         <td>1.5</td>
                         <td>Hands-on requirement</td>
                         <td>Pending</td>
+                        <td>No</td>
+                        <td>Not applicable</td>
                         <td>Breakout</td>
                         <td>Spring Summit</td>
                         <td>Education Team</td>
@@ -181,6 +206,8 @@
                         <td>0.75</td>
                         <td>Ethics included</td>
                         <td>Approved</td>
+                        <td>Yes</td>
+                        <td>2002-01-01 by Jason Zinza</td>
                         <td>Conference</td>
                         <td>Spring Summit</td>
                         <td>Program Lead</td>
@@ -197,6 +224,16 @@
             <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
             <button class="pdt-page-controls-button">Next</button>
         </div>
+    </div>
+
+    <div class="pdt-comment-box">
+        <h2>John Doe Comments</h2>
+        <form action="">
+            <textarea name="comment_box" id="comment_box"></textarea>
+            <br>
+            <button>Close</button>
+            <button type="submit">Submit</button>
+        </form>
     </div>
 
 

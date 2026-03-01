@@ -26,7 +26,13 @@
         text-align: right;
     }
 
-    .pdt-buttons {}
+    .pdt-buttons {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
 
     .pdt-details-people {
         text-align: left;
@@ -36,11 +42,23 @@
     }
 
     .pdt-person-card {
+        position: relative;
         width: 210px;
         margin: 2px;
-        padding: 4px;
+        padding: 4px 28px 4px 4px;
         border: 2px solid #000;
         border-radius: 6px;
         flex: 0 0 220px;
+    }
+
+    .pdt-person-card__icon {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        // border: 0;
+        // background: transparent;
+        // padding: 0;
+        // line-height: 1;
+        cursor: pointer;
     }
 }

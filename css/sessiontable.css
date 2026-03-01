@@ -143,6 +143,13 @@
   background-color: aqua;
   text-align: right;
 }
+.pdt-main .pdt-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 .pdt-main .pdt-details-people {
   text-align: left;
   display: flex;
@@ -150,10 +157,17 @@
   gap: 8px;
 }
 .pdt-main .pdt-person-card {
+  position: relative;
   width: 210px;
   margin: 2px;
-  padding: 4px;
+  padding: 4px 28px 4px 4px;
   border: 2px solid #000;
   border-radius: 6px;
   flex: 0 0 220px;
+}
+.pdt-main .pdt-person-card__icon {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  cursor: pointer;
 }/*# sourceMappingURL=sessiontable.css.map */
