@@ -41,10 +41,11 @@
         padding-left: 8px;
         padding-right: 8px;
         color: #fff;
-        cursor: pointer ;
+        cursor: pointer;
     }
+
     button:hover {
-        @extend button ;
+        @extend button;
         background-color: #c0183c;
         border: 1px solid #c0183c;
     }
@@ -65,16 +66,62 @@
         thead {
             border-bottom: 2px solid #e11d48;
         }
-        
+
 
         tbody tr:nth-child(even) {
-            
+
             background-color: #fef2f2;
         }
 
         tbody tr:nth-child(odd) {
-            
+
             background-color: #ffffff;
         }
     }
 }
+
+.pdt-for-testing-modal {
+    display: flex;
+    justify-content: center;
+    margin: 8px ;
+
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+
+        
+
+
+        tbody tr:nth-child(even) {
+
+            background-color: #fef2f2;
+        }
+
+        tbody tr:nth-child(odd) {
+
+            background-color: #ffffff;
+        }
+    }
+
+    button {
+        background-color: #e11d48;
+        border: 1px solid #e11d48;
+        border-radius: 6px;
+        padding: 4px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    button:hover {
+        @extend button;
+        background-color: #c0183c;
+        border: 1px solid #c0183c;
+    }
+
+    .pdt-button {
+        @extend button;
+    }
+}
+

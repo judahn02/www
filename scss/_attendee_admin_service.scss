@@ -1,7 +1,39 @@
 @use 'core-components' as core;
 
+
+
 .pdt-admin-service {
+    border: 3px solid #e11d48 ;
+    border-radius: 10px;
+
+    width: min(90vw, 600px);
+    max-height: 85vh;
+    overflow-y: auto;
+
+    h2 {
+        padding-left: 8px ;
+    }
+
+    .pdt-section-divider {
+        width: auto;
+        margin-left: 8px;
+        margin-right: 8px;
+        background-color: #ffd1d1 ;
+    }
+    table {
+        width: 100% ;
+        padding: 12px ;
+        text-align: center ;
+    }
+
+    input,
+    select {
+        width: 100px;
+        box-sizing: border-box;
+    }
+
     .pdt-submit {
         @include core.actions-right;
+        margin: 8px ;
     }
 }

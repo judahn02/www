@@ -188,104 +188,132 @@
         </div>
     </div>
 
-    <div class="pdt-admin-service">
-        <h2>Administrative Service</h2>
-        <div class="pdt-section-divider" aria-hidden="true"></div>
+    <div class="pdt-for-testing-modal">
+        <div class="pdt-admin-service">
+            <h2>Administrative Service</h2>
+            <div class="pdt-section-divider" aria-hidden="true"></div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Type</th>
-                    <th>CEU Weight</th>
-                    <th>Delete?</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="5">
-                        <small>No administrative service entries found.</small>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2024-01-15</td>
-                    <td>2024-03-15</td>
-                    <td>Board Member</td>
-                    <td>0.50</td>
-                    <td><button type="button">X</button></td>
-                </tr>
-                <tr>
-                    <td>2023-06-01</td>
-                    <td>2023-08-31</td>
-                    <td>Committee Chair</td>
-                    <td>0.75</td>
-                    <td><button type="button">X</button></td>
-                </tr>
-                <tr>
-                    <td>2022-09-10</td>
-                    <td>2022-12-20</td>
-                    <td>Mentorship Lead</td>
-                    <td>0.40</td>
-                    <td><button type="button">X</button></td>
-                </tr>
-                <tr>
-                    <td>2021-02-05</td>
-                    <td>2021-05-28</td>
-                    <td>Workshop Coordinator</td>
-                    <td>0.60</td>
-                    <td><button type="button">X</button></td>
-                </tr>
-                <tr>
-                    <td>2020-10-01</td>
-                    <td>2020-12-18</td>
-                    <td>Advisory Panel</td>
-                    <td>0.30</td>
-                    <td><button type="button">X</button></td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Type</th>
+                        <th>CEU Weight</th>
+                        <th>Delete?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5">
+                            <small>No administrative service entries found.</small>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="date" name="admin_start" id="admin_start">
+                        </td>
+                        <td>
+                            <input type="date" name="admin_end" id="admin_end">
+                        </td>
+                        <td>
+                            <select class="pdt_admin_type" name="admin_type" id="admin_type">
+                                <option value="">Select type</option>
+                                <option value="board_member">Board Member</option>
+                                <option value="committee_chair">Committee Chair</option>
+                                <option value="mentorship_lead">Mentorship Lead</option>
+                                <option value="workshop_coordinator">Workshop Coordinator</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" name="admin_ceuw" id="admin_ceuw">
+                        </td>
+                        <td>
+                            <button type="button">Add</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-15</td>
+                        <td>2024-03-15</td>
+                        <td>Board Member</td>
+                        <td>0.50</td>
+                        <td><button type="button">X</button></td>
+                    </tr>
+                    <tr>
+                        <td>2023-06-01</td>
+                        <td>2023-08-31</td>
+                        <td>Committee Chair</td>
+                        <td>0.75</td>
+                        <td><button type="button">X</button></td>
+                    </tr>
+                    <tr>
+                        <td>2022-09-10</td>
+                        <td>2022-12-20</td>
+                        <td>Mentorship Lead</td>
+                        <td>0.40</td>
+                        <td><button type="button">X</button></td>
+                    </tr>
+                    <tr>
+                        <td>2021-02-05</td>
+                        <td>2021-05-28</td>
+                        <td>Workshop Coordinator</td>
+                        <td>0.60</td>
+                        <td><button type="button">X</button></td>
+                    </tr>
+                    <tr>
+                        <td>2020-10-01</td>
+                        <td>2020-12-18</td>
+                        <td>Advisory Panel</td>
+                        <td>0.30</td>
+                        <td><button type="button">X</button></td>
+                    </tr>
+                </tbody>
+            </table>
 
-        <div class="pdt-section-divider" aria-hidden="true"></div>
+            <div class="pdt-section-divider" aria-hidden="true"></div>
 
-        <div class="pdt-submit">
-            <button>Cancel</button>
-            <button>Save Session</button>
+            <div class="pdt-submit">
+                <button>Cancel</button>
+                <button>Save Session</button>
+            </div>
         </div>
     </div>
 
-    <div class="pdt_edit_person">
-        <h3>Edit Person</h3>
-        <div class="pdt-section-divider" aria-hidden="true"></div>
-        <form action="">
-            <div class="pdt-edit-person__name-row">
-                <div class="pdt-first">
-                    <p>First name</p>
-                    <input type="text" name="f_name" id="f_name">
-                </div>
-                <div class="pdt-last">
-                    <p>Last name</p>
-                    <input type="text" name="l_name" id="l_name">
-                </div>
-            </div>
-            <div class="pdt-edit-person__contact-row">
-                <div class="pdt-email">
-                    <p>Email</p>
-                    <input type="text" name="email" id="email">
-                </div>
-                <div class="pdt-ph-number">
-                    <p>Phone Number</p>
-                    <input type="text" name="ph_number" id="ph_number">
-                </div>
-            </div>
 
-            <div class="pdt-section-divider"></div>
+    <div class="pdt-for-testing-modal">
+        <div class="pdt_edit_person">
+            <h3>Edit Person</h3>
+            <div class="pdt-section-divider" aria-hidden="true"></div>
+            <form action="">
+                <div class="pdt-edit-person__name-row">
+                    <div class="pdt-first">
+                        <p>First name</p>
+                        <input type="text" name="f_name" id="f_name">
+                    </div>
+                    <div class="pdt-last">
+                        <p>Last name</p>
+                        <input type="text" name="l_name" id="l_name">
+                    </div>
+                </div>
+                <div class="pdt-edit-person__contact-row">
+                    <div class="pdt-email">
+                        <p>Email</p>
+                        <input type="text" name="email" id="email">
+                    </div>
+                    <div class="pdt-ph-number">
+                        <p>Phone Number</p>
+                        <input type="text" name="ph_number" id="ph_number">
+                    </div>
+                </div>
 
-            <div class="pdt-edit-person__actions">
-                <button>Cancel</button>
-                <button>Save Presenter</button>
-            </div>
-        </form>
+                <div class="pdt-section-divider"></div>
+
+                <div class="pdt-edit-person__actions">
+                    <button>Cancel</button>
+                    <button>Save Presenter</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 
