@@ -15,13 +15,13 @@
 
         <div class="pdt-grid">
             <div class="pdt-grid-item">
-                <a class="pdt-grid-link" href="./session-table.html">Session Table</a>
+                <a class="pdt-grid-link" href="./session-table.html"><b>Session Table</b></a>
             </div>
             <div class="pdt-grid-item">
-                <a class="pdt-grid-link" href="./presenter-table.html">Presenter Table</a>
+                <a class="pdt-grid-link" href="./presenter-table.html"><b>Presenter Table</b></a>
             </div>
             <div class="pdt-grid-item">
-                <a class="pdt-grid-link" href="../index.html">Home</a>
+                <a class="pdt-grid-link" href="../index.html"><b>Home</b></a>
             </div>
         </div>
 
@@ -54,7 +54,7 @@
                         <td class="pdt-attendee-table__cell">Nava</td>
                         <td class="pdt-attendee-table__cell">example@example.com</td>
                         <td class="pdt-attendee-table__cell">
-                            <button class="pdt-attendee-table__link-button" type="button">Link Account</button>
+                            <button class="pdt-attendee-table__link-button" type="button">WP #404</button>
                         </td>
                         <td class="pdt-attendee-table__cell">7.5</td>
                         <td class="pdt-attendee-table__cell">0.15</td>
@@ -110,60 +110,64 @@
         </div>
     </div>
 
-    <div class="pdt-add-new-member">
-        <h2>Add New Member</h2>
-        <div class="pdt-section-divider"></div>
-
-        <button>Are they a registered Presenter?</button>
-
-        <form action="">
-            <div class="pdt-add-new-member__name-row">
-                <div class="pdt-first">
-                    <p>First name</p>
-                    <input type="text" name="f_name" id="f_name">
-                </div>
-                <div class="pdt-last">
-                    <p>Last name</p>
-                    <input type="text" name="l_name" id="l_name">
-                </div>
-            </div>
-            <div class="pdt-add-new-member__contact-row">
-                <div class="pdt-email">
-                    <p>Email</p>
-                    <input type="text" name="email" id="email">
-                </div>
-                <div class="pdt-ph-number">
-                    <p>Phone Number</p>
-                    <input type="text" name="ph_number" id="ph_number">
-                </div>
-            </div>
-
+    <div class="pdt-for-testing-modal">
+        <div class="pdt-add-new-member">
+            <h2>Add New Member</h2>
             <div class="pdt-section-divider"></div>
 
-            <div class="pdt-add-new-member__actions">
-                <button>Cancel</button>
-                <button>Mark as Attendee</button>
-            </div>
-        </form>
+            <button class="pdt-is-presenter-btn">Are they a registered Presenter?</button>
+
+            <form action="">
+                <div class="pdt-add-new-member__name-row">
+                    <div class="pdt-first">
+                        <p>First name</p>
+                        <input type="text" name="f_name" id="f_name">
+                    </div>
+                    <div class="pdt-last">
+                        <p>Last name</p>
+                        <input type="text" name="l_name" id="l_name">
+                    </div>
+                </div>
+                <div class="pdt-add-new-member__contact-row">
+                    <div class="pdt-email">
+                        <p>Email</p>
+                        <input type="text" name="email" id="email">
+                    </div>
+                    <div class="pdt-ph-number">
+                        <p>Phone Number</p>
+                        <input type="text" name="ph_number" id="ph_number">
+                    </div>
+                </div>
+
+                <div class="pdt-section-divider"></div>
+
+                <div class="pdt-add-new-member__actions">
+                    <button>Cancel</button>
+                    <button>Mark as Attendee</button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <div class="pdt-presenter-check">
-        <h2>Registered Presenter Check</h2>
-
-        <div class="pdt-section-divider"></div>
-
-        <form action="">
-            <p>Presenter name</p>
-            <input type="text" name="p_name" id="p_name">
-            <p><small>Start typing a presenter name...</small></p>
+    <div class="pdt-for-testing-modal">
+        <div class="pdt-presenter-check">
+            <h2>Registered Presenter Check</h2>
 
             <div class="pdt-section-divider"></div>
 
-            <div class="pdt-presenter-check__actions">
-                <button>Cancel</button>
-                <button>Save Session</button>
-            </div>
-        </form>
+            <form action="">
+                <p>Presenter name</p>
+                <input type="text" name="p_name" id="p_name">
+                <p><small>Start typing a presenter name...</small></p>
+
+                <div class="pdt-section-divider"></div>
+
+                <div class="pdt-presenter-check__actions">
+                    <button>Cancel</button>
+                    <button>Save Session</button>
+                </div>
+            </form>
+        </div>
     </div>
 </body>
 

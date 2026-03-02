@@ -58,6 +58,13 @@
   background-color: #ffffff;
 }
 
+/* 
+    This needs to be divided, half if for 
+    development in a lamp stack, the other
+    half if actual css that needs to stay 
+    with the respective modals.
+
+*/
 .pdt-for-testing-modal {
   display: flex;
   justify-content: center;
