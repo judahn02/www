@@ -26,7 +26,7 @@
 .pdt-main .pdt-page-controls-status {
   margin: 2px;
 }
-.pdt-main button, .pdt-main .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-button, .pdt-main .pdt-button:hover, .pdt-main button:hover {
+.pdt-main button, .pdt-main button:hover, .pdt-main .pdt-add-member, .pdt-main .pdt-add-member:hover, .pdt-main .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-button, .pdt-main .pdt-button:hover {
   background-color: #e11d48;
   border: 1px solid #e11d48;
   border-radius: 6px;
@@ -36,7 +36,7 @@
   color: #fff;
   cursor: pointer;
 }
-.pdt-main button:hover, .pdt-main .pdt-button:hover {
+.pdt-main button:hover, .pdt-main .pdt-add-member:hover, .pdt-main .pdt-button:hover {
   background-color: #c0183c;
   border: 1px solid #c0183c;
 }
@@ -80,7 +80,7 @@
 .pdt-for-testing-modal table tbody tr:nth-child(odd) {
   background-color: #ffffff;
 }
-.pdt-for-testing-modal button, .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-button:hover, .pdt-for-testing-modal button:hover, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-for-testing-modal .pdt-button {
+.pdt-for-testing-modal button, .pdt-for-testing-modal .pdt-main .pdt-add-member, .pdt-main .pdt-for-testing-modal .pdt-add-member, .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-button:hover, .pdt-for-testing-modal button:hover, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-for-testing-modal .pdt-button {
   background-color: #e11d48;
   border: 1px solid #e11d48;
   border-radius: 6px;
@@ -90,12 +90,81 @@
   color: #fff;
   cursor: pointer;
 }
-.pdt-for-testing-modal button:hover, .pdt-for-testing-modal .pdt-button:hover {
+.pdt-for-testing-modal button:hover, .pdt-for-testing-modal .pdt-main .pdt-add-member:hover, .pdt-main .pdt-for-testing-modal .pdt-add-member:hover, .pdt-for-testing-modal .pdt-button:hover {
   background-color: #c0183c;
   border: 1px solid #c0183c;
+}
+body {
+  background-color: #fafafa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #1d2327;
+}
+
+.pdt-section-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 8px;
+  background-color: #000000;
+}
+
+.pdt-main {
+  border-width: 0px;
+}
+.pdt-main .pdt-grid,
+.pdt-main a {
+  color: #e11d48;
+  margin-right: 8px;
+  text-decoration: none;
+}
+.pdt-main button, .pdt-main .pdt-add-member, .pdt-main .pdt-add-member:hover, .pdt-main button:hover {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+  border-radius: 6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+.pdt-main button:hover, .pdt-main .pdt-add-member:hover {
+  background-color: #c0183c;
+  border: 1px solid #c0183c;
+}
+.pdt-main h1 {
+  margin: 4px;
+  padding: 12px;
+}
+.pdt-main .pdt-grid {
+  margin: 4px;
+  padding: 12px;
+}
+.pdt-main .pdt-topRow {
+  margin: 4px;
+  padding: 12px;
 }
 .pdt-main .pdt-db-config, .pdt-main .pdt-tutorials {
   margin: 4px;
   padding: 4px;
   border: 4px solid #000;
+}
+.pdt-main .pdt-home-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  margin: 4px;
+  align-items: start;
+}
+.pdt-main .pdt-home-panels > .pdt-db-config,
+.pdt-main .pdt-home-panels > .pdt-tutorials {
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .pdt-main .pdt-home-panels {
+    grid-template-columns: 1fr;
+  }
 }/*# sourceMappingURL=homepage.css.map */

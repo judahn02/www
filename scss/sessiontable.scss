@@ -1,64 +1,180 @@
 @use "core-layout";
 @use "core-components" as core;
 @use "session-modal";
-@use "session-attendees" ;
+@use "session-attendees";
 
+
+// Comment Box CSS is under pdt-main {...}
 .pdt-main {
+    border-width: 0px;
+
+    .pdt-grid,
+    a {
+        color: #e11d48;
+        margin-right: 8px;
+        text-decoration: none;
+    }
+
+    button {
+        background-color: #e11d48;
+        border: 1px solid #e11d48;
+        border-radius: 6px;
+        margin-left: 8px;
+        margin-right: 8px;
+        padding: 4px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    button:hover {
+        @extend button;
+        background-color: #c0183c;
+        border: 1px solid #c0183c;
+    }
+
+    .pdt-add-member {
+        @extend button;
+    }
+
+    h1 {
+        margin: 4px;
+
+        padding: 12px;
+    }
+
+    .pdt-grid {
+        margin: 4px;
+
+        padding: 12px;
+    }
+
+    .pdt-topRow {
+        margin: 4px;
+        padding: 12px;
+
+        .pdt-add-session {
+            @extend button ;
+        }
+
+    }
+
+    .pdt-page-controls-top,
+    .pdt-page-controls-bottom {
+        margin: 4px;
+
+        padding: 12px;
+    }
+
     .pdt-session-table-wrapper {
+        width: 100%;
         overflow-x: auto;
     }
 
     .pdt-session-table {
+        width: 100%;
+        min-width: 1500px;
+        border: 2px solid #e11d48;
+        border-radius: 10px;
+        border-collapse: separate;
+        border-spacing: 0;
+
 
         th,
         td {
             padding: 8px 12px;
+            text-align: center ;
+        }
+
+
+        .pdt-details-button {
+            @include core.inline-button;
+            white-space: nowrap;
+        }
+
+        .pdt-details-row {
+
+           
+
+
+            .pdt-details-panel {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .pdt-buttons {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 4px ;
+                flex-wrap: wrap;
+                width: 100%;
+
+                button {
+                    margin: 2px ;
+                    padding-left: 6px;
+                    padding-right: 6px;
+                }
+            }
+
+            .pdt-details-people {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                align-items: stretch;
+                text-align: left;
+                gap: 12px;
+                width: 100%;
+                margin-top: 12px;
+            }
+
+            .pdt-person-card {
+                position: relative;
+                width: auto;
+                margin: 0;
+                padding: 4px 28px 4px 4px;
+                border: 1px solid #e2617d;
+                border-radius: 6px;
+                min-width: 0;
+                background-color: #fefafa;
+            }
+
+            .pdt-person-card__icon {
+                position: absolute;
+                top: 6px;
+                right: 6px;
+                display: block;
+                width: 30px ;
+                height: 30px;
+                cursor: pointer ;
+                transition: transform 0.15s ease;
+            }
+            .pdt-person-card__icon:hover {
+                @extend .pdt-person-card__icon ;
+                transform: translateY(-2px);
+            }
         }
     }
+}
 
-    .pdt-details-button {
-        @include core.inline-button;
-        white-space: nowrap;
-    } 
+.pdt-comment-box {
+    border: 3px solid #e11d48;
+    border-radius: 10px;
 
-    .pdt-details-panel {
-        background-color: aqua;
-        text-align: right;
+    width: min(90vw, 200px);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 12px;
+    text-align: center;
+
+    h2 {
+        color: #e11d48;
     }
 
-    .pdt-buttons {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .pdt-details-people {
-        text-align: left;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .pdt-person-card {
-        position: relative;
-        width: 210px;
-        margin: 2px;
-        padding: 4px 28px 4px 4px;
-        border: 2px solid #000;
-        border-radius: 6px;
-        flex: 0 0 220px;
-    }
-
-    .pdt-person-card__icon {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        // border: 0;
-        // background: transparent;
-        // padding: 0;
-        // line-height: 1;
-        cursor: pointer;
+    button {
+        margin: 8px;
+        margin-top: 12px;
     }
 }

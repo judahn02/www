@@ -1,6 +1,61 @@
 @use 'core-layout';
+@use "core-components" as core;
+
+$pdt-home-panels-stack-width: 900px;
 
 .pdt-main {
+
+    border-width: 0px;
+
+    .pdt-grid,
+    a {
+        color: #e11d48;
+        margin-right: 8px;
+        text-decoration: none;
+    }
+
+    button {
+        background-color: #e11d48;
+        border: 1px solid #e11d48;
+        border-radius: 6px;
+        margin-left: 8px;
+        margin-right: 8px;
+        padding: 4px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    button:hover {
+        @extend button;
+        background-color: #c0183c;
+        border: 1px solid #c0183c;
+    }
+
+    .pdt-add-member {
+        @extend button;
+    }
+
+    h1 {
+        margin: 4px;
+
+        padding: 12px;
+    }
+
+    .pdt-grid {
+        margin: 4px;
+
+        padding: 12px;
+    }
+
+    .pdt-topRow {
+        margin: 4px;
+
+        padding: 12px;
+
+
+    }
 
     .pdt-db-config {
         margin: 4px ;
@@ -10,5 +65,26 @@
 
     .pdt-tutorials {
         @extend .pdt-db-config ;
+    }
+
+    .pdt-home-panels {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 16px;
+        margin: 4px;
+        align-items: start;
+    }
+
+    .pdt-home-panels > .pdt-db-config,
+    .pdt-home-panels > .pdt-tutorials {
+        margin: 0;
+    }
+}
+
+@media (max-width: $pdt-home-panels-stack-width) {
+    .pdt-main {
+        .pdt-home-panels {
+            grid-template-columns: 1fr;
+        }
     }
 }

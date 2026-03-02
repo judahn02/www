@@ -2,6 +2,15 @@
 
 .pdt-session-modal {
 
+    border: 3px solid #e11d48 ;
+    border-radius: 10px;
+
+    width: min(90vw, 800px);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 12px ;
+    text-align: left;
+
     .pdt-session-modal__date-length-row,
     .pdt-session-modal__session-event-row,
     .pdt-session-modal__ceu-row {

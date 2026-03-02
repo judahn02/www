@@ -1,6 +1,15 @@
 @use 'core-components' as core;
 
 .pdt-session-attendees {
+
+    border: 3px solid #e11d48 ;
+    border-radius: 10px;
+
+    width: min(90vw, 800px);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 12px ;
+    text-align: center;
     .pdt-session-attendees__label {
         margin-bottom: 4px;
     }
