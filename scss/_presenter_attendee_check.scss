@@ -1,7 +1,48 @@
 @use 'core-components' as core;
 
 .pdt-attendee-check {
+    border: 3px solid #e11d48 ;
+    border-radius: 10px;
+
+    width: min(90vw, 300px);
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 8px ;
     .pdt-attendee-check__actions {
         @include core.actions-right;
+    }
+
+    h2 {
+        color: #e11d48 ;
+        margin-left: 8px;
+    }
+
+    button {
+        margin: 8px ;
+    }
+
+    .pdt-is-presenter-btn {
+        display: block;
+        text-align: center;
+        width: 300px ;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .pdt-section-divider {
+        width: auto;
+        margin-left: 8px;
+        margin-right: 8px;
+        background-color: #f47b7b ;
+    }
+    form {
+        p {
+            margin-left: 12px ;
+        }
+
+        input {
+            width: 250px ;
+            margin-left: 15px ;
+        }
     }
 }
