@@ -1,37 +1,39 @@
 
-//TODO: double check that I can work in this function.
-export function event_hookups(attendeeDataNode) {
+
+export function event_hookups(attendeeDataNode) { //add a another parameter for table_2 data
     const attendeeData = JSON.parse(attendeeDataNode.textContent);
 
 
     // taking care of table_1
+    //Tip: the color is tied to the odd/event row value.
     {
-        const table_1 = document.getElementById("table_1");
-        if (!table_1) {
-            console.error("table_1 not found.")
+        if (attendeeData.length === 0) {
+            console.log("AttendeeData is empty") ;
             return;
         }
-        //remove the first row
-        table_1.replaceChildren();
+        const table_1 = document.getElementById("table_1");
 
-        // load up the data into variable
+        if (!table_1) {
+            console.error("table_1 not found.");
+            return;
+        }
 
-
+        const tbody = table_1.querySelector("tbody");
+        if (!tbody) { console.error("tbody not found"); return; }
+        // Tip: the attendee data array will alway be sent but might be emtpy, I need to keep the current child in that case.
+        tbody.replaceChildren();
 
         for (const sessionData of attendeeData) {
-            table_1.appendChild(format_session_row_1(sessionData));
-            table_1.appendChild(format_session_row_2(sessionData));
+            tbody.appendChild(format_session_row_1(sessionData));
+            tbody.appendChild(format_session_row_2(sessionData));
         }
 
 
     }
-    // const table_1 = document.getElementById("table_1");
-    // const row = document.createElement('tr');
-    // const cell = document.createElement("td");
-    // cell.textContent = "2024-06-01";
-    // row.appendChild(cell);
-    // table_1.appendChild(row);
 
+    {
+        // Table 2 logic goes here
+    }
 
 }
 
