@@ -65,7 +65,12 @@
 
         thead {
             border-bottom: 2px solid #e11d48;
+
+            th {
+                background: linear-gradient(to bottom, #fff 0%,  rgba(255, 255, 255, 1) 90%, rgba(255, 222, 222, 1) 96%, #e11d48 100%);
+                }
         }
+
 
 
         tbody tr:nth-child(even) {
@@ -90,13 +95,13 @@
 .pdt-for-testing-modal {
     display: flex;
     justify-content: center;
-    margin: 8px ;
+    margin: 8px;
 
     table {
         border-collapse: collapse;
         border-spacing: 0;
 
-        
+
 
 
         tbody tr:nth-child(even) {
@@ -131,4 +136,3 @@
         @extend button;
     }
 }
-

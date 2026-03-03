@@ -51,6 +51,9 @@
 .pdt-main table thead {
   border-bottom: 2px solid #e11d48;
 }
+.pdt-main table thead th {
+  background: linear-gradient(to bottom, #fff 0%, rgb(255, 255, 255) 90%, rgb(255, 222, 222) 96%, #e11d48 100%);
+}
 .pdt-main table tbody tr:nth-child(even) {
   background-color: #fef2f2;
 }
@@ -132,6 +135,9 @@ body {
 .pdt-main .pdt-contact {
   margin-left: 15px;
 }
+.pdt-main .pdt-contact p {
+  margin: 0;
+}
 .pdt-main .pdt-history-table-wrap {
   max-height: 320px;
   overflow-x: auto;
@@ -150,19 +156,30 @@ body {
 .pdt-main .pdt-history-table th {
   position: sticky;
   top: 0;
-  background: #fff;
   z-index: 1;
   text-align: center;
+}
+.pdt-main .pdt-admin-service-table-wrap {
+  height: 140px;
+  overflow-y: auto;
 }
 .pdt-main .pdt-admin-service-table {
   width: 100%;
   table-layout: fixed;
+}
+.pdt-main .pdt-admin-service-table thead {
+  border-bottom: 0px solid #fff;
 }
 .pdt-main .pdt-admin-service-table th,
 .pdt-main .pdt-admin-service-table td {
   width: 25%;
   padding: 8px 12px;
   text-align: center;
+}
+.pdt-main .pdt-admin-service-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 .pdt-main .pdt-submit {
   text-align: right;

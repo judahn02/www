@@ -51,6 +51,9 @@
 .pdt-main table thead {
   border-bottom: 2px solid #e11d48;
 }
+.pdt-main table thead th {
+  background: linear-gradient(to bottom, #fff 0%, rgb(255, 255, 255) 90%, rgb(255, 222, 222) 96%, #e11d48 100%);
+}
 .pdt-main table tbody tr:nth-child(even) {
   background-color: #fef2f2;
 }

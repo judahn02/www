@@ -9,13 +9,12 @@
 </head>
 
 <body>
+    
     <div class="pdt-for-testing-modal">
         <div class="pdt-main">
             <h2>Professional Development Record</h2>
-            <h3>Member</h3>
             <div class="pdt-contact">
-                <p><b>John Doe</b></p>
-                <p>Email: example@example.com</p>
+                <p><b>Member:</b> John Doe | <b>Email:</b> example@example.com</p>
             </div>
             <h3>Trainig & Conference History</h3>
             <div class="pdt-history-table-wrap">
@@ -79,41 +78,34 @@
                 </table>
             </div>
             <h3>Adminstative Service</h3>
-            <table class="pdt-admin-service-table" id="table_2">
-                <thead>
-                    <tr>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Type</th>
-                        <th>CEU Weight</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="4">
-                            No administrative service entries found.
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>2024-01-15</td>
-                        <td>2024-03-15</td>
-                        <td>Board Member</td>
-                        <td>0.50</td>
-                    </tr>
-                    <tr>
-                        <td>2023-06-01</td>
-                        <td>2023-08-31</td>
-                        <td>Committee Chair</td>
-                        <td>0.75</td>
-                    </tr>
-                    <tr>
-                        <td>2022-09-10</td>
-                        <td>2022-12-20</td>
-                        <td>Mentorship Lead</td>
-                        <td>0.40</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="pdt-admin-service-table-wrap">
+                <table class="pdt-admin-service-table" id="table_2">
+                    <thead>
+                        <tr>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Type</th>
+                            <th>CEU Weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4">
+                                No administrative service entries found.
+                            </td>
+                        </tr>
+                        <!-- 
+                        TIP: This is for document refrense.
+                        <tr>
+                            <td>2024-01-15</td>
+                            <td>2024-03-15</td>
+                            <td>Board Member</td>
+                            <td>0.50</td>
+                        </tr> -->
+                        
+                    </tbody>
+                </table>
+            </div>
 
             <div class="pdt-section-divider" aria-hidden="true"></div>
 
@@ -190,7 +182,45 @@
         }
     ]
 </script>
-<!-- Add the second array here.-->
+    <script id="admin-service-data" type="application/json">
+[
+        {
+            "id": "admin-service-001",
+            "start": "2024-01-15",
+            "end": "2024-03-15",
+            "type": "Board Member",
+            "ceu_wei": "0.50"
+        },
+        {
+            "id": "admin-service-002",
+            "start": "2023-06-01",
+            "end": "2023-08-31",
+            "type": "Committee Chair",
+            "ceu_wei": "0.75"
+        },
+        {
+            "id": "admin-service-002",
+            "start": "2023-06-01",
+            "end": "2023-08-31",
+            "type": "Committee Chair",
+            "ceu_wei": "0.75"
+        },
+        {
+            "id": "admin-service-002",
+            "start": "2023-06-01",
+            "end": "2023-08-31",
+            "type": "Committee Chair",
+            "ceu_wei": "0.75"
+        },
+        {
+            "id": "admin-service-003",
+            "start": "2022-09-10",
+            "end": "2022-12-20",
+            "type": "Mentorship Lead",
+            "ceu_wei": "0.40"
+        }
+    ]
+    </script>
 </body>
 
 </html>

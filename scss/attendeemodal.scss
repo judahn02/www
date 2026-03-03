@@ -30,6 +30,10 @@
 
     .pdt-contact {
         margin-left: 15px;
+
+        p {
+            margin: 0;
+        }
     }
 
     .pdt-history-table-wrap {
@@ -53,14 +57,21 @@
     .pdt-history-table th {
         position: sticky;
         top: 0;
-        background: #fff;
+        
         z-index: 1;
         text-align: center;
+    }
+
+    .pdt-admin-service-table-wrap {
+        height: 140px;
+        overflow-y: auto;
     }
 
     .pdt-admin-service-table {
         width: 100%;
         table-layout: fixed;
+
+        thead { border-bottom: 0px solid #fff;}
     }
 
     .pdt-admin-service-table th,
@@ -68,6 +79,15 @@
         width: 25%;
         padding: 8px 12px;
         text-align: center;
+    }
+
+    
+    .pdt-admin-service-table th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        
+        
     }
 
     .pdt-submit {
