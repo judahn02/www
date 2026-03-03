@@ -258,122 +258,144 @@
             <h2>Add New Session</h2>
             <div class="pdt-section-divider" aria-hidden="true"></div>
             <form action="">
-                <div class="pdt-session-modal__date-length-row">
-                    <div class="pdt-date">
-                        <p>Date</p>
-                        <div class="pdt-date-options">
-                            <label>
-                                <input type="radio" name="date_mode" value="single" checked="checked">
-                                Single Date
-                            </label>
-                            <input type="date" name="date" id="date">
+                <div class="pdt-parent">
+                    <div class="div1">
+                        <div class="pdt-date">
+                            <h4>Date</h4>
+                            <div class="pdt-date-options">
+                                <label>
+                                    <input type="radio" name="date_mode" value="single" checked="checked">
+                                    Single Date
+                                </label>
+                                <input type="date" name="date" id="date">
 
-                            <label>
-                                <input type="radio" name="date_mode" value="range">
-                                Date Range
-                            </label>
-                            <div class="pdt-date-range">
-                                <input type="date" name="date_start" id="date-start">
-                                <span>to</span>
-                                <input type="date" name="date_end" id="date-end">
+                                <label>
+                                    <input type="radio" name="date_mode" value="range">
+                                    Date Range
+                                </label>
+                                <div class="pdt-date-range">
+                                    <input type="date" name="date_start" id="date-start">
+                                    <span>to</span>
+                                    <input type="date" name="date_end" id="date-end">
+                                </div>
+
+                                <label>
+                                    <input type="radio" name="date_mode" value="self_paced">
+                                    Self Paced
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div3">
+                        <div class="pdt-Length">
+                            <h4>Length (minutes)</h4>
+                            <input type="text" name="length" id="length">
+                        </div>
+                    </div>
+                    <div class="div4">
+                        <div class="pdt-flags">
+                            <h4>Flags</h4>
+                            <p><u>Frequent Flags</u></p>
+                            <div class="pdt-flag-list" aria-label="Recent flags">
+                                <label>
+                                    <input type="checkbox" name="flags" value="general">
+                                    General
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="flags" value="ppo">
+                                    PPO
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="flags" value="advanced">
+                                    Advanced
+                                </label>
+
+                                
+                                <div class="pdt-section-divider" aria-hidden="true"></div>
                             </div>
 
-                            <label>
-                                <input type="radio" name="date_mode" value="self_paced">
-                                Self Paced
-                            </label>
-                        </div>
-                    </div>
-                    <div class="pdt-Length">
-                        <p>Length (minutes)</p>
-                        <input type="text" name="length" id="length">
-                    </div>
-                </div>
-                <div class="pdt-textfields-and-flags">
-                    <div class="pdt-textfields">
-                        <div class="pdt-session-modal__organizer-field">
-                            <label for="organizer">Organizer</label><br>
-                            <textarea name="organizer" class="textbox" id="organizer" rows="2"></textarea>
-                        </div>
-                        <div class="pdt-session-modal__title-field">
-                            <label for="session_title">Session Title</label><br>
-                            <textarea name="session_title" class="textbox" id="session_title" rows="2"></textarea>
-                        </div>
-                        <div class="pdt-session-modal__parent-event-field">
-                            <label for="parent_event">Parent Event</label><br>
-                            <textarea name="parent_event" class="textbox" id="parent_event" rows="2"
-                                placeholder="Part of confrence or larger event? Otherwise leave blank"></textarea>
-                        </div>
-                    </div>
-                    <div class="pdt-flags">
-                        <p><b>Flags</b></p>
-                        <p><b>Recent Flags</b></p>
-                        <div class="pdt-flag-list" aria-label="Recent flags">
-                            <label>
-                                <input type="checkbox" name="flags" value="general">
-                                General
-                            </label>
-                            <label>
-                                <input type="checkbox" name="flags" value="ppo">
-                                PPO
-                            </label>
-                            <label>
-                                <input type="checkbox" name="flags" value="advanced">
-                                Advanced
-                            </label>
-                        </div>
 
-                        <label for="flag-search">Find or Add Flag</label><br>
-                        <input type="search" name="flag_search" id="flag-search" placeholder="Search flags">
-                        <input type="button" value="Add Flag" disabled="disabled">
+                            <label for="flag-search">Find or Add Flag</label><br>
+                            <input type="search" name="flag_search" id="flag-search" placeholder="Search flags">
+                            <input type="button" value="Add Flag" disabled="disabled">
+                        </div>
+                    </div>
+                    <div class="div5">
+                        <div class="pdt-textfields">
+                            <div class="pdt-session-modal__organizer-field">
+                                <label for="organizer">Organizer</label><br>
+                                <textarea name="organizer" class="textbox" id="organizer" rows="2"></textarea>
+                            </div>
+                            <div class="pdt-session-modal__title-field">
+                                <label for="session_title">Session Title</label><br>
+                                <textarea name="session_title" class="textbox" id="session_title" rows="2"></textarea>
+                            </div>
+                            <div class="pdt-session-modal__parent-event-field">
+                                <label for="parent_event">Parent Event</label><br>
+                                <textarea name="parent_event" class="textbox" id="parent_event" rows="2"
+                                    placeholder="Part of confrence or larger event? Otherwise leave blank"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div6">
+                        <div class="pdt-session-type">
+                            <h4>Session Type</h4>
+                            <select name="session_type" id="session_type">
+                                <option value="lecture">Lecture</option>
+                                <option value="workshop">Workshop</option>
+                                <option value="panel">Panel</option>
+                                <option value="breakout">Breakout</option>
+                                <option value="roundtable">Roundtable</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="div7">
+                        <div class="pdt-event-type">
+                            <h4>Event Type</h4>
+                            <select name="event_type" id="event_type">
+                                <option value="lecture">Lecture</option>
+                                <option value="workshop">Workshop</option>
+                                <option value="panel">Panel</option>
+                                <option value="breakout">Breakout</option>
+                                <option value="roundtable">Roundtable</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="div8">
+                        <div class="pdt-session-modal__ceu-row">
+                            <div class="pdt-event-type">
+                                <p>Qualify for CEUs?</p>
+                                <select name="qual_for_CEU" id="qual_for_ceu">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="pdt-ceu-weight">
+                                <p>CEU Weight</p>
+                                <input type="text" name="CEU Weight" id="CEU Weight" disabled="disabled"
+                                    placeholder="0.00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div9">
+                        <div class="pdt-session-modal__presenters-field">
+                            <p>Presenter(s)</p>
+                            <input type="text" name="presenters" id="presenters" placeholder="Enter presenter names">
+                        </div>
                     </div>
                 </div>
-                <div class="pdt-session-modal__session-event-row">
-                    <div class="pdt-session-type">
-                        <p>Session Type</p>
-                        <select name="session_type" id="session_type">
-                            <option value="lecture">Lecture</option>
-                            <option value="workshop">Workshop</option>
-                            <option value="panel">Panel</option>
-                            <option value="breakout">Breakout</option>
-                            <option value="roundtable">Roundtable</option>
-                        </select>
-                    </div>
-                    <div class="pdt-event-type">
-                        <p>Event Type</p>
-                        <select name="event_type" id="event_type">
-                            <option value="lecture">Lecture</option>
-                            <option value="workshop">Workshop</option>
-                            <option value="panel">Panel</option>
-                            <option value="breakout">Breakout</option>
-                            <option value="roundtable">Roundtable</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="pdt-session-modal__ceu-row">
-                    <div class="pdt-ceu-weight">
-                        <p>CEU Weight</p>
-                        <input type="text" name="CEU Weight" id="CEU Weight" disabled="disabled" placeholder="0.00">
-                    </div>
-                    <div class="pdt-event-type">
-                        <p>Qualify for CEUs?</p>
-                        <select name="qual_for_CEU" id="qual_for_ceu">
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="pdt-session-modal__presenters-field">
-                    <p>Presenter(s)</p>
-                    <input type="text" name="presenters" id="presenters" placeholder="Enter presenter names">
-                </div>
+
+
+
                 <div class="pdt-section-divider"></div>
                 <div class="pdt-session-modal__actions">
                     <button>Cancel</button>
                     <button>Save Session</button>
                 </div>
+
             </form>
         </div>
+
     </div>
 
 
@@ -381,119 +403,157 @@
         <div class="pdt-session-attendees">
             <h2>Edit Attendees</h2>
             <div class="pdt-section-divider" aria-hidden="true"></div>
-            <p class="pdt-session-attendees__label">Session</p>
+            <h3 class="pdt-session-attendees__label">Session</h3>
             <p class="pdt-session-attendees__session-name">How to Be Boardly for ASLTA?</p>
             <div class="pdt-session-attendees__search">
-                <input type="search" name="attendee-search" id="attendee-search">
+                <input type="search" name="attendee-search" id="attendee-search" placeholder="Search attendees by name or email">
             </div>
             <h3>Attendees</h3>
-            <table class="pdt-session-attendees__table">
-                <thead>
-                    <tr>
-                        <th>Attendee</th>
-                        <th>Certification Status at time of Attending</th>
-                        <th>Self Paced Date Range (not always present)</th>
-                        <th>Comments</th>
-                        <th>Delete?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="pdt-session-attendees__search-row">
-                        <!-- I am changing this a little, now it spans the whole row and once a name is entred, it shows at top.-->
-                        <td colspan="5"><input type="text" name="search-attendee" id="search-attendee"></td>
-                    </tr>
-                    <tr class="pdt-session-attendees__row">
-                        <td>Avery Collins</td>
-                        <td>
-                            <select name="attendee_status_1" id="attendee_status_1">
-                                <option value="none">None</option>
-                                <option value="not_assigned">Not Assigned</option>
-                                <option value="associate">Associate</option>
-                                <option value="master">Master</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="date" name="self-p-start" id="self-p-start">
-                            <p>to</p>
-                            <input type="date" name="self-p-end" id="self-p-end">
-                        </td>
-                        <td><button>Comment</button></td>
-                        <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
-                    </tr>
-                    <tr class="pdt-session-attendees__row">
-                        <td>Mason Reed</td>
-                        <td>
-                            <select name="attendee_status_2" id="attendee_status_2">
-                                <option value="none">None</option>
-                                <option value="not_assigned">Not Assigned</option>
-                                <option value="associate">Associate</option>
-                                <option value="master">Master</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="date" name="self-p-start" id="self-p-start">
-                            <p>to</p>
-                            <input type="date" name="self-p-end" id="self-p-end">
-                        </td>
-                        <td><button>Comment</button></td>
-                        <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
-                    </tr>
-                    <tr class="pdt-session-attendees__row">
-                        <td>Olivia Turner</td>
-                        <td>
-                            <select name="attendee_status_3" id="attendee_status_3">
-                                <option value="none">None</option>
-                                <option value="not_assigned">Not Assigned</option>
-                                <option value="associate">Associate</option>
-                                <option value="master">Master</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="date" name="self-p-start" id="self-p-start">
-                            <p>to</p>
-                            <input type="date" name="self-p-end" id="self-p-end">
-                        </td>
-                        <td><button>Comment</button></td>
-                        <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
-                    </tr>
-                    <tr class="pdt-session-attendees__row">
-                        <td>Ethan Brooks</td>
-                        <td>
-                            <select name="attendee_status_4" id="attendee_status_4">
-                                <option value="none">None</option>
-                                <option value="not_assigned">Not Assigned</option>
-                                <option value="associate">Associate</option>
-                                <option value="master">Master</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="date" name="self-p-start" id="self-p-start">
-                            <p>to</p>
-                            <input type="date" name="self-p-end" id="self-p-end">
-                        </td>
-                        <td><button>Comment</button></td>
-                        <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
-                    </tr>
-                    <tr class="pdt-session-attendees__row">
-                        <td>Sophia Bennett</td>
-                        <td>
-                            <select name="attendee_status_5" id="attendee_status_5">
-                                <option value="none">None</option>
-                                <option value="not_assigned">Not Assigned</option>
-                                <option value="associate">Associate</option>
-                                <option value="master">Master</option>
-                            </select>
-                        </td>
-                        <td>
-                            <input type="date" name="self-p-start" id="self-p-start">
-                            <p>to</p>
-                            <input type="date" name="self-p-end" id="self-p-end">
-                        </td>
-                        <td><button>Comment</button></td>
-                        <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="pdt-session-attendees__table-wrap">
+                <table class="pdt-session-attendees__table">
+                    <thead>
+                        <tr>
+                            <th>Attendee</th>
+                            <th>Certification Status at time of Attending</th>
+                            <th>Self Paced Date Range (not always present)</th>
+                            <th>Comments</th>
+                            <th>Delete?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="pdt-session-attendees__search-row">
+                            <!-- I am changing this a little, now it spans the whole row and once a name is entred, it shows at top.-->
+                            <td colspan="5">
+                                <input type="text" name="search-attendee" id="search-attendee"
+                                    placeholder="Type Attendee Name" list="attendee-search-options">
+                                <datalist id="attendee-search-options">
+                                    <option value="Avery Collins"></option>
+                                    <option value="Mason Reed"></option>
+                                    <option value="Olivia Turner"></option>
+                                    <option value="Ethan Brooks"></option>
+                                    <option value="Sophia Bennett"></option>
+                                </datalist>
+                            </td>
+                        </tr>
+                        <tr class="pdt-session-attendees__row">
+                            <td>Avery Collins</td>
+                            <td>
+                                <select name="attendee_status_1" id="attendee_status_1">
+                                    <option value="none">None</option>
+                                    <option value="not_assigned">Not Assigned</option>
+                                    <option value="associate">Associate</option>
+                                    <option value="master">Master</option>
+                                </select>
+                            </td>
+                            <td class="pdt-session-attendees__date-range-cell">
+                                <input type="date" name="self-p-start" id="self-p-start">
+                                <p>to</p>
+                                <input type="date" name="self-p-end" id="self-p-end">
+                            </td>
+                            <td>
+                                <button type="button">
+                                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                        aria-hidden="true">
+                                </button>
+                            </td>
+                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                        </tr>
+                        <tr class="pdt-session-attendees__row">
+                            <td>Mason Reed</td>
+                            <td>
+                                <select name="attendee_status_2" id="attendee_status_2">
+                                    <option value="none">None</option>
+                                    <option value="not_assigned">Not Assigned</option>
+                                    <option value="associate">Associate</option>
+                                    <option value="master">Master</option>
+                                </select>
+                            </td>
+                            <td class="pdt-session-attendees__date-range-cell">
+                                <input type="date" name="self-p-start" id="self-p-start">
+                                <p>to</p>
+                                <input type="date" name="self-p-end" id="self-p-end">
+                            </td>
+                            <td>
+                                <button type="button">
+                                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                        aria-hidden="true">
+                                </button>
+                            </td>
+                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                        </tr>
+                        <tr class="pdt-session-attendees__row">
+                            <td>Olivia Turner</td>
+                            <td>
+                                <select name="attendee_status_3" id="attendee_status_3">
+                                    <option value="none">None</option>
+                                    <option value="not_assigned">Not Assigned</option>
+                                    <option value="associate">Associate</option>
+                                    <option value="master">Master</option>
+                                </select>
+                            </td>
+                            <td class="pdt-session-attendees__date-range-cell">
+                                <input type="date" name="self-p-start" id="self-p-start">
+                                <p>to</p>
+                                <input type="date" name="self-p-end" id="self-p-end">
+                            </td>
+                            <td>
+                                <button type="button">
+                                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                        aria-hidden="true">
+                                </button>
+                            </td>
+                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                        </tr>
+                        <tr class="pdt-session-attendees__row">
+                            <td>Ethan Brooks</td>
+                            <td>
+                                <select name="attendee_status_4" id="attendee_status_4">
+                                    <option value="none">None</option>
+                                    <option value="not_assigned">Not Assigned</option>
+                                    <option value="associate">Associate</option>
+                                    <option value="master">Master</option>
+                                </select>
+                            </td>
+                            <td class="pdt-session-attendees__date-range-cell">
+                                <input type="date" name="self-p-start" id="self-p-start">
+                                <p>to</p>
+                                <input type="date" name="self-p-end" id="self-p-end">
+                            </td>
+                            <td>
+                                <button type="button">
+                                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                        aria-hidden="true">
+                                </button>
+                            </td>
+                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                        </tr>
+                        <tr class="pdt-session-attendees__row">
+                            <td>Sophia Bennett</td>
+                            <td>
+                                <select name="attendee_status_5" id="attendee_status_5">
+                                    <option value="none">None</option>
+                                    <option value="not_assigned">Not Assigned</option>
+                                    <option value="associate">Associate</option>
+                                    <option value="master">Master</option>
+                                </select>
+                            </td>
+                            <td class="pdt-session-attendees__date-range-cell">
+                                <input type="date" name="self-p-start" id="self-p-start">
+                                <p>to</p>
+                                <input type="date" name="self-p-end" id="self-p-end">
+                            </td>
+                            <td>
+                                <button type="button">
+                                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                        aria-hidden="true">
+                                </button>
+                            </td>
+                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pdt-section-divider" aria-hidden="true"></div>
             <div class="pdt-submit">
                 <button>Cancel</button>
                 <button>Save Session</button>
@@ -507,115 +567,129 @@
             <h2>Edit Session</h2>
             <div class="pdt-section-divider" aria-hidden="true"></div>
             <form action="">
-                <div class="pdt-session-modal__date-length-row">
-                    <div class="pdt-date">
-                        <p>Date</p>
-                        <div class="pdt-date-options">
-                            <label>
-                                <input type="radio" name="edit_date_mode" value="single" checked="checked">
-                                Single Date
-                            </label>
-                            <input type="date" name="date" id="edit-date">
+                <div class="pdt-parent">
+                    <div class="div1">
+                        <div class="pdt-date">
+                            <h4>Date</h4>
+                            <div class="pdt-date-options">
+                                <label>
+                                    <input type="radio" name="edit_date_mode" value="single" checked="checked">
+                                    Single Date
+                                </label>
+                                <input type="date" name="date" id="edit-date">
 
-                            <label>
-                                <input type="radio" name="edit_date_mode" value="range">
-                                Date Range
-                            </label>
-                            <div class="pdt-date-range">
-                                <input type="date" name="date_start" id="edit-date-start">
-                                <span>to</span>
-                                <input type="date" name="date_end" id="edit-date-end">
+                                <label>
+                                    <input type="radio" name="edit_date_mode" value="range">
+                                    Date Range
+                                </label>
+                                <div class="pdt-date-range">
+                                    <input type="date" name="date_start" id="edit-date-start">
+                                    <span>to</span>
+                                    <input type="date" name="date_end" id="edit-date-end">
+                                </div>
+
+                                <label>
+                                    <input type="radio" name="edit_date_mode" value="self_paced">
+                                    Self Paced
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div3">
+                        <div class="pdt-Length">
+                            <h4>Length (minutes)</h4>
+                            <input type="text" name="length" id="edit-length">
+                        </div>
+                    </div>
+                    <div class="div4">
+                        <div class="pdt-flags">
+                            <h4>Flags</h4>
+                            <p><u>Frequent Flags</u></p>
+                            <div class="pdt-flag-list" aria-label="Recent flags">
+                                <label>
+                                    <input type="checkbox" name="flags" value="general">
+                                    General
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="flags" value="ppo">
+                                    PPO
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="flags" value="advanced">
+                                    Advanced
+                                </label>
+
+                                <div class="pdt-section-divider" aria-hidden="true"></div>
                             </div>
 
-                            <label>
-                                <input type="radio" name="edit_date_mode" value="self_paced">
-                                Self Paced
-                            </label>
+                            <label for="edit-flag-search">Find or Add Flag</label><br>
+                            <input type="search" name="flag_search" id="edit-flag-search" placeholder="Search flags">
+                            <input type="button" value="Add Flag" disabled="disabled">
                         </div>
                     </div>
-                    <div class="pdt-Length">
-                        <p>Length (minutes)</p>
-                        <input type="text" name="length" id="edit-length">
-                    </div>
-                </div>
-                <div class="pdt-textfields-and-flags">
-                    <div class="pdt-textfields">
-                        <div class="pdt-session-modal__organizer-field">
-                            <label for="edit-organizer">Organizer</label><br>
-                            <textarea name="organizer" class="textbox" id="edit-organizer" rows="2"></textarea>
-                        </div>
-                        <div class="pdt-session-modal__title-field">
-                            <label for="edit-session_title">Session Title</label><br>
-                            <textarea name="session_title" class="textbox" id="edit-session_title" rows="2"></textarea>
-                        </div>
-                        <div class="pdt-session-modal__parent-event-field">
-                            <label for="edit-parent_event">Parent Event</label><br>
-                            <textarea name="parent_event" class="textbox" id="edit-parent_event" rows="2"
-                                placeholder="Part of confrence or larger event? Otherwise leave blank"></textarea>
+                    <div class="div5">
+                        <div class="pdt-textfields">
+                            <div class="pdt-session-modal__organizer-field">
+                                <label for="edit-organizer">Organizer</label><br>
+                                <textarea name="organizer" class="textbox" id="edit-organizer" rows="2"></textarea>
+                            </div>
+                            <div class="pdt-session-modal__title-field">
+                                <label for="edit-session_title">Session Title</label><br>
+                                <textarea name="session_title" class="textbox" id="edit-session_title" rows="2"></textarea>
+                            </div>
+                            <div class="pdt-session-modal__parent-event-field">
+                                <label for="edit-parent_event">Parent Event</label><br>
+                                <textarea name="parent_event" class="textbox" id="edit-parent_event" rows="2"
+                                    placeholder="Part of confrence or larger event? Otherwise leave blank"></textarea>
+                            </div>
                         </div>
                     </div>
-                    <div class="pdt-flags">
-                        <p><b>Flags</b></p>
-                        <p><b>Recent Flags</b></p>
-                        <div class="pdt-flag-list" aria-label="Recent flags">
-                            <label>
-                                <input type="checkbox" name="flags" value="general">
-                                General
-                            </label>
-                            <label>
-                                <input type="checkbox" name="flags" value="ppo">
-                                PPO
-                            </label>
-                            <label>
-                                <input type="checkbox" name="flags" value="advanced">
-                                Advanced
-                            </label>
+                    <div class="div6">
+                        <div class="pdt-session-type">
+                            <h4>Session Type</h4>
+                            <select name="session_type" id="edit-session_type">
+                                <option value="lecture">Lecture</option>
+                                <option value="workshop">Workshop</option>
+                                <option value="panel">Panel</option>
+                                <option value="breakout">Breakout</option>
+                                <option value="roundtable">Roundtable</option>
+                            </select>
                         </div>
-
-                        <label for="edit-flag-search">Find or Add Flag</label><br>
-                        <input type="search" name="flag_search" id="edit-flag-search" placeholder="Search flags">
-                        <input type="button" value="Add Flag" disabled="disabled">
                     </div>
-                </div>
-                <div class="pdt-session-modal__session-event-row">
-                    <div class="pdt-session-type">
-                        <p>Session Type</p>
-                        <select name="session_type" id="edit-session_type">
-                            <option value="lecture">Lecture</option>
-                            <option value="workshop">Workshop</option>
-                            <option value="panel">Panel</option>
-                            <option value="breakout">Breakout</option>
-                            <option value="roundtable">Roundtable</option>
-                        </select>
+                    <div class="div7">
+                        <div class="pdt-event-type">
+                            <h4>Event Type</h4>
+                            <select name="event_type" id="edit-event_type">
+                                <option value="lecture">Lecture</option>
+                                <option value="workshop">Workshop</option>
+                                <option value="panel">Panel</option>
+                                <option value="breakout">Breakout</option>
+                                <option value="roundtable">Roundtable</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="pdt-event-type">
-                        <p>Event Type</p>
-                        <select name="event_type" id="edit-event_type">
-                            <option value="lecture">Lecture</option>
-                            <option value="workshop">Workshop</option>
-                            <option value="panel">Panel</option>
-                            <option value="breakout">Breakout</option>
-                            <option value="roundtable">Roundtable</option>
-                        </select>
+                    <div class="div8">
+                        <div class="pdt-session-modal__ceu-row">
+                            <div class="pdt-event-type">
+                                <p>Qualify for CEUs?</p>
+                                <select name="qual_for_CEU" id="edit-qual_for_ceu">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                            <div class="pdt-ceu-weight">
+                                <p>CEU Weight</p>
+                                <input type="text" name="CEU Weight" id="edit-ceu-weight" disabled="disabled"
+                                    placeholder="0.00">
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="pdt-session-modal__ceu-row">
-                    <div class="pdt-ceu-weight">
-                        <p>CEU Weight</p>
-                        <input type="text" name="CEU Weight" id="edit-ceu-weight" disabled="disabled"
-                            placeholder="0.00">
+                    <div class="div9">
+                        <div class="pdt-session-modal__presenters-field">
+                            <p>Presenter(s)</p>
+                            <input type="text" name="presenters" id="edit-presenters" placeholder="Enter presenter names">
+                        </div>
                     </div>
-                    <div class="pdt-event-type">
-                        <p>Qualify for CEUs?</p>
-                        <select name="qual_for_CEU" id="edit-qual_for_ceu">
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="pdt-session-modal__presenters-field">
-                    <p>Presenter(s)</p>
-                    <input type="text" name="presenters" id="edit-presenters" placeholder="Enter presenter names">
                 </div>
                 <div class="pdt-section-divider"></div>
                 <div class="pdt-session-modal__actions">

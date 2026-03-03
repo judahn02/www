@@ -1,29 +1,68 @@
 @use 'core-components' as core;
 
 .pdt-session-attendees {
-
     border: 3px solid #e11d48 ;
     border-radius: 10px;
-
     width: min(90vw, 800px);
-    max-height: 85vh;
-    overflow-y: auto;
+    height: 690px;
     padding: 12px ;
-    text-align: center;
+    padding-left: 24px ;
+    padding-right: 24px ;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+
+    .pdt-section-divider {
+        width: auto;
+        margin-left: 8px;
+        margin-right: 8px;
+        background-color: #f47b7b ;
+    }
+
+    table {
+        text-align: center;
+    }
+
+    h2, h3 {
+        color: #e11d48 ;
+    }
+
     .pdt-session-attendees__label {
         margin-bottom: 4px;
+        
+
     }
 
     .pdt-session-attendees__session-name {
-        margin-top: 0;
+        margin-top: 0px;
+        padding: 4px ;
+        padding-left: 8px ;
+        border: 1px solid rgb(188, 188, 188) ;
+        border-radius: 16px;
+        background-color: rgb(222, 222, 222);
     }
 
     .pdt-session-attendees__search {
-        margin-bottom: 12px;
+        margin-top: 12px ;
+        width: 100%;
+        margin-bottom: 6px;
+
+        input {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
+    .pdt-session-attendees__table-wrap {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
     }
 
     .pdt-session-attendees__table {
         width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
     }
 
     .pdt-session-attendees__table th,
@@ -31,7 +70,59 @@
         padding: 8px 12px;
     }
 
+    .pdt-session-attendees__table th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #fff;
+        // border-bottom: 1px solid black;
+    }
+
+    .pdt-session-attendees__table tbody tr:first-child td {
+        position: sticky;
+        top: 49px;
+        z-index: 1;
+        background: #fff;
+        border-top: 1px solid #f47b7b ;
+        text-align: left;
+    }
+
+    .pdt-session-attendees__search-row input[type='text'] {
+        width: min(100%, 40ch);
+        text-align: left;
+    }
+
     .pdt-session-attendees__delete-button {
         @include core.inline-button;
+    }
+
+    .pdt-session-attendees__table button:not(.pdt-session-attendees__delete-button) {
+        border: 0;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+    }
+
+    .pdt-session-attendees__table button:not(.pdt-session-attendees__delete-button):hover {
+        transform: translateY(-1px);
+    }
+
+    .pdt-session-attendees__table .pdt-person-card__icon {
+        width: 40px;
+        height: 40px;
+        margin-top: 8px;
+    }
+
+    .pdt-session-attendees__date-range-cell {
+        > p {
+            margin: 0px ;
+            padding: 0px ;
+            text-align: center;
+        }
+    }
+
+    .pdt-submit {
+        margin-top: 8px ;
     }
 }
