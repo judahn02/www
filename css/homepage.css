@@ -149,7 +149,14 @@ body {
 .pdt-main .pdt-db-config, .pdt-main .pdt-tutorials {
   margin: 4px;
   padding: 4px;
-  border: 4px solid #000;
+  border: 2px solid #e11d48;
+  border-radius: 16px;
+  height: 250px;
+}
+.pdt-main .pdt-db-config input[type=text], .pdt-main .pdt-tutorials input[type=text] {
+  width: 320px;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 .pdt-main .pdt-home-panels {
   display: grid;
@@ -158,12 +165,22 @@ body {
   margin: 4px;
   align-items: start;
 }
+.pdt-main .pdt-home-panels > .pdt-db-config h3,
+.pdt-main .pdt-home-panels > .pdt-tutorials h3 {
+  margin: 0px;
+  padding: 0px;
+  margin-top: 10px;
+}
 .pdt-main .pdt-home-panels > .pdt-db-config,
 .pdt-main .pdt-home-panels > .pdt-tutorials {
   margin: 0;
+  padding: 8px 16px;
 }
-
-@media (max-width: 900px) {
+.pdt-main .pdt-home-panels > .pdt-db-config button, .pdt-main .pdt-home-panels > .pdt-db-config .pdt-add-member, .pdt-main .pdt-home-panels > .pdt-tutorials .pdt-add-member,
+.pdt-main .pdt-home-panels > .pdt-tutorials button {
+  margin: 8px 0px;
+}
+@media (max-width: 700px) {
   .pdt-main .pdt-home-panels {
     grid-template-columns: 1fr;
   }

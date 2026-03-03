@@ -1,7 +1,7 @@
 @use 'core-layout';
 @use "core-components" as core;
 
-$pdt-home-panels-stack-width: 900px;
+$pdt-home-panels-stack-width: 700px;
 
 .pdt-main {
 
@@ -41,6 +41,7 @@ $pdt-home-panels-stack-width: 900px;
         margin: 4px;
 
         padding: 12px;
+
     }
 
     .pdt-grid {
@@ -60,7 +61,17 @@ $pdt-home-panels-stack-width: 900px;
     .pdt-db-config {
         margin: 4px ;
         padding: 4px ;
-        border: 4px solid #000 ;
+        border: 2px solid #e11d48 ;
+        border-radius: 16px;
+        height: 250px ;
+
+       
+
+        input[type='text'] {
+            width: 320px;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
     }
 
     .pdt-tutorials {
@@ -73,11 +84,27 @@ $pdt-home-panels-stack-width: 900px;
         gap: 16px;
         margin: 4px;
         align-items: start;
+
+        
     }
 
     .pdt-home-panels > .pdt-db-config,
     .pdt-home-panels > .pdt-tutorials {
+        h3 {
+            margin: 0px; 
+            padding: 0px;
+            margin-top: 10px;
+        }
         margin: 0;
+        padding: 8px 16px ;
+
+        button {
+            margin: 8px 0px ;
+        }
+    }
+
+    .pdt-db-config {
+
     }
 }
 
