@@ -11,7 +11,7 @@ export function event_hookups(attendeeDataNode, adminServiceDataNode) {
         if (attendeeData.length === 0) {
             console.log("AttendeeData is empty");
         } else {
-            const table_1 = document.getElementById("table_1");
+            const table_1 = document.getElementById("pdt-table-1");
 
             if (!table_1) {
                 console.error("table_1 not found.");
@@ -35,7 +35,7 @@ export function event_hookups(attendeeDataNode, adminServiceDataNode) {
         if (adminServiceData.length === 0) {
             console.log("adminServiceData is empty");
         } else {
-            const table_2 = document.getElementById("table_2");
+            const table_2 = document.getElementById("pdt-table-2");
 
             if (!table_2) {
                 console.error("table_2 not found.");
@@ -52,9 +52,34 @@ export function event_hookups(attendeeDataNode, adminServiceDataNode) {
         }
     }
 
-    //wire up the export button
+    //ALL Event Listeners are HERE!
+    {
+        const modal_btn = document.getElementById("pdt-open-modal") ;
+        modal_btn.addEventListener("click", () => {
+            const modal = document.getElementById("pdt-modal");
+            if (!modal) { return; }
+            modal.style.display = "flex";
+        })
+        const modal_close_btn = document.getElementById("pdt-modal-close") ;
+        modal_close_btn .addEventListener("click", () => {
+            const modal = document.getElementById("pdt-modal");
+            if (!modal) { return; }
+            modal.style.display = "none";
+        })
 
-    //wire up the open and close and touch out of modal space.
+        const modal_window = document.getElementById("pdt-modal");
+        if (!modal_window) { return; }
+        modal_window.addEventListener("click", (event) => {
+            if (event.target !== modal_window) { return; }
+            modal_window.style.display = "none";
+        });
+
+        const export_btn = document.getElementById("pdt-export-btn") ;
+        if (!export_btn) { return; }
+        export_btn.addEventListener("click", () => {
+            export_attendee_modal_csv(attendeeData, adminServiceData);
+        });
+    }
 
 }
 
@@ -130,4 +155,78 @@ function format_admin_service_row(adminServiceRow) {
     }
 
     return row;
+}
+
+function export_attendee_modal_csv(attendeeData, adminServiceData) {
+    const csvParts = [
+        build_session_csv(attendeeData),
+        "",
+        build_admin_service_csv(adminServiceData)
+    ];
+
+    const csvText = csvParts.join("\n");
+    const csvBlob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+    const csvUrl = URL.createObjectURL(csvBlob);
+
+    const downloadLink = document.createElement("a");
+    downloadLink.href = csvUrl;
+    downloadLink.download = "training-conference-admin-export.csv";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(csvUrl);
+}
+
+function build_session_csv(attendeeData) {
+    const rows = [
+        ["Training and Conference History"],
+        ["Date", "Session Title", "Type", "Hours", "CEU Capable", "CEU Weight", "RID Qualified", "When RID Submission?", "Parent Event", "Event Type", "Flags", "Comment"]
+    ];
+
+    for (const sessionData of attendeeData) {
+        rows.push([
+            sessionData.date,
+            sessionData.title,
+            sessionData.type,
+            sessionData.hours,
+            sessionData.ceu_cap,
+            sessionData.ceu_wei,
+            sessionData.rid_qual,
+            sessionData.when_rid,
+            sessionData.par_evnt,
+            sessionData.evnt_type,
+            sessionData.flags,
+            sessionData.comment
+        ]);
+    }
+
+    return rows.map(format_csv_row).join("\n");
+}
+
+function build_admin_service_csv(adminServiceData) {
+    const rows = [
+        ["Administrative Service"],
+        ["Start", "End", "Type", "CEU Weight"]
+    ];
+
+    for (const adminServiceRow of adminServiceData) {
+        rows.push([
+            adminServiceRow.start,
+            adminServiceRow.end,
+            adminServiceRow.type,
+            adminServiceRow.ceu_wei
+        ]);
+    }
+
+    return rows.map(format_csv_row).join("\n");
+}
+
+function format_csv_row(rowValues) {
+    return rowValues.map(format_csv_cell).join(",");
+}
+
+function format_csv_cell(value) {
+    const text = String(value ?? "");
+    const escapedText = text.replaceAll("\"", "\"\"");
+    return `"${escapedText}"`;
 }

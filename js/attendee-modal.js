@@ -1,5 +1,5 @@
 // Add core impore here when needed.
-import { event_hookups } from "./attendee-modal/event-hooksups.js";
+import { event_hookups } from "./attendee-modal/event-hookups.js";
 
 
 
@@ -10,8 +10,8 @@ import { event_hookups } from "./attendee-modal/event-hooksups.js";
 
     function initAttendeeModal() {
         // Vite entry point placeholder for attendee modal behavior.
-        const attendeeDataNode = document.getElementById("attendee-data");
-        const adminServiceDataNode = document.getElementById("admin-service-data");
+        const attendeeDataNode = document.getElementById("pdt-attendee-data");
+        const adminServiceDataNode = document.getElementById("pdt-admin-service-data");
 
         if (!attendeeDataNode) {
             console.error("The html json data is not found. Skipping table load.");

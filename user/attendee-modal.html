@@ -9,8 +9,10 @@
 </head>
 
 <body>
-    
-    <div class="pdt-for-testing-modal">
+    <button id="pdt-open-modal">
+        Open Modal
+    </button>    
+    <div class="pdt-for-testing-modal" id="pdt-modal" style="display: none;">
         <div class="pdt-main">
             <h2>Professional Development Record</h2>
             <div class="pdt-contact">
@@ -18,7 +20,7 @@
             </div>
             <h3>Trainig & Conference History</h3>
             <div class="pdt-history-table-wrap">
-                <table class="pdt-history-table" id="table_1">
+                <table class="pdt-history-table" id="pdt-table-1">
                     <thead>
                         <tr>
                             <th>Date</th>
@@ -79,7 +81,7 @@
             </div>
             <h3>Adminstative Service</h3>
             <div class="pdt-admin-service-table-wrap">
-                <table class="pdt-admin-service-table" id="table_2">
+                <table class="pdt-admin-service-table" id="pdt-table-2">
                     <thead>
                         <tr>
                             <th>Start</th>
@@ -110,15 +112,16 @@
             <div class="pdt-section-divider" aria-hidden="true"></div>
 
             <div class="pdt-submit">
-                <button>Export CSV</button>
-                <button>Close</button>
+                <button id="pdt-export-btn">Export CSV</button>
+                <button id="pdt-modal-close">Close</button>
             </div>
 
         </div>
     </div>
     <script type="module" src="../js/attendee-modal.js"></script>
     <!-- for your refrence: -->
-    <script id="attendee-data" type="application/json">
+     <!-- If you change the data schema, make sure to update the scss and the js (event-hookups.js)-->
+    <script id="pdt-attendee-data" type="application/json">
 [
         {
             "id": "session-001",
@@ -182,7 +185,7 @@
         }
     ]
 </script>
-    <script id="admin-service-data" type="application/json">
+    <script id="pdt-admin-service-data" type="application/json">
 [
         {
             "id": "admin-service-001",
