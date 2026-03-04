@@ -1,127 +1,123 @@
 @use 'core-layout';
 @use 'core-components' as core;
 
-
-.pdt-for-testing-modal {
-    position: fixed;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    background: rgba(0, 0, 0, 0.45);
-    z-index: 1000;
+button {
+    background-color: #e11d48;
+    border: 1px solid #e11d48;
+    border-radius: 6px;
+    padding: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: #fff;
+    cursor: pointer;
 }
 
-.pdt-main {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-    padding: 8px;
-    padding-left: 16px;
-    padding-right: 16px;
-    width: min(1100px, 95vw);
-    min-width: 700px;
-    max-height: 90vh;
-    overflow: auto;
 
-    .pdt-section-divider {
-        width: auto;
-        margin-left: 8px;
-        margin-right: 8px;
-        background-color: #f47b7b;
-    }
+.pdt-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    box-sizing: border-box;
+    background-color: rgba(0, 0, 0, 0.45);
+}
 
-    h2,
-    h3 {
-        color: #e11d48;
-    }
+.pdt-modal__panel {
+    width: 700px;
+    max-width: 100%;
+    height: 800px;
+    max-height: 100%;
+    position: relative;
+    border: 1px solid black;
+    background-color: #fff;
+    --mpx: 16px;
+    --mpy: 8px;
+    padding: var(--mpy) var(--mpx);
+    box-sizing: border-box;
+    /*key: vertical, horizonal*/
+
+
 
     h2 {
-        margin: 0px;
-        // padding: 0px ;
+        margin-top: 16px;
+        margin-bottom: 0px;
     }
 
-
-    .pdt-contact {
-        margin-left: 15px;
-
-        p {
-            margin: 0;
-        }
+    .pdt-contact p {
+        margin: 8px 24px;
+        /* margin-left: 16px; margin-top: 8px; */
     }
 
-    .pdt-history-table-wrap {
-        max-height: 320px;
+    .pdt-summary p {
+        margin: 0px 0px;
+    }
+
+    .pdt-range {
+        --x: 25px;
+        width: calc(100% - (2 * var(--x)));
+        box-sizing: border-box;
+        margin: 4px var(--x);
+
+    }
+
+    .pdt-tabs {
+        height: 40px;
+    }
+
+    .pdt-tabs button {
+        margin-top: 4px;
+        background-color: inherit;
+        float: left;
+        color: black;
+        /* border: none ; */
+        outline: none;
+        height: inherit;
+        transition: 0.3s;
+    }
+
+    .pdt-tabs button:hover {
+        background-color: #ff1010;
+    }
+
+    .pdt-tabs button.active {
+        background-color: #ccc;
+    }
+
+    .pdt-table-wrap {
+
+        margin-top: 8px;
+        height: calc(600px - var(--mpy) - 44px);
+        /* 29px is the height of the button. */
         overflow-x: auto;
         overflow-y: auto;
+
+
     }
 
-    .pdt-history-table {
-        min-width: 1100px;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-    .pdt-history-table th,
-    .pdt-history-table td {
-        padding: 8px 8px;
-        text-align: center;
-    }
-
-    .pdt-history-table th {
-        position: sticky;
-        top: 0;
-        
-        z-index: 1;
-        text-align: center;
-    }
-
-    .pdt-admin-service-table-wrap {
-        height: 140px;
-        overflow-y: auto;
-    }
-
-    .pdt-admin-service-table {
+    .pdt-tab-content {
+        display: none;
         width: 100%;
-        table-layout: fixed;
-
-        thead { border-bottom: 0px solid #fff;}
+        box-sizing: border-box;
     }
 
-    .pdt-admin-service-table th,
-    .pdt-admin-service-table td {
-        width: 25%;
-        padding: 8px 12px;
+    .pdt-table-wrap table {
+        width: 100%;
+        box-sizing: border-box;
         text-align: center;
-    }
 
-    
-    .pdt-admin-service-table th {
-        position: sticky;
-        top: 0;
-        z-index: 1;
-        
-        
-    }
+        border-collapse: separate;
+        border-spacing: 5px 10px;
 
-    .pdt-submit {
-        @include core.actions-right;
-        margin-top: 8px ;
-    }
 
-    .pdt-flags {
-        text-align: left;
-        padding: 2px 8px;
-        border-bottom: 1px solid black;
-    }
-
-    .pdt-comment {
-
-        margin-bottom: 15px;
-        text-align: left;
-        padding: 2px 8px;
     }
 
 
+    .pdt-close {
+        position: absolute;
+        left: var(--mpx);
+        bottom: var(--mpy);
+    }
 }

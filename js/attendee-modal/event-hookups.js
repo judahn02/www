@@ -79,6 +79,36 @@ export function event_hookups(attendeeDataNode, adminServiceDataNode) {
         export_btn.addEventListener("click", () => {
             export_attendee_modal_csv(attendeeData, adminServiceData);
         });
+
+        const pdtTabButtons = document.querySelectorAll(".pdt-tab-link");
+        const pdtTabPanels = document.querySelectorAll(".pdt-tab-content");
+
+        function openPdtTab(event) {
+            const tabId = event.currentTarget.dataset.tabTarget;
+            const activePanel = document.getElementById(tabId);
+
+            pdtTabPanels.forEach((panel) => {
+                panel.style.display = "none";
+            });
+
+            pdtTabButtons.forEach((button) => {
+                button.classList.remove("active");
+            });
+
+            if (activePanel) {
+                activePanel.style.display = "block";
+            }
+
+            event.currentTarget.classList.add("active");
+        }
+
+        pdtTabButtons.forEach((button) => {
+            button.addEventListener("click", openPdtTab);
+        });
+
+        if (pdtTabButtons.length > 0) {
+            pdtTabButtons[0].click();
+        }
     }
 
 }

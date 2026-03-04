@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendee Modal 2 beta</title>
+    <style>
+        * {
+            /* border: 1px solid grey; */
+
+        }
+
+        button {
+            background-color: #e11d48;
+            border: 1px solid #e11d48;
+            border-radius: 6px;
+            padding: 4px;
+            padding-left: 8px;
+            padding-right: 8px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+
+        .pdt-main {
+            width: 700px;
+            height: 800px;
+            position: relative;
+            border: 1px solid black;
+            --mpx: 16px;
+            --mpy: 8px;
+            padding: var(--mpy) var(--mpx);
+            /*key: vertical, horizonal*/
+
+
+
+            h2 {
+                margin-top: 16px;
+                margin-bottom: 0px;
+            }
+
+            .pdt-contact p {
+                margin: 8px 24px;
+                /* margin-left: 16px; margin-top: 8px; */
+            }
+
+            .pdt-summary p {
+                margin: 0px 0px;
+            }
+
+            .pdt-range {
+                --x: 25px;
+                width: calc(100% - (2 * var(--x)));
+                box-sizing: border-box;
+                margin: 4px var(--x);
+
+            }
+
+            .pdt-tabs {
+                height: 40px;
+            }
+
+            .pdt-tabs button {
+                margin-top: 4px;
+                background-color: inherit;
+                float: left;
+                color: black;
+                /* border: none ; */
+                outline: none;
+                height: inherit;
+                transition: 0.3s;
+            }
+
+            .pdt-tabs button:hover {
+                background-color: #ff1010;
+            }
+
+            .pdt-tabs button.active {
+                background-color: #ccc;
+            }
+
+            .pdt-table-wrap {
+
+                margin-top: 8px;
+                height: calc(600px - var(--mpy) - 44px);
+                /* 29px is the height of the button. */
+                overflow-x: auto;
+                overflow-y: auto;
+
+
+            }
+
+            .pdt-tab-content {
+                display: none;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .pdt-table-wrap table {
+                width: 100%;
+                box-sizing: border-box;
+                text-align: center;
+
+                border-collapse: separate;
+                border-spacing: 5px 10px;
+
+
+            }
+
+
+            .pdt-close {
+                position: absolute;
+                left: var(--mpx);
+                bottom: var(--mpy);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button>Open Modal</button>
+    <div class="pdt-main">
+        <h2>Professional Development Record</h2>
+        <div class="pdt-contact">
+            <p><b>Member: </b><span id="pdt-name">John Doe</span> | <b>Email: </b><span
+                    id="pdt-email">example@example.com</span></p>
+        </div>
+        <div class="pdt-summary">
+            <p><b>Total hours: </b><span id="pdt-t_hours">0</span><b> Last <span id="pdt-years">11</span> years:
+                </b><span id="pdt-cmus">0</span><b> Most recent: </b><span id="pdt-r_sess">-</span></p>
+
+            <input class="pdt-range" type="range">
+        </div>
+
+        <button id="pdt-export">Export CSV</button>
+
+        <div class="pdt-tabs">
+            <button id="pdt-tab-history" class="pdt-tab-link" data-tab-target="pdt-tab-panel-history">Training &amp;
+                Confrence History</button>
+            <button id="pdt-tab-admin" class="pdt-tab-link" data-tab-target="pdt-tab-panel-admin">Administrative
+                Service</button>
+        </div>
+
+        <div class="pdt-table-wrap">
+            <div class="pdt-tab-content" id="pdt-tab-panel-history">
+                <table class="pdt-history-table" id="pdt-table-1">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Session Title</th>
+                            <th>Type</th>
+                            <th>Hours</th>
+                            <th>CEU Capable</th>
+                            <th>CEU Weight</th>
+                            <th>RID Qualified</th>
+                            <th>When RID Submission?</th>
+                            <th>Parent Event</th>
+                            <th>Event Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="10" style="text-align:left;">No sessions found.</td>
+                        </tr>
+
+                        <tr class="pdt-history-table__session-row">
+                            <td>2024-06-01</td>
+                            <td>A New Way to Teach ASL Literature</td>
+                            <td>Workshop</td>
+                            <td>1.5h</td>
+                            <td>Yes</td>
+                            <td>1.50</td>
+                            <td>Yes</td>
+                            <td>2000-01-01</td>
+                            <td>Summer Institute</td>
+                            <td>Training</td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                <div class="pdt-flags-and-comment">
+                                    <div class="pdt-flags"><span>General | PPO | Advanced</span></div>
+                                    <div class="pdt-comment">...</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="pdt-history-table__session-row">
+                            <td>2024-06-01</td>
+                            <td>A New Way to Teach ASL Literature</td>
+                            <td>Workshop</td>
+                            <td>1.5h</td>
+                            <td>Yes</td>
+                            <td>1.50</td>
+                            <td>Yes</td>
+                            <td>2000-01-01</td>
+                            <td>Summer Institute</td>
+                            <td>Training</td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                <div class="pdt-flags-and-comment">
+                                    <div class="pdt-flags"><span>General | PPO | Advanced</span></div>
+                                    <div class="pdt-comment">...</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="pdt-history-table__session-row">
+                            <td>2024-06-01</td>
+                            <td>A New Way to Teach ASL Literature</td>
+                            <td>Workshop</td>
+                            <td>1.5h</td>
+                            <td>Yes</td>
+                            <td>1.50</td>
+                            <td>Yes</td>
+                            <td>2000-01-01</td>
+                            <td>Summer Institute</td>
+                            <td>Training</td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                <div class="pdt-flags-and-comment">
+                                    <div class="pdt-flags"><span>General | PPO | Advanced</span></div>
+                                    <div class="pdt-comment">...</div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="pdt-history-table__session-row">
+                            <td>2024-06-01</td>
+                            <td>A New Way to Teach ASL Literature</td>
+                            <td>Workshop</td>
+                            <td>1.5h</td>
+                            <td>Yes</td>
+                            <td>1.50</td>
+                            <td>Yes</td>
+                            <td>2000-01-01</td>
+                            <td>Summer Institute</td>
+                            <td>Training</td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                <div class="pdt-flags-and-comment">
+                                    <div class="pdt-flags"><span>General | PPO | Advanced</span></div>
+                                    <div class="pdt-comment">...</div>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="pdt-tab-content" id="pdt-tab-panel-admin">
+                <table class="pdt-admin-service-table" id="pdt-table-2">
+                    <thead>
+                        <tr>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Type</th>
+                            <th>CEU Weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4">No administrative service entries found.</td>
+                        </tr>
+
+                        <!-- <tr>
+                                    <td>2024-01-15</td>
+                                    <td>2024-03-15</td>
+                                    <td>Board Member</td>
+                                    <td>0.50</td>
+                                </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <button id="pdt-close" class="pdt-close">Close</button>
+    </div>
+
+    <script>
+        const pdtTabButtons = document.querySelectorAll(".pdt-tab-link");
+        const pdtTabPanels = document.querySelectorAll(".pdt-tab-content");
+
+        function openPdtTab(event) {
+            const tabId = event.currentTarget.dataset.tabTarget;
+            const activePanel = document.getElementById(tabId);
+
+            pdtTabPanels.forEach((panel) => {
+                panel.style.display = "none";
+            });
+
+            pdtTabButtons.forEach((button) => {
+                button.classList.remove("active");
+            });
+
+            if (activePanel) {
+                activePanel.style.display = "block";
+            }
+
+            event.currentTarget.classList.add("active");
+        }
+
+        pdtTabButtons.forEach((button) => {
+            button.addEventListener("click", openPdtTab);
+        });
+
+        if (pdtTabButtons.length > 0) {
+            pdtTabButtons[0].click();
+        }
+    </script>
+</body>
+
+</html>

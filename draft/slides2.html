@@ -1,3 +1,5 @@
+<!--With that I know now, and the AI's provided experience,
+    I can rebuild this page with much better struture.-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,116 +7,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/attendeemodal.css">
-    <title>Attendee Modal</title>
+    <title>Attendee Modal 2 - Beta</title>
 </head>
 
 <body>
-    <button id="pdt-open-modal">
-        Open Modal
-    </button>    
-    <div class="pdt-modal" id="pdt-modal">
-        <div class="pdt-modal__panel">
+    <button id="pdt-modal-open-btn">Open Modal</button>
+    <div class="pdt-for-testing-modal">
+        <div class="pdt-main" id="pdt-modal">
             <h2>Professional Development Record</h2>
+
             <div class="pdt-contact">
-                <p><b>Member: </b><span id="pdt-name">John Doe</span> | <b>Email: </b><span
-                        id="pdt-email">example@example.com</span></p>
+                <p><b>Member:</b> John Doe | <b>Email:</b> example@example.com</p>
             </div>
+
             <div class="pdt-summary">
-                <p><b>Total hours: </b><span id="pdt-t_hours">0</span><b> Last <span id="pdt-years">11</span> years:
-                    </b><span id="pdt-cmus">0</span><b> Most recent: </b><span id="pdt-r_sess">-</span></p>
-
-                <input class="pdt-range" type="range">
-            </div>
-
-            <button id="pdt-export-btn">Export CSV</button>
-
-            <div class="pdt-tabs">
-                <button id="pdt-tab-history" class="pdt-tab-link" data-tab-target="pdt-tab-panel-history">Training
-                    &amp;
-                    Confrence History</button>
-                <button id="pdt-tab-admin" class="pdt-tab-link" data-tab-target="pdt-tab-panel-admin">Administrative
-                    Service</button>
-            </div>
-
-            <div class="pdt-table-wrap">
-                <div class="pdt-tab-content" id="pdt-tab-panel-history">
-                    <table class="pdt-history-table" id="pdt-table-1">
-                        <thead>
-                            <tr>
-                                <th>Date</th>
-                                <th>Session Title</th>
-                                <th>Type</th>
-                                <th>Hours</th>
-                                <th>CEU Capable</th>
-                                <th>CEU Weight</th>
-                                <th>RID Qualified</th>
-                                <th>When RID Submission?</th>
-                                <th>Parent Event</th>
-                                <th>Event Type</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="10" style="text-align:left;">No sessions found.</td>
-                            </tr>
-
-                            <!-- <tr class="pdt-history-table__session-row">
-                                <td>2024-06-01</td>
-                                <td>A New Way to Teach ASL Literature</td>
-                                <td>Workshop</td>
-                                <td>1.5h</td>
-                                <td>Yes</td>
-                                <td>1.50</td>
-                                <td>Yes</td>
-                                <td>2000-01-01</td>
-                                <td>Summer Institute</td>
-                                <td>Training</td>
-                            </tr>
-                            <tr>
-                                <td colspan="10">
-                                    <div class="pdt-flags-and-comment">
-                                        <div class="pdt-flags"><span>General | PPO | Advanced</span></div>
-                                        <div class="pdt-comment">...</div>
-                                    </div>
-                                </td>
-                            </tr> -->
-                            
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pdt-tab-content" id="pdt-tab-panel-admin">
-                    <table class="pdt-admin-service-table" id="pdt-table-2">
-                        <thead>
-                            <tr>
-                                <th>Start</th>
-                                <th>End</th>
-                                <th>Type</th>
-                                <th>CEU Weight</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="4">No administrative service entries found.</td>
-                            </tr>
-
-                            <!-- <tr>
-                                        <td>2024-01-15</td>
-                                        <td>2024-03-15</td>
-                                        <td>Board Member</td>
-                                        <td>0.50</td>
-                                    </tr> -->
-                        </tbody>
-                    </table>
+                <div class="pdt-metrics">
+                    <span id="pdt-total-hours"><b>Total hours:</b> 0</span>
+                    <span id="pdt-11yr-hours"><b>Last 11 years:</b> 0</span>
+                    <span id="pdt-most-recent"><b>Most recent:</b> —</span>
                 </div>
             </div>
 
+            <div class="pdt-slider">
+                <input type="range" name="progress-years" id="pdt-progress-years" min="1" max="11" value="11">
+            </div>
 
-            <button id="pdt-modal-close" class="pdt-close">Close</button>
+            <div class="pdt-actions">
+                <button id="pdt-export-report-btn" type="button">Export CSV</button>
+            </div>
+
+            <div class="pdt-section-switch" role="tablist" aria-label="Record sections">
+                <label id="pdt-training-section-label" class="pdt-section-switch__label pdt-section-switch__label--active" role="tab" aria-controls="pdt-panel-training" aria-selected="true">
+                    Training &amp; Conference History
+                </label>
+                <label id="pdt-admin-section-label" class="pdt-section-switch__label" role="tab" aria-controls="pdt-panel-admin" aria-selected="false">
+                    Administrative Service
+                </label>
+            </div>
+
+            <div class="pdt-panels">
+                <section class="pdt-panel pdt-panel--active" id="pdt-panel-training" role="tabpanel">
+                    <div class="pdt-history-table-wrap">
+                        <table class="pdt-history-table" id="pdt-table-1">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Session Title</th>
+                                    <th>Type</th>
+                                    <th>Hours</th>
+                                    <th>CEU Capable</th>
+                                    <th>CEU Weight</th>
+                                    <th>RID Qualified</th>
+                                    <th>When RID Submission?</th>
+                                    <th>Parent Event</th>
+                                    <th>Event Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="10" style="text-align:left;">No sessions found.</td>
+                                </tr>
+                                <!-- 
+                                <tr class="pdt-history-table__session-row">
+                                    <td>2024-06-01</td>
+                                    <td>A New Way to Teach ASL Literature</td>
+                                    <td>Workshop</td>
+                                    <td>1.5h</td>
+                                    <td>Yes</td>
+                                    <td>1.50</td>
+                                    <td>Yes</td>
+                                    <td>2000-01-01</td>
+                                    <td>Summer Institute</td>
+                                    <td>Training</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="10">
+                                        <div class="pdt-flags-and-comment">
+                                            <div class="pdt-flags"><span>General | PPO | Advanced</span></div>
+                                            <div class="pdt-comment">...</div>
+                                        </div>
+                                    </td>
+                                </tr> 
+                                -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="pdt-panel" id="pdt-panel-admin" role="tabpanel">
+                    <div class="pdt-admin-service-table-wrap">
+                        <table class="pdt-admin-service-table" id="pdt-table-2">
+                            <thead>
+                                <tr>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                    <th>Type</th>
+                                    <th>CEU Weight</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4">No administrative service entries found.</td>
+                                </tr>
+
+                                <!-- <tr>
+                                    <td>2024-01-15</td>
+                                    <td>2024-03-15</td>
+                                    <td>Board Member</td>
+                                    <td>0.50</td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <div class="pdt-section-divider" aria-hidden="true"></div>
+            <button id="pdt-modal-close">Close</button>
         </div>
     </div>
     <script type="module" src="../js/attendee-modal.js"></script>
-    <!-- for your refrence: -->
-     <!-- If you change the data schema, make sure to update the scss and the js (event-hookups.js)-->
     <script id="pdt-attendee-data" type="application/json">
 [
         {
