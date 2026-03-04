@@ -310,7 +310,7 @@
                                     Advanced
                                 </label>
 
-                                
+
                                 <div class="pdt-section-divider" aria-hidden="true"></div>
                             </div>
 
@@ -348,8 +348,6 @@
                                 <option value="roundtable">Roundtable</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="div7">
                         <div class="pdt-event-type">
                             <h4>Event Type</h4>
                             <select name="event_type" id="event_type">
@@ -360,8 +358,15 @@
                                 <option value="roundtable">Roundtable</option>
                             </select>
                         </div>
+                        <div class="pdt-rid-qualified">
+                            <h4>RID Qualified?</h4>
+                            <select name="rid_qualified" id="rid_qualified">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="div8">
+                    <div class="div7">
                         <div class="pdt-session-modal__ceu-row">
                             <div class="pdt-event-type">
                                 <p>Qualify for CEUs?</p>
@@ -375,9 +380,10 @@
                                 <input type="text" name="CEU Weight" id="CEU Weight" disabled="disabled"
                                     placeholder="0.00">
                             </div>
+
                         </div>
                     </div>
-                    <div class="div9">
+                    <div class="div8">
                         <div class="pdt-session-modal__presenters-field">
                             <p>Presenter(s)</p>
                             <input type="text" name="presenters" id="presenters" placeholder="Enter presenter names">
@@ -397,6 +403,108 @@
         </div>
 
     </div>
+    <div class="pdt-for-testing-modal">
+        <div class="pdt-session-modal2">
+            <form action="">
+                <div class="div1">
+                    <p>div1 - dates</p>
+                    <p class="pdt-session-modal2__eyebrow">Date Options</p>
+                    <div class="pdt-session-modal2__choices">
+                        <label><input type="radio" name="demo-date-mode" checked> Specific dates</label>
+                        <label><input type="radio" name="demo-date-mode"> Self paced</label>
+                    </div>
+                    <div class="pdt-session-modal2__inline-fields">
+                        <label class="pdt-session-modal2__field">
+                            <span>Start</span>
+                            <input type="date" value="2026-03-14">
+                        </label>
+                        <label class="pdt-session-modal2__field">
+                            <span>End</span>
+                            <input type="date" value="2026-03-16">
+                        </label>
+                    </div>
+                </div>
+                <div class="div2">
+                    <p>div2 - length</p>
+                    <label class="pdt-session-modal2__field">
+                        <span>Session Title</span>
+                        <input type="text" value="Board Governance Intensive">
+                    </label>
+                </div>
+                <div class="div3">
+                    <p>div3 - presenter</p>
+                    <label class="pdt-session-modal2__field">
+                        <span>Length</span>
+                        <input type="text" value="90 min">
+                    </label>
+                </div>
+                <div class="div4">
+                    <p>div4 - flags</p>
+                    <p class="pdt-session-modal2__eyebrow">Flags</p>
+                    <div class="pdt-session-modal2__choices">
+                        <label><input type="checkbox" checked> Qualifies for CEUs</label>
+                        <label><input type="checkbox"> RID qualified</label>
+                        <label><input type="checkbox" checked> Featured session</label>
+                        <label><input type="checkbox"> Needs review</label>
+                    </div>
+                </div>
+                <div class="div5">
+                    <p>div5 - org.session.parent</p>
+                    <label class="pdt-session-modal2__field">
+                        <span>Notes</span>
+                        <textarea rows="4">Placeholder copy for spacing, wrapping, and vertical rhythm inside the wider text area.</textarea>
+                    </label>
+                </div>
+                <div class="div6">
+                    <p>div6 - 3 drops</p>
+                    <label class="pdt-session-modal2__field">
+                        <span>Event Type</span>
+                        <select>
+                            <option>Conference</option>
+                            <option>Workshop</option>
+                        </select>
+                    </label>
+                    <label class="pdt-session-modal2__field">
+                        <span>Parent Event</span>
+                        <select>
+                            <option>Spring Summit</option>
+                            <option>Regional Training Day</option>
+                        </select>
+                    </label>
+                    <label class="pdt-session-modal2__field">
+                        <span>Organizer</span>
+                        <select>
+                            <option>Admin Team</option>
+                            <option>Education Team</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="div7">
+                    <p>div7 - ceu og</p>
+                    <p class="pdt-session-modal2__eyebrow">CEU Details</p>
+                    <div class="pdt-session-modal2__two-up">
+                        <label class="pdt-session-modal2__field">
+                            <span>CEU Weight</span>
+                            <input type="text" value="1.5">
+                        </label>
+                        <label class="pdt-session-modal2__field">
+                            <span>Consideration</span>
+                            <input type="text" value="General credit">
+                        </label>
+                    </div>
+                </div>
+                <div class="div8">
+                    <p>div8</p>
+                    <p class="pdt-session-modal2__eyebrow">Presenters</p>
+                    <div class="pdt-session-modal2__chips">
+                        <span>Avery Collins</span>
+                        <span>Mason Reed</span>
+                        <span>Olivia Turner</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
     <div class="pdt-for-testing-modal">
@@ -406,7 +514,8 @@
             <h3 class="pdt-session-attendees__label">Session</h3>
             <p class="pdt-session-attendees__session-name">How to Be Boardly for ASLTA?</p>
             <div class="pdt-session-attendees__search">
-                <input type="search" name="attendee-search" id="attendee-search" placeholder="Search attendees by name or email">
+                <input type="search" name="attendee-search" id="attendee-search"
+                    placeholder="Search attendees by name or email">
             </div>
             <h3>Attendees</h3>
             <div class="pdt-session-attendees__table-wrap">
@@ -635,7 +744,8 @@
                             </div>
                             <div class="pdt-session-modal__title-field">
                                 <label for="edit-session_title">Session Title</label><br>
-                                <textarea name="session_title" class="textbox" id="edit-session_title" rows="2"></textarea>
+                                <textarea name="session_title" class="textbox" id="edit-session_title"
+                                    rows="2"></textarea>
                             </div>
                             <div class="pdt-session-modal__parent-event-field">
                                 <label for="edit-parent_event">Parent Event</label><br>
@@ -655,8 +765,6 @@
                                 <option value="roundtable">Roundtable</option>
                             </select>
                         </div>
-                    </div>
-                    <div class="div7">
                         <div class="pdt-event-type">
                             <h4>Event Type</h4>
                             <select name="event_type" id="edit-event_type">
@@ -667,8 +775,15 @@
                                 <option value="roundtable">Roundtable</option>
                             </select>
                         </div>
+                        <div class="pdt-rid-qualified">
+                            <h4>RID Qualified?</h4>
+                            <select name="rid_qualified" id="edit-rid_qualified">
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="div8">
+                    <div class="div7">
                         <div class="pdt-session-modal__ceu-row">
                             <div class="pdt-event-type">
                                 <p>Qualify for CEUs?</p>
@@ -684,10 +799,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="div9">
+                    <div class="div8">
                         <div class="pdt-session-modal__presenters-field">
                             <p>Presenter(s)</p>
-                            <input type="text" name="presenters" id="edit-presenters" placeholder="Enter presenter names">
+                            <input type="text" name="presenters" id="edit-presenters"
+                                placeholder="Enter presenter names">
                         </div>
                     </div>
                 </div>
