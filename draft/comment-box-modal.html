@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Box</title>
+
+    <link rel="stylesheet" href="../css/session-comment-box.css">
+</head>
+
+<body>
+    <button>Open Modal</button>
+    <div class="pdt-parent">
+        <h2><span>John Doe</span> Comments</h2>
+
+        <form action="">
+            <!-- <label for="comment_box_admin">For Admin View Only</label> -->
+            <textarea name="comment_box_admin" id="comment_box_admin"></textarea>
+            <label for="comment_box_admin">For Admin View Only</label>
+            <br>
+
+            <textarea name="comment_box" id="comment_box"></textarea>
+            <label for="comment_box">! Will be seen by Member !</label>
+            <br>
+            <div class="pdt-buttons">
+                <button>Close</button>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -240,7 +240,7 @@
         </div>
     </div>
 
-    <div class="pdt-for-testing-modal">
+    <!-- <div class="pdt-for-testing-modal">
         <div class="pdt-comment-box">
             <h2>John Doe Comments</h2>
             <form action="">
@@ -250,10 +250,10 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
-    </div>
+    </div> -->
 
 
-    <div class="pdt-for-testing-modal">
+    <!-- <div class="pdt-for-testing-modal">
         <div class="pdt-session-modal add-session">
             <h2>Add New Session</h2>
             <div class="pdt-section-divider" aria-hidden="true"></div>
@@ -402,109 +402,7 @@
             </form>
         </div>
 
-    </div>
-    <div class="pdt-for-testing-modal">
-        <div class="pdt-session-modal2">
-            <form action="">
-                <div class="div1">
-                    <p>div1 - dates</p>
-                    <p class="pdt-session-modal2__eyebrow">Date Options</p>
-                    <div class="pdt-session-modal2__choices">
-                        <label><input type="radio" name="demo-date-mode" checked> Specific dates</label>
-                        <label><input type="radio" name="demo-date-mode"> Self paced</label>
-                    </div>
-                    <div class="pdt-session-modal2__inline-fields">
-                        <label class="pdt-session-modal2__field">
-                            <span>Start</span>
-                            <input type="date" value="2026-03-14">
-                        </label>
-                        <label class="pdt-session-modal2__field">
-                            <span>End</span>
-                            <input type="date" value="2026-03-16">
-                        </label>
-                    </div>
-                </div>
-                <div class="div2">
-                    <p>div2 - length</p>
-                    <label class="pdt-session-modal2__field">
-                        <span>Session Title</span>
-                        <input type="text" value="Board Governance Intensive">
-                    </label>
-                </div>
-                <div class="div3">
-                    <p>div3 - presenter</p>
-                    <label class="pdt-session-modal2__field">
-                        <span>Length</span>
-                        <input type="text" value="90 min">
-                    </label>
-                </div>
-                <div class="div4">
-                    <p>div4 - flags</p>
-                    <p class="pdt-session-modal2__eyebrow">Flags</p>
-                    <div class="pdt-session-modal2__choices">
-                        <label><input type="checkbox" checked> Qualifies for CEUs</label>
-                        <label><input type="checkbox"> RID qualified</label>
-                        <label><input type="checkbox" checked> Featured session</label>
-                        <label><input type="checkbox"> Needs review</label>
-                    </div>
-                </div>
-                <div class="div5">
-                    <p>div5 - org.session.parent</p>
-                    <label class="pdt-session-modal2__field">
-                        <span>Notes</span>
-                        <textarea rows="4">Placeholder copy for spacing, wrapping, and vertical rhythm inside the wider text area.</textarea>
-                    </label>
-                </div>
-                <div class="div6">
-                    <p>div6 - 3 drops</p>
-                    <label class="pdt-session-modal2__field">
-                        <span>Event Type</span>
-                        <select>
-                            <option>Conference</option>
-                            <option>Workshop</option>
-                        </select>
-                    </label>
-                    <label class="pdt-session-modal2__field">
-                        <span>Parent Event</span>
-                        <select>
-                            <option>Spring Summit</option>
-                            <option>Regional Training Day</option>
-                        </select>
-                    </label>
-                    <label class="pdt-session-modal2__field">
-                        <span>Organizer</span>
-                        <select>
-                            <option>Admin Team</option>
-                            <option>Education Team</option>
-                        </select>
-                    </label>
-                </div>
-                <div class="div7">
-                    <p>div7 - ceu og</p>
-                    <p class="pdt-session-modal2__eyebrow">CEU Details</p>
-                    <div class="pdt-session-modal2__two-up">
-                        <label class="pdt-session-modal2__field">
-                            <span>CEU Weight</span>
-                            <input type="text" value="1.5">
-                        </label>
-                        <label class="pdt-session-modal2__field">
-                            <span>Consideration</span>
-                            <input type="text" value="General credit">
-                        </label>
-                    </div>
-                </div>
-                <div class="div8">
-                    <p>div8</p>
-                    <p class="pdt-session-modal2__eyebrow">Presenters</p>
-                    <div class="pdt-session-modal2__chips">
-                        <span>Avery Collins</span>
-                        <span>Mason Reed</span>
-                        <span>Olivia Turner</span>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
+    </div> -->
 
 
     <div class="pdt-for-testing-modal">
@@ -524,6 +422,7 @@
                         <tr>
                             <th>Attendee</th>
                             <th>Certification Status at time of Attending</th>
+                            <th>RID certified? (not always present)</th>
                             <th>Self Paced Date Range (not always present)</th>
                             <th>Comments</th>
                             <th>Delete?</th>
@@ -532,7 +431,7 @@
                     <tbody>
                         <tr class="pdt-session-attendees__search-row">
                             <!-- I am changing this a little, now it spans the whole row and once a name is entred, it shows at top.-->
-                            <td colspan="5">
+                            <td colspan="6">
                                 <input type="text" name="search-attendee" id="search-attendee"
                                     placeholder="Type Attendee Name" list="attendee-search-options">
                                 <datalist id="attendee-search-options">
@@ -554,6 +453,7 @@
                                     <option value="master">Master</option>
                                 </select>
                             </td>
+                            <td><input type="checkbox" name="rid_certified_1" id="rid_certified_1"></td>
                             <td class="pdt-session-attendees__date-range-cell">
                                 <input type="date" name="self-p-start" id="self-p-start">
                                 <p>to</p>
@@ -577,6 +477,7 @@
                                     <option value="master">Master</option>
                                 </select>
                             </td>
+                            <td><input type="checkbox" name="rid_certified_1" id="rid_certified_1"></td>
                             <td class="pdt-session-attendees__date-range-cell">
                                 <input type="date" name="self-p-start" id="self-p-start">
                                 <p>to</p>
@@ -600,6 +501,7 @@
                                     <option value="master">Master</option>
                                 </select>
                             </td>
+                            <td><input type="checkbox" name="rid_certified_1" id="rid_certified_1"></td>
                             <td class="pdt-session-attendees__date-range-cell">
                                 <input type="date" name="self-p-start" id="self-p-start">
                                 <p>to</p>
@@ -623,6 +525,7 @@
                                     <option value="master">Master</option>
                                 </select>
                             </td>
+                            <td><input type="checkbox" name="rid_certified_1" id="rid_certified_1"></td>
                             <td class="pdt-session-attendees__date-range-cell">
                                 <input type="date" name="self-p-start" id="self-p-start">
                                 <p>to</p>
@@ -646,6 +549,7 @@
                                     <option value="master">Master</option>
                                 </select>
                             </td>
+                            <td><input type="checkbox" name="rid_certified_1" id="rid_certified_1"></td>
                             <td class="pdt-session-attendees__date-range-cell">
                                 <input type="date" name="self-p-start" id="self-p-start">
                                 <p>to</p>
@@ -671,7 +575,7 @@
     </div>
 
 
-    <div class="pdt-for-testing-modal">
+    <!-- <div class="pdt-for-testing-modal">
         <div class="pdt-session-modal edit-session">
             <h2>Edit Session</h2>
             <div class="pdt-section-divider" aria-hidden="true"></div>
@@ -814,7 +718,7 @@
                 </div>
             </form>
         </div>
-    </div>
+    </div> -->
 </body>
 
 </html>

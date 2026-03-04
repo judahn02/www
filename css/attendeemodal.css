@@ -136,12 +136,15 @@ button {
 }
 
 .pdt-modal__panel {
-  width: 700px;
+  width: 800px;
   max-width: 100%;
   height: 800px;
   max-height: 100%;
+  display: flex;
+  flex-direction: column;
   position: relative;
-  border: 1px solid black;
+  border: 2px solid #e11d48;
+  border-radius: 16px;
   background-color: #fff;
   --mpx: 16px;
   --mpy: 8px;
@@ -166,6 +169,9 @@ button {
   box-sizing: border-box;
   margin: 4px var(--x);
 }
+.pdt-modal__panel .pdt-csv-button {
+  margin-bottom: 8px;
+}
 .pdt-modal__panel .pdt-tabs {
   height: 40px;
 }
@@ -180,17 +186,21 @@ button {
   transition: 0.3s;
 }
 .pdt-modal__panel .pdt-tabs button:hover {
-  background-color: #ff1010;
+  background-color: rgb(207, 36, 36);
+  color: white;
 }
 .pdt-modal__panel .pdt-tabs button.active {
-  background-color: #ccc;
+  background-color: #e11d48;
+  color: white;
 }
 .pdt-modal__panel .pdt-table-wrap {
   margin-top: 8px;
-  height: calc(600px - var(--mpy) - 44px);
-  /* 29px is the height of the button. */
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-x: auto;
   overflow-y: auto;
+  border: 1px solid #e11d48;
+  border-radius: 8px;
 }
 .pdt-modal__panel .pdt-tab-content {
   display: none;
@@ -202,10 +212,26 @@ button {
   box-sizing: border-box;
   text-align: center;
   border-collapse: separate;
-  border-spacing: 5px 10px;
+  border-spacing: 0px 10px;
+}
+.pdt-modal__panel .pdt-table-wrap table .pdt-flags-and-comment {
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgb(126, 126, 126);
+}
+.pdt-modal__panel .pdt-table-wrap th,
+.pdt-modal__panel .pdt-table-wrap td {
+  padding: 4px 8px;
+}
+.pdt-modal__panel .pdt-table-wrap thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #ffffff;
+}
+.pdt-modal__panel .pdt-table-wrap thead th {
+  background-color: transparent;
 }
 .pdt-modal__panel .pdt-close {
-  position: absolute;
-  left: var(--mpx);
-  bottom: var(--mpy);
+  align-self: flex-start;
+  margin-top: 12px;
 }/*# sourceMappingURL=attendeemodal.css.map */

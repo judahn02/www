@@ -220,14 +220,11 @@ body {
   padding: 0;
   color: #e11d48;
 }
+.pdt-main .pdt-p-summary p {
+  margin: 8px 0px;
+}
 .pdt-main .pdt-p-summary p b {
   color: #e11d48;
-}
-.pdt-main .pdt-p-summary small {
-  color: #e11d48;
-}
-.pdt-main .pdt-p-summary small b {
-  color: #000;
 }
 .pdt-main .pdt-p-summary .pdt-sum-row {
   display: flex;

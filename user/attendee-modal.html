@@ -11,7 +11,7 @@
 <body>
     <button id="pdt-open-modal">
         Open Modal
-    </button>    
+    </button>
     <div class="pdt-modal" id="pdt-modal">
         <div class="pdt-modal__panel">
             <h2>Professional Development Record</h2>
@@ -20,13 +20,17 @@
                         id="pdt-email">example@example.com</span></p>
             </div>
             <div class="pdt-summary">
-                <p><b>Total hours: </b><span id="pdt-t_hours">0</span><b> Last <span id="pdt-years">11</span> years:
-                    </b><span id="pdt-cmus">0</span><b> Most recent: </b><span id="pdt-r_sess">-</span></p>
-
+                <p>
+                    <b>In the last <span>10</span> years</b> [ <b>Total</b>: 20<small>ceus</small> | <b>Training &amp;
+                        Confrence</b>: 15<small>ceus</small> | <b>Administration Service</b>:
+                    5<small>ceus</small> ]
+                </p>
                 <input class="pdt-range" type="range">
             </div>
 
-            <button id="pdt-export-btn">Export CSV</button>
+            <div class="pdt-csv-button">
+                <button id="pdt-export-btn">Export CSV</button>
+            </div>
 
             <div class="pdt-tabs">
                 <button id="pdt-tab-history" class="pdt-tab-link" data-tab-target="pdt-tab-panel-history">Training
@@ -78,7 +82,7 @@
                                     </div>
                                 </td>
                             </tr> -->
-                            
+
                         </tbody>
                     </table>
                 </div>
@@ -114,7 +118,7 @@
     </div>
     <script type="module" src="../js/attendee-modal.js"></script>
     <!-- for your refrence: -->
-     <!-- If you change the data schema, make sure to update the scss and the js (event-hookups.js)-->
+    <!-- If you change the data schema, make sure to update the scss and the js (event-hookups.js)-->
     <script id="pdt-attendee-data" type="application/json">
 [
         {

@@ -19,8 +19,8 @@
                 <p>email@email.com</p>
             </div>
             <div class="pdt-header-buttons">
-                <button>Edit Person</button>
-                <button>Administrative Service</button>
+                <button id="pdt-edit-person-btn">Edit Person</button>
+                <button id="pdt-admin-service-btn">Administrative Service</button>
             </div>
         </div>
 
@@ -28,18 +28,24 @@
             <h3>Progress Summary</h3>
             <div class="pdt-sum-row">
                 <div class="pdt-hours">
-                    <p><b>Total Hours all-time:</b>1.5</p>
+                    <p><b>Total Hours all-time:</b><span id="pdt-total-hours">-</span></p>
                 </div>
                 <div class="pdt-session">
-                    <p><b>Most recent session:</b>A New Way to Teach ASL Lterature | 2024-06-01 |</p>
+                    <p><b>Most recent session:</b><span id="pdt-recent_session">-</span> | <span
+                            id="pdt-recent_session_date">-</span> |</p>
                 </div>
             </div>
-            <small>
-                Total Hours in the last <b>11</b> years(s): <b>1.5</b>
-            </small>
-            <br>
+            <p>
+                <b>In the last <span id="pdt-years">-</span> years</b> [ <b>Total</b>: <span
+                    id="pdt-ceu-total">-</span><small>ceus</small> |
+                <b>Training &amp;
+                    Confrence</b>: <span id="pdt-ceu-trainConf">-</span><small>ceus</small> | <b>Administration
+                    Service</b>:
+                <span id="pdt-ceu-adminServ">-</span><small>ceus</small> ]
+            </p>
+
             <div class="pdt-p-summary__slider">
-                <input type="range" name="progress-years" id="pdt-progress-years" min="1" max="11" value="11">
+                <input type="range" name="progress-years" id="pdt-progress-years" min="1" max="10">
             </div>
             <button>Export Report</button>
         </div>
@@ -315,6 +321,7 @@
             </form>
         </div>
     </div>
+    <script type="module" src="../js/attendee-page.js"></script>
 </body>
 
 </html>

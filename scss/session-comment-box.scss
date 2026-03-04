@@ -1,0 +1,47 @@
+@use 'core-components' as core;
+
+.pdt-parent {
+    position: fixed;
+    inset: 50% auto auto 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+
+    padding: 16px 24px ;
+    border: 2px solid #e11d48;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 24px 80px rgba(24, 24, 27, 0.18);
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h2 {
+        color: #e11d48 ;
+    }
+
+    textarea {
+        width: 100%;
+    }
+
+    .pdt-buttons {
+
+        button {
+            padding: 4px 8px;
+            border: 1px solid #e11d48;
+            border-radius: 16px;
+            background-color: #e11d48;
+            color: white;
+        }
+
+        display: flex;
+        
+        width: 100%;
+        justify-content: center;
+        margin-top: 8px;
+        gap: 8px;
+    }
+
+}
