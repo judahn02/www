@@ -31,7 +31,7 @@ export class data {
             {
                 "date": "2023-11-14",
                 "session_title": "Language Access in Practice",
-                "type": "Panel",
+                "type": "Training",
                 "hours": "1.0h",
                 "ceu_capable": "Yes",
                 "ceu_weight": "1.00",
@@ -45,7 +45,7 @@ export class data {
             {
                 "date": "2000-01-01 to 2000-02-01",
                 "session_title": "Interpreter Ethics Review",
-                "type": "Lecture",
+                "type": "Confrence",
                 "hours": "2.0h",
                 "ceu_capable": "Yes",
                 "ceu_weight": "2.00",
@@ -73,7 +73,7 @@ export class data {
             {
                 "date": "not started",
                 "session_title": "Digital Tools for ASL Classrooms",
-                "type": "Breakout",
+                "type": "Workshops",
                 "hours": "1.2h",
                 "ceu_capable": "Yes",
                 "ceu_weight": "1.20",
@@ -99,5 +99,48 @@ export class data {
 
             return currentValue[key];
         }, this.data);
+    }
+
+    static normalizeSessionType(value) {
+        const normalized = String(value || "").trim().toLowerCase();
+
+        if (normalized === "workshops") {
+            return "workshop";
+        }
+
+        if (normalized === "confrence") {
+            return "conference";
+        }
+
+        return normalized;
+    }
+
+    static querySessions(filters = {}) {
+        const sessions = this.get("sessions");
+        if (!Array.isArray(sessions)) {
+            return [];
+        }
+
+        const searchText = String(filters.searchText || "").trim().toLowerCase();
+        const selectedType = this.normalizeSessionType(filters.selectedType || "all");
+
+        return sessions.filter((session) => {
+            const sessionType = this.normalizeSessionType(session.type);
+            const matchesType = selectedType === "all" || sessionType === selectedType;
+            if (!matchesType) {
+                return false;
+            }
+
+            if (searchText === "") {
+                return true;
+            }
+
+            const searchableText = [
+                session.session_title,
+                session.type
+            ].map((value) => String(value || "").toLowerCase());
+
+            return searchableText.some((value) => value.includes(searchText));
+        });
     }
 }
