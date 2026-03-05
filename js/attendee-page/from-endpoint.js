@@ -178,8 +178,55 @@ export class data {
             target = target[key];
         }
 
-        target[keys[keys.length - 1]] = value;
+        const lastKey = keys[keys.length - 1];
+        let normalizedValue = value;
+
+        if (lastKey === "admin_service") {
+            normalizedValue = this.assignMissingAdminServiceOgIds(value);
+        }
+
+        target[lastKey] = normalizedValue;
         return true;
+    }
+
+    static assignMissingAdminServiceOgIds(value) {
+        if (!Array.isArray(value)) {
+            return value;
+        }
+
+        const rows = value.map((row) => ({ ...row }));
+        const usedOgIds = new Set();
+        let nextId = 1;
+
+        rows.forEach((row) => {
+            const ogId = String(row?.og_id ?? "").trim();
+            if (ogId === "") {
+                return;
+            }
+
+            usedOgIds.add(ogId);
+            const parsed = Number.parseInt(ogId, 10);
+            if (Number.isFinite(parsed)) {
+                nextId = Math.max(nextId, parsed + 1);
+            }
+        });
+
+        return rows.map((row) => {
+            const nextRow = { ...row };
+            const ogId = String(nextRow?.og_id ?? "").trim();
+            if (ogId !== "") {
+                return nextRow;
+            }
+
+            while (usedOgIds.has(String(nextId))) {
+                nextId += 1;
+            }
+
+            nextRow.og_id = String(nextId);
+            usedOgIds.add(String(nextId));
+            nextId += 1;
+            return nextRow;
+        });
     }
 
     static normalizeSessionType(value) {
@@ -232,11 +279,18 @@ Endpoint contract proposal (server implementation guide)
 
 Goal
 - Replace this mock `data` object with API responses while preserving the current
-  frontend behavior in `querySessions()`.
+  frontend behavior in `querySessions()` and admin-service edit/save flow.
+
+Important current frontend behavior
+- `data.set("admin_service", value)` auto-fills missing `og_id` values in this mock
+  class so local testing works without a backend.
+- Treat this as simulation only. In production, the server should own real IDs.
 
 Recommended endpoints
 1. GET /api/attendee-page/summary
 2. GET /api/attendee-page/sessions
+3. GET /api/attendee-page/admin-service
+4. PUT /api/attendee-page/admin-service
 
 Supported query params for GET /api/attendee-page/sessions
 - `selectedType` (string, optional, default: "all")
@@ -282,12 +336,41 @@ Expected sessions response shape
   ...
 ]
 
+Expected admin service item shape
+{
+  "og_id": string,      // server-persistent row id (required)
+  "tmp_id": string,     // client correlation id (optional echo-back)
+  "start": "YYYY-MM-DD",
+  "end": "YYYY-MM-DD",
+  "type": string,
+  "ceu_wei": string
+}
+
+Expected admin service GET response shape
+[
+  AdminServiceItem,
+  ...
+]
+
+Expected admin service PUT request body
+{
+  "rows": AdminServiceItem[],
+  "deleted_og_ids": string[]
+}
+
+PUT semantics
+- Upsert all rows in `rows` by `og_id`.
+- Delete rows matching `deleted_og_ids`.
+- Return canonical saved rows with server-assigned `og_id` values for new records.
+- `tmp_id` should be ignored for persistence; only use it as client correlation data.
+
 Alternative single endpoint
 - GET /api/attendee-page
   - Response:
     {
       "summary": SummaryObject,
-      "sessions": SessionItem[]
+      "sessions": SessionItem[],
+      "admin_service": AdminServiceItem[]
     }
   - In this mode, frontend can still call `querySessions()` client-side.
 

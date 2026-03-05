@@ -112,6 +112,16 @@ body {
   background-color: #000000;
 }
 
+.pdt-admin-service button {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+  border-radius: 6px;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: #fff;
+  cursor: pointer;
+}
 .pdt-admin-service {
   background-color: #fff;
   border: 3px solid #e11d48;

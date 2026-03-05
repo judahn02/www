@@ -3,8 +3,20 @@
 // .pdt-edit-person-modal logic is in _attendee_edit_person.scss
 
 .pdt-admin-service {
+
+    button {
+        background-color: #e11d48;
+        border: 1px solid #e11d48;
+        border-radius: 6px;
+        padding: 4px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #fff;
+        cursor: pointer;
+    }
+
     background-color: #fff;
-    border: 3px solid #e11d48 ;
+    border: 3px solid #e11d48;
     border-radius: 10px;
 
     width: min(95vw, 700px);
@@ -12,19 +24,20 @@
     overflow-y: auto;
 
     h2 {
-        padding-left: 8px ;
+        padding-left: 8px;
     }
 
     .pdt-section-divider {
         width: auto;
         margin-left: 8px;
         margin-right: 8px;
-        background-color: #ffd1d1 ;
+        background-color: #ffd1d1;
     }
+
     table {
-        width: 100% ;
-        padding: 12px ;
-        text-align: center ;
+        width: 100%;
+        padding: 12px;
+        text-align: center;
     }
 
     input,
@@ -35,6 +48,6 @@
 
     .pdt-submit {
         @include core.actions-right;
-        margin: 8px ;
+        margin: 8px;
     }
 }

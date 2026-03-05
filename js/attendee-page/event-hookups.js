@@ -162,96 +162,147 @@ export function event_hookups() {
 
     // Administrative Service
     {
-        // I want a client side cache of the admin table - this variable below
-        let admin_service_data = data.get("admin_service");
-        // There probably should be a variable that hold the next available id.
-        // Note: the serverside database will be the one to assign id's, the ones generated
-        //  here will only be used for identification. 
         const admin_service_window = document.getElementById("pdt-admin-service-modal");
-        //TODO: maybe a const of the table here?
+        const admin_service_tbody = admin_service_window?.querySelector("table tbody");
+        const admin_start_input = document.getElementById("admin_start");
+        const admin_end_input = document.getElementById("admin_end");
+        const admin_type_input = document.getElementById("admin_type");
+        const admin_ceuw_input = document.getElementById("admin_ceuw");
+        const add_admin_service_row = document.getElementById("pst-add-admin-service-row");
+        const admin_service_cancel = document.getElementById("pdt-admin-service-cancel");
+        const admin_service_save = document.getElementById("pdt-admin-service-save");
+        const add_row = add_admin_service_row?.closest("tr");
 
-        const admin_service_deleted_ogs = [] ; // To note when. 
+        let admin_service_data = [];
+        const admin_service_deleted_ogs = [];
+        let next_tmp_id = 1;
+
+        if (!admin_service_window || !admin_service_tbody || !add_row) {
+            console.error("can't connect admin service modal/table");
+            return;
+        }
+        if (!admin_start_input || !admin_end_input || !admin_type_input || !admin_ceuw_input) {
+            console.error("can't connect admin service inputs");
+            return;
+        }
+        if (!add_admin_service_row) {
+            console.error("can't connect pst-add-admin-service-row");
+            return;
+        }
+        if (!admin_service_cancel) {
+            console.error("can't connect pdt-admin-service-cancel");
+            return;
+        }
+        if (!admin_service_save) {
+            console.error("can't connect pdt-admin-service-save");
+            return;
+        }
 
 
         // Hooking up the Administrative Service Button
         if (!adminServiceBtn) { console.error("can't connect pdt-admin-service-btn"); }
         else {
             adminServiceBtn.addEventListener("click", () => {
-                if (!admin_service_window) {
-                    console.error("can't connect pdt-admin-service-modal");
-                    return;
-                } ;
-
-                admin_service_data = data.get("admin_service");
-
-                //TODO: load table here with function call and data.
-
-
+                admin_service_data = normalizeAdminServiceTmpIds(cloneAdminServiceRows(data.get("admin_service")));
+                admin_service_deleted_ogs.length = 0;
+                next_tmp_id = computeNextTmpId(admin_service_data);
+                renderAdminServiceTable(admin_service_tbody, add_row, admin_service_data);
                 admin_service_window.hidden = false;
-            })
+            });
         }
 
         // clicking outside of the window
         admin_service_window.addEventListener("click", (event) => {
             if (event.target !== admin_service_window) { return; }
             admin_service_window.hidden = true;
+            admin_service_deleted_ogs.length = 0;
         });
 
 
         // Hooking up the Cancel button.
-        const admin_service_cancel = document.getElementById("pdt-admin-service-cancel") ;
-        if(!admin_service_cancel) {
-            console.error("can't connect pdt-admin-service-cancel") ;
-            return ;
-        } else {
-            admin_service_cancel.addEventListener("click", () => {
-                admin_service_window.hidden = true;
-            })
-
-            // Clear out the admin_service_deleted_ogs
-        } ;
+        admin_service_cancel.addEventListener("click", () => {
+            admin_service_window.hidden = true;
+            admin_service_deleted_ogs.length = 0;
+        });
 
         // Hooking up the Save button
-        const admin_service_save = document.getElementById("pdt-admin-service-save") ;
-        if(!admin_service_save) {
-            console.error("can't connect pdt-admin-service-save") ;
-        } else {
-            // use data.set to send over a copy of admin_service_data, 
-            // be sure to s
-            
-            
-            // row is a proper update
-        }
-
-
-        const add_admin_service_row = document.getElementById("pst-add-admin-service-row") ;
-        if(!add_admin_service_row) {
-            console.error("can't connect pst-add-admin-service-row") ;
-            return ;
-        } else {
-            // collect the inputs and clear them
-
-            // add to both table row and admin_service_data
-
-            // get anything else ready for the next time someone presses the button. 
-        }
-
-        // Last button here defined is the Save session. 
-        
-
-
-        // Note: when loading the table, each button x will need a unique identifier
-        /* it looks like this is the best strat.
-
-        admin_service_data.forEach((row, index) => {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.textContent = "X";
-            btn.addEventListener("click", () => removeAdminRow(index)); // preset param
+        admin_service_save.addEventListener("click", () => {
+            data.set("admin_service", cloneAdminServiceRows(admin_service_data));
+            data.set("admin_service_deleted_ogs", mergeDeletedIds(data.get("admin_service_deleted_ogs"), admin_service_deleted_ogs));
+            admin_service_window.hidden = true;
+            admin_service_deleted_ogs.length = 0;
         });
-            The button is to delete the row from view and the admin table cache. 
-            when deleted, add it to the "admin_service_deleted_ogs" array.
-        */
+
+        add_admin_service_row.addEventListener("click", () => {
+            const nextRow = readAdminServiceInputs(admin_start_input, admin_end_input, admin_type_input, admin_ceuw_input);
+            const validationError = validateAdminServiceRow(nextRow);
+            if (validationError) {
+                console.error(validationError);
+                return;
+            }
+
+            admin_service_data.push({
+                og_id: null,
+                tmp_id: String(next_tmp_id),
+                start: nextRow.start,
+                end: nextRow.end,
+                type: nextRow.type,
+                ceu_wei: nextRow.ceu_wei
+            });
+            next_tmp_id += 1;
+
+            renderAdminServiceTable(admin_service_tbody, add_row, admin_service_data);
+            clearAdminServiceInputs(admin_start_input, admin_end_input, admin_type_input, admin_ceuw_input);
+        });
+
+        admin_service_tbody.addEventListener("click", (event) => {
+            const deleteBtn = event.target.closest("[data-action='delete-admin-service']");
+            if (!deleteBtn) {
+                return;
+            }
+
+            const rowTmpId = String(deleteBtn.dataset.tmpId || "");
+            if (!rowTmpId) {
+                return;
+            }
+
+            const index = admin_service_data.findIndex((row) => String(row.tmp_id) === rowTmpId);
+            if (index < 0) {
+                return;
+            }
+
+            const [removedRow] = admin_service_data.splice(index, 1);
+            const removedOgId = removedRow?.og_id;
+            if (removedOgId !== null && removedOgId !== undefined && String(removedOgId).trim() !== "") {
+                const normalizedOgId = String(removedOgId);
+                if (!admin_service_deleted_ogs.includes(normalizedOgId)) {
+                    admin_service_deleted_ogs.push(normalizedOgId);
+                }
+            }
+
+            renderAdminServiceTable(admin_service_tbody, add_row, admin_service_data);
+        });
+
+        renderAdminServiceTable(admin_service_tbody, add_row, []);
+
+        { //DEBUG CODE ONLY, REMOVE FROM PRODUCTION
+            const debugAdminServiceBtn = document.getElementById("debug-admin-service");
+            if (!debugAdminServiceBtn) {
+                console.error("can't connect debug-admin-service");
+            } else {
+                debugAdminServiceBtn.addEventListener("click", () => {
+                    const cacheSnapshot = cloneAdminServiceRows(admin_service_data);
+                    const dataSnapshot = cloneAdminServiceRows(data.get("admin_service"));
+                    const deletedSnapshot = [...admin_service_deleted_ogs];
+
+                    console.group("Debug Admin Service");
+                    console.log("cache (admin_service_data):", cacheSnapshot);
+                    console.log("data.get('admin_service'):", dataSnapshot);
+                    console.log("pending admin_service_deleted_ogs:", deletedSnapshot);
+                    console.groupEnd();
+                });
+            }
+        }
 
     }
 }
@@ -547,4 +598,162 @@ function formatCsvCell(value) {
     const text = String(value ?? "");
     const escapedText = text.replaceAll("\"", "\"\"");
     return `"${escapedText}"`;
+}
+
+function cloneAdminServiceRows(rows) {
+    if (!Array.isArray(rows)) {
+        return [];
+    }
+
+    return rows.map((row) => ({ ...row }));
+}
+
+function normalizeAdminServiceTmpIds(rows) {
+    const safeRows = Array.isArray(rows) ? rows : [];
+    const usedTmpIds = new Set();
+    let nextId = 1;
+
+    return safeRows.map((row) => {
+        const nextRow = { ...row };
+        const candidate = String(nextRow.tmp_id ?? "").trim();
+        if (candidate !== "" && !usedTmpIds.has(candidate)) {
+            usedTmpIds.add(candidate);
+            const parsed = Number.parseInt(candidate, 10);
+            if (Number.isFinite(parsed)) {
+                nextId = Math.max(nextId, parsed + 1);
+            }
+            return nextRow;
+        }
+
+        while (usedTmpIds.has(String(nextId))) {
+            nextId += 1;
+        }
+
+        nextRow.tmp_id = String(nextId);
+        usedTmpIds.add(String(nextId));
+        nextId += 1;
+        return nextRow;
+    });
+}
+
+function computeNextTmpId(rows) {
+    const safeRows = Array.isArray(rows) ? rows : [];
+    const maxId = safeRows.reduce((highest, row) => {
+        const current = Number.parseInt(String(row?.tmp_id ?? ""), 10);
+        if (!Number.isFinite(current)) {
+            return highest;
+        }
+
+        return Math.max(highest, current);
+    }, 0);
+
+    return maxId + 1;
+}
+
+function renderAdminServiceTable(tableBody, addRow, rows) {
+    if (!tableBody || !addRow) {
+        return;
+    }
+
+    tableBody.replaceChildren(addRow);
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+        const emptyRow = document.createElement("tr");
+        const emptyCell = document.createElement("td");
+        const emptyText = document.createElement("small");
+
+        emptyCell.colSpan = 5;
+        emptyText.textContent = "No administrative service entries found.";
+        emptyCell.appendChild(emptyText);
+        emptyRow.appendChild(emptyCell);
+        tableBody.appendChild(emptyRow);
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+    rows.forEach((row) => {
+        fragment.appendChild(buildAdminServiceDataRow(row));
+    });
+    tableBody.appendChild(fragment);
+}
+
+function buildAdminServiceDataRow(row) {
+    const tableRow = document.createElement("tr");
+    const startCell = document.createElement("td");
+    const endCell = document.createElement("td");
+    const typeCell = document.createElement("td");
+    const ceuCell = document.createElement("td");
+    const deleteCell = document.createElement("td");
+    const deleteBtn = document.createElement("button");
+
+    startCell.textContent = formatCellValue(row?.start);
+    endCell.textContent = formatCellValue(row?.end);
+    typeCell.textContent = formatCellValue(row?.type);
+    ceuCell.textContent = formatCellValue(row?.ceu_wei);
+
+    deleteBtn.type = "button";
+    deleteBtn.textContent = "X";
+    deleteBtn.dataset.action = "delete-admin-service";
+    deleteBtn.dataset.tmpId = String(row?.tmp_id ?? "");
+
+    deleteCell.appendChild(deleteBtn);
+
+    tableRow.appendChild(startCell);
+    tableRow.appendChild(endCell);
+    tableRow.appendChild(typeCell);
+    tableRow.appendChild(ceuCell);
+    tableRow.appendChild(deleteCell);
+
+    return tableRow;
+}
+
+function readAdminServiceInputs(startInput, endInput, typeInput, ceuWeightInput) {
+    const selectedTypeText = typeInput?.options?.[typeInput.selectedIndex]?.text || "";
+    return {
+        start: String(startInput?.value || "").trim(),
+        end: String(endInput?.value || "").trim(),
+        type: selectedTypeText.trim(),
+        ceu_wei: String(ceuWeightInput?.value || "").trim()
+    };
+}
+
+function validateAdminServiceRow(row) {
+    if (!row.start || !row.end || !row.type || !row.ceu_wei) {
+        return "admin service row is missing one or more required values";
+    }
+
+    if (row.type === "Select type") {
+        return "please choose an admin service type";
+    }
+
+    const startTime = Date.parse(row.start);
+    const endTime = Date.parse(row.end);
+    if (!Number.isFinite(startTime) || !Number.isFinite(endTime)) {
+        return "admin service row contains invalid date values";
+    }
+
+    if (endTime < startTime) {
+        return "admin service end date cannot be before start date";
+    }
+
+    const ceuWeight = Number.parseFloat(row.ceu_wei);
+    if (!Number.isFinite(ceuWeight) || ceuWeight < 0) {
+        return "admin service CEU weight must be a non-negative number";
+    }
+
+    row.ceu_wei = ceuWeight.toFixed(2);
+    return "";
+}
+
+function clearAdminServiceInputs(startInput, endInput, typeInput, ceuWeightInput) {
+    startInput.value = "";
+    endInput.value = "";
+    typeInput.value = "";
+    ceuWeightInput.value = "";
+}
+
+function mergeDeletedIds(existingDeletedIds, pendingDeletedIds) {
+    const existing = Array.isArray(existingDeletedIds) ? existingDeletedIds.map((id) => String(id)) : [];
+    const pending = Array.isArray(pendingDeletedIds) ? pendingDeletedIds.map((id) => String(id)) : [];
+    return Array.from(new Set([...existing, ...pending]));
 }
