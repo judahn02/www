@@ -193,7 +193,8 @@ body {
 .pdt-main {
   border-width: 0px;
 }
-.pdt-main .pdt-grid, .pdt-main a {
+.pdt-main .pdt-grid,
+.pdt-main a {
   color: #e11d48;
   margin-right: 8px;
   text-decoration: none;
@@ -226,7 +227,8 @@ body {
   margin: 4px;
   padding: 12px;
 }
-.pdt-main .pdt-page-controls-top, .pdt-main .pdt-page-controls-bottom {
+.pdt-main .pdt-page-controls-top,
+.pdt-main .pdt-page-controls-bottom {
   margin: 4px;
   padding: 12px;
 }

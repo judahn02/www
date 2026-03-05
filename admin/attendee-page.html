@@ -15,8 +15,8 @@
                 <div class="pdt-person-icon__initials" aria-hidden="true"><b>JD</b></div>
             </div>
             <div class="pdt-person-title">
-                <h2>John Doe</h2>
-                <p>email@email.com</p>
+                <h2 id="pdt-full-name">John Doe</h2>
+                <p><span id="pdt-page-number">123-123-1234</span> | <span id="pdt-page-email">email@email.com</span></p>
             </div>
             <div class="pdt-header-buttons">
                 <button id="pdt-edit-person-btn">Edit Person</button>
@@ -47,18 +47,18 @@
             <div class="pdt-p-summary__slider">
                 <input type="range" name="progress-years" id="pdt-progress-years" min="1" max="10">
             </div>
-            <button>Export Report</button>
+            <button id="pdt-export-report">Export Report</button>
         </div>
 
         <div class="pdt-person-results">
             <h3>Training & Conference History</h3>
 
             <div class="pdt-topRow">
-                <input class="pdt-search" type="search" placeholder="Search sessions">
-                <input class="pdt-button" type="button" value="All">
-                <input class="pdt-button" type="button" value="Workshops">
-                <input class="pdt-button" type="button" value="Training">
-                <input class="pdt-button" type="button" value="Confrence">
+                <input class="pdt-search" id="pdt-session-search" type="search" placeholder="Search sessions">
+                <input class="pdt-button" id="pdt-all-button" type="button" value="All">
+                <input class="pdt-button" id="pdt-workshops-button" type="button" value="Workshops">
+                <input class="pdt-button" id="pdt-trainig-button" type="button" value="Training">
+                <input class="pdt-button" id="pdt-confrence-button" type="button" value="Confrence">
             </div>
         </div>
 
@@ -118,7 +118,7 @@
         </div>
     </div>
 
-    <div class="pdt-for-testing-modal">
+    <div id="pdt-admin-service-modal" class="pdt-edit-person-modal" role="dialog" aria-modal="true" aria-labelledby="pdt-edit-person-title" hidden>
         <div class="pdt-admin-service">
             <h2>Administrative Service</h2>
             <div class="pdt-section-divider" aria-hidden="true"></div>
@@ -159,7 +159,7 @@
                             <input type="text" name="admin_ceuw" id="admin_ceuw">
                         </td>
                         <td>
-                            <button type="button">Add</button>
+                            <button type="button" id="pst-add-admin-service-row">Add</button>
                         </td>
                     </tr>
                     <tr>
@@ -203,44 +203,44 @@
             <div class="pdt-section-divider" aria-hidden="true"></div>
 
             <div class="pdt-submit">
-                <button>Cancel</button>
-                <button>Save Session</button>
+                <button id="pdt-admin-service-cancel">Cancel</button>
+                <button id="pdt-admin-service-save">Save Service</button>
             </div>
         </div>
     </div>
 
 
-    <div class="pdt-for-testing-modal">
+    <div id="pdt-edit-person-modal" class="pdt-edit-person-modal" role="dialog" aria-modal="true" aria-labelledby="pdt-edit-person-title" hidden>
         <div class="pdt_edit_person">
-            <h3>Edit Person</h3>
+            <h3 id="pdt-edit-person-title">Edit Person</h3>
             <div class="pdt-section-divider" aria-hidden="true"></div>
             <form action="">
                 <div class="pdt-edit-person__name-row">
                     <div class="pdt-first">
                         <p>First name</p>
-                        <input type="text" name="f_name" id="f_name">
+                        <input type="text" name="f_name" id="pdt-f_name">
                     </div>
                     <div class="pdt-last">
                         <p>Last name</p>
-                        <input type="text" name="l_name" id="l_name">
+                        <input type="text" name="l_name" id="pdt-l_name">
                     </div>
                 </div>
                 <div class="pdt-edit-person__contact-row">
                     <div class="pdt-email">
                         <p>Email</p>
-                        <input type="text" name="email" id="email">
+                        <input type="text" name="email" id="pdt-email">
                     </div>
                     <div class="pdt-ph-number">
                         <p>Phone Number</p>
-                        <input type="text" name="ph_number" id="ph_number">
+                        <input type="text" name="ph_number" id="pdt-number">
                     </div>
                 </div>
 
                 <div class="pdt-section-divider"></div>
 
                 <div class="pdt-edit-person__actions">
-                    <button>Cancel</button>
-                    <button>Save Presenter</button>
+                    <button type="button" id="pdt-edit-person-cancel">Cancel</button>
+                    <button type="button" id="pdt-edit-person-save">Save Presenter</button>
                 </div>
             </form>
         </div>

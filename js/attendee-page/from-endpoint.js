@@ -6,6 +6,12 @@ export class data {
 
     static data = {
         //No keys are allowed to have a '.' in them.
+        "contact": {
+            "first": "John",
+            "last": "Doe",
+            "email": "email@email.com",
+            "number": "123-123-1234"
+        },
         "summary": {
             "total-hours": 1.5,
             "recent_session": "A New Way to Teach ASL Literature",
@@ -39,8 +45,8 @@ export class data {
                 "rid_submission": "Not Relevant",
                 "parent_event": "Regional Forum",
                 "event_type": "Conference",
-                "flags": null,
-                "comment": null
+                "flags": "No Flags",
+                "comment": "No comment"
             },
             {
                 "date": "2000-01-01 to 2000-02-01",
@@ -67,8 +73,8 @@ export class data {
                 "rid_submission": "Not Relevant",
                 "parent_event": "Volunteer Day",
                 "event_type": "Workshop",
-                "flags": null,
-                "comment": null
+                "flags": "No Flags",
+                "comment": "No comment"
             },
             {
                 "date": "not started",
@@ -81,10 +87,56 @@ export class data {
                 "rid_submission": "2000-01-01",
                 "parent_event": "Fall Summit",
                 "event_type": "Conference",
-                "flags": null,
-                "comment": null
+                "flags": "No Flags",
+                "comment": "No comment"
             }
-        ]
+        ],
+        "admin_service": [
+            {
+                "og_id" : "2",
+                "tmp_id" : "2",
+                "start": "2024-01-15",
+                "end": "2024-03-15",
+                "type": "Board Member",
+                "ceu_wei": "0.50"
+            },
+            {
+                "og_id" : "3",
+                "tmp_id" : "2",
+                "start": "2023-06-01",
+                "end": "2023-08-31",
+                "type": "Committee Chair",
+                "ceu_wei": "0.75"
+            },
+            {
+                "og_id" : "4",
+                "tmp_id" : "2",
+                "start": "2022-09-10",
+                "end": "2022-12-20",
+                "type": "Mentorship Lead",
+                "ceu_wei": "0.40"
+            },
+            {
+                "og_id" : "5",
+                "tmp_id" : "2",
+                "start": "2021-02-05",
+                "end": "2021-05-28",
+                "type": "Workshop Coordinator",
+                "ceu_wei": "0.60"
+            },
+            {
+                "og_id" : "6",
+                "tmp_id" : "2",
+                "start": "2020-10-01",
+                "end": "2020-12-18",
+                "type": "Advisory Panel",
+                "ceu_wei": "0.30"
+            }
+        ],
+        // This is only here for refrence, 
+        "admin_service_deleted_ogs" : [
+            /* if any og rows were deleted, their id's are stored here.*/
+        ] 
     }
 
     static get(path) {
@@ -99,6 +151,35 @@ export class data {
 
             return currentValue[key];
         }, this.data);
+    }
+
+    static set(path, value) {
+        if (typeof path !== "string" || path.trim() === "") {
+            return false;
+        }
+
+        const keys = path.split(".");
+        if (keys.some((key) => key.trim() === "")) {
+            return false;
+        }
+
+        let target = this.data;
+
+        for (let i = 0; i < keys.length - 1; i += 1) {
+            const key = keys[i];
+            const currentValue = target[key];
+
+            if (currentValue === null || currentValue === undefined) {
+                target[key] = {};
+            } else if (typeof currentValue !== "object" || Array.isArray(currentValue)) {
+                return false;
+            }
+
+            target = target[key];
+        }
+
+        target[keys[keys.length - 1]] = value;
+        return true;
     }
 
     static normalizeSessionType(value) {
@@ -144,3 +225,73 @@ export class data {
         });
     }
 }
+
+/*
+Endpoint contract proposal (server implementation guide)
+=======================================================
+
+Goal
+- Replace this mock `data` object with API responses while preserving the current
+  frontend behavior in `querySessions()`.
+
+Recommended endpoints
+1. GET /api/attendee-page/summary
+2. GET /api/attendee-page/sessions
+
+Supported query params for GET /api/attendee-page/sessions
+- `selectedType` (string, optional, default: "all")
+  - Special value: "all" disables type filtering.
+  - Normalize before comparing:
+    - lowercase + trim
+    - "workshops" -> "workshop"
+    - "confrence" -> "conference"
+- `searchText` (string, optional, default: "")
+  - lowercase + trim
+  - substring match against:
+    - `session_title`
+    - `type`
+
+Expected summary response shape
+{
+  "total-hours": number,
+  "recent_session": string,
+  "recent_session_date": "YYYY-MM-DD",
+  "train-n-conf": number[],
+  "admin-service": number[]
+}
+
+Expected session item shape
+{
+  "date": string,
+  "session_title": string,
+  "type": string,
+  "hours": string,
+  "ceu_capable": string,
+  "ceu_weight": string,
+  "rid_qualified": string,
+  "rid_submission": string,
+  "parent_event": string,
+  "event_type": string,
+  "flags": string,
+  "comment": string
+}
+
+Expected sessions response shape
+[
+  SessionItem,
+  ...
+]
+
+Alternative single endpoint
+- GET /api/attendee-page
+  - Response:
+    {
+      "summary": SummaryObject,
+      "sessions": SessionItem[]
+    }
+  - In this mode, frontend can still call `querySessions()` client-side.
+
+Server-side filtering note
+- If backend performs filtering, it should mirror `querySessions()` exactly to avoid
+  visible mismatches in the UI.
+*/

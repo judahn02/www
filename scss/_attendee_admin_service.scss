@@ -1,12 +1,13 @@
 @use 'core-components' as core;
 
-
+// .pdt-edit-person-modal logic is in _attendee_edit_person.scss
 
 .pdt-admin-service {
+    background-color: #fff;
     border: 3px solid #e11d48 ;
     border-radius: 10px;
 
-    width: min(90vw, 600px);
+    width: min(95vw, 700px);
     max-height: 85vh;
     overflow-y: auto;
 
@@ -28,7 +29,7 @@
 
     input,
     select {
-        width: 100px;
+        width: 120px;
         box-sizing: border-box;
     }
 

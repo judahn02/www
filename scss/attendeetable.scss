@@ -5,33 +5,35 @@
 .pdt-main {
     border-width: 0px;
 
-    .pdt-grid, a {
-        color: #e11d48 ;
-        margin-right: 8px ;
+    .pdt-grid,
+    a {
+        color: #e11d48;
+        margin-right: 8px;
         text-decoration: none;
     }
 
     button {
-            background-color: #e11d48;
-            border: 1px solid #e11d48;
-            border-radius: 6px;
-            margin-left: 8px ;
-            margin-right: 8px ;
-            padding: 4px;
-            padding-left: 8px;
-            padding-right: 8px;
-            color: #fff;
-            cursor: pointer;
-        }
+        background-color: #e11d48;
+        border: 1px solid #e11d48;
+        border-radius: 6px;
+        margin-left: 8px;
+        margin-right: 8px;
+        padding: 4px;
+        padding-left: 8px;
+        padding-right: 8px;
+        color: #fff;
+        cursor: pointer;
+    }
 
-        button:hover {
-            @extend button;
-            background-color: #c0183c;
-            border: 1px solid #c0183c;
-        }
-        .pdt-add-member {
-            @extend button ;
-        }
+    button:hover {
+        @extend button;
+        background-color: #c0183c;
+        border: 1px solid #c0183c;
+    }
+
+    .pdt-add-member {
+        @extend button;
+    }
 
     h1 {
         margin: 4px;
@@ -50,9 +52,11 @@
 
         padding: 12px;
 
-        
+
     }
-    .pdt-page-controls-top, .pdt-page-controls-bottom {
+
+    .pdt-page-controls-top,
+    .pdt-page-controls-bottom {
         margin: 4px;
 
         padding: 12px;
@@ -66,7 +70,7 @@
 
     table {
         width: 100%;
-        border: 2px solid #e11d48 ;
+        border: 2px solid #e11d48;
         border-radius: 10px;
         border-collapse: separate;
         border-spacing: 0;
@@ -89,7 +93,7 @@
         .pdt-attendee-table__row:hover {
             transform: translateY(-2px);
             background-color: #fff5f7;
-            cursor: pointer ;
+            cursor: pointer;
         }
     }
 }
