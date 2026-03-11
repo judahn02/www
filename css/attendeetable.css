@@ -26,7 +26,7 @@
 .pdt-main .pdt-page-controls-status {
   margin: 2px;
 }
-.pdt-main button, .pdt-main button:hover, .pdt-main .pdt-add-member, .pdt-main .pdt-add-member:hover, .pdt-main .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-button, .pdt-main .pdt-button:hover {
+.pdt-main button, .pdt-main .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-button, .pdt-main .pdt-button:not(:disabled):hover, .pdt-main button:not(:disabled):hover {
   background-color: #e11d48;
   border: 1px solid #e11d48;
   border-radius: 6px;
@@ -36,9 +36,18 @@
   color: #fff;
   cursor: pointer;
 }
-.pdt-main button:hover, .pdt-main .pdt-add-member:hover, .pdt-main .pdt-button:hover {
+.pdt-main button:not(:disabled):hover, .pdt-main .pdt-button:not(:disabled):hover {
   background-color: #c0183c;
   border: 1px solid #c0183c;
+}
+.pdt-main button:disabled, .pdt-main .pdt-for-testing-modal .pdt-button:disabled, .pdt-for-testing-modal .pdt-main .pdt-button:disabled, .pdt-main .pdt-button:disabled, .pdt-main .pdt-button:disabled:not(:disabled):hover, .pdt-main button:disabled:not(:disabled):hover,
+.pdt-main .pdt-button:disabled,
+.pdt-main input[type=button]:disabled {
+  background-color: #d7dde8;
+  border: 1px solid #d7dde8;
+  color: #6b7280;
+  cursor: not-allowed;
+  opacity: 1;
 }
 .pdt-main .pdt-search {
   border: 1px solid #bfc6d2;
@@ -83,7 +92,7 @@
 .pdt-for-testing-modal table tbody tr:nth-child(odd) {
   background-color: #ffffff;
 }
-.pdt-for-testing-modal button, .pdt-for-testing-modal .pdt-main .pdt-add-member, .pdt-main .pdt-for-testing-modal .pdt-add-member, .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-button:hover, .pdt-for-testing-modal button:hover, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-for-testing-modal .pdt-button {
+.pdt-for-testing-modal button, .pdt-for-testing-modal .pdt-button, .pdt-for-testing-modal .pdt-button:not(:disabled):hover, .pdt-for-testing-modal button:not(:disabled):hover, .pdt-for-testing-modal .pdt-main .pdt-button, .pdt-main .pdt-for-testing-modal .pdt-button {
   background-color: #e11d48;
   border: 1px solid #e11d48;
   border-radius: 6px;
@@ -93,9 +102,18 @@
   color: #fff;
   cursor: pointer;
 }
-.pdt-for-testing-modal button:hover, .pdt-for-testing-modal .pdt-main .pdt-add-member:hover, .pdt-main .pdt-for-testing-modal .pdt-add-member:hover, .pdt-for-testing-modal .pdt-button:hover {
+.pdt-for-testing-modal button:not(:disabled):hover, .pdt-for-testing-modal .pdt-button:not(:disabled):hover {
   background-color: #c0183c;
   border: 1px solid #c0183c;
+}
+.pdt-for-testing-modal button:disabled, .pdt-for-testing-modal .pdt-button:disabled, .pdt-for-testing-modal .pdt-button:disabled:not(:disabled):hover, .pdt-for-testing-modal .pdt-main .pdt-button:disabled, .pdt-main .pdt-for-testing-modal .pdt-button:disabled, .pdt-for-testing-modal button:disabled:not(:disabled):hover,
+.pdt-for-testing-modal .pdt-button:disabled,
+.pdt-for-testing-modal input[type=button]:disabled {
+  background-color: #d7dde8;
+  border: 1px solid #d7dde8;
+  color: #6b7280;
+  cursor: not-allowed;
+  opacity: 1;
 }
 body {
   background-color: #fafafa;
@@ -112,9 +130,28 @@ body {
   background-color: #000000;
 }
 
+.pdt-modal-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.35);
+  z-index: 900;
+}
+
+.pdt-modal-wrapper[hidden] {
+  display: none;
+}
+
 .pdt-add-new-member {
   border: 3px solid #e11d48;
   border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
   width: min(90vw, 400px);
   max-height: 85vh;
   overflow-y: auto;
@@ -124,8 +161,10 @@ body {
   color: #e11d48;
   margin-left: 8px;
 }
-.pdt-add-new-member button, .pdt-add-new-member .pdt-main button:hover, .pdt-main .pdt-add-new-member button:hover, .pdt-add-new-member .pdt-main .pdt-add-member, .pdt-main .pdt-add-new-member .pdt-add-member {
-  margin: 8px;
+.pdt-add-new-member .pdt-button {
+  margin-top: 8px;
+  margin-left: 8px;
+  margin-right: 8px;
 }
 .pdt-add-new-member .pdt-is-presenter-btn {
   display: block;
@@ -154,6 +193,10 @@ body {
 .pdt-presenter-check {
   border: 3px solid #e11d48;
   border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
   width: min(90vw, 300px);
   max-height: 85vh;
   overflow-y: auto;
@@ -166,7 +209,7 @@ body {
   color: #e11d48;
   margin-left: 8px;
 }
-.pdt-presenter-check button, .pdt-presenter-check .pdt-main button:hover, .pdt-main .pdt-presenter-check button:hover, .pdt-presenter-check .pdt-main .pdt-add-member, .pdt-main .pdt-presenter-check .pdt-add-member {
+.pdt-presenter-check .pdt-button {
   margin: 8px;
 }
 .pdt-presenter-check .pdt-is-presenter-btn {
@@ -190,16 +233,52 @@ body {
   margin-left: 15px;
 }
 
-.pdt-main {
-  border-width: 0px;
+.pdt-link-armember {
+  border: 2px solid red;
+  border-radius: 16px;
+  padding: 16px 16px;
+  width: 400px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
 }
-.pdt-main .pdt-grid,
-.pdt-main a {
-  color: #e11d48;
+.pdt-link-armember .pdt-section-divider {
+  background-color: #d38697;
+  width: calc(100% - 16px);
+  margin-left: 8px;
   margin-right: 8px;
-  text-decoration: none;
 }
-.pdt-main button, .pdt-main .pdt-add-member, .pdt-main .pdt-add-member:hover, .pdt-main button:hover {
+.pdt-link-armember .pdt-top-row {
+  display: flex;
+  justify-content: space-between;
+}
+.pdt-link-armember .pdt-top-row h2 {
+  color: #e11d48;
+}
+.pdt-link-armember .pdt-top-row .pdt-close-btn {
+  font-size: 1rem;
+  height: 30px;
+  width: 30px;
+  transform: translate(0px, 16px);
+}
+.pdt-link-armember input {
+  width: calc(100% - 16px);
+  margin-left: 8px;
+}
+.pdt-link-armember .pdt-buttons {
+  display: flex;
+  padding-top: 8px;
+  padding-right: 8px;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.pdt-link-armember .pdt-buttons .pdt-button {
+  margin: 0;
+}
+
+.pdt-button {
   background-color: #e11d48;
   border: 1px solid #e11d48;
   border-radius: 6px;
@@ -211,9 +290,25 @@ body {
   color: #fff;
   cursor: pointer;
 }
-.pdt-main button:hover, .pdt-main .pdt-add-member:hover {
+
+.pdt-button:hover {
   background-color: #c0183c;
   border: 1px solid #c0183c;
+}
+
+.pdt-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.pdt-main {
+  border-width: 0px;
+}
+.pdt-main .pdt-grid,
+.pdt-main a {
+  color: #e11d48;
+  margin-right: 8px;
+  text-decoration: none;
 }
 .pdt-main h1 {
   margin: 4px;
@@ -245,7 +340,7 @@ body {
   margin: 8px;
   text-align: center;
   height: 50px;
-  padding: 4x;
+  padding: 4px;
   border-bottom: 0.5px solid #ffa7a7;
 }
 .pdt-main table .pdt-attendee-table__row {

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tom Select Gmail-Style Tokenized Autocomplete</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" />
+    <style>
+        /* Tom Select styling hooks (empty on purpose) */
+        .pdt-Tom-Select .ts-wrapper {}
+
+        .pdt-Tom-Select .ts-control {}
+
+        .pdt-Tom-Select .ts-wrapper.focus .ts-control {}
+
+        .pdt-Tom-Select .ts-control input {}
+
+        .pdt-Tom-Select .ts-dropdown {}
+
+        .pdt-Tom-Select .ts-dropdown .option {}
+
+        .pdt-Tom-Select .ts-dropdown .active {}
+
+        .pdt-Tom-Select .ts-wrapper.multi .ts-control>div {}
+
+        .pdt-Tom-Select .ts-control .remove {}
+
+        /* Custom render hooks used by option/item templates */
+        .pdt-Tom-Select .option-row {}
+
+        .pdt-Tom-Select .option-name {}
+
+        .pdt-Tom-Select .option-email {}
+
+        .pdt-Tom-Select .chip {}
+
+        .pdt-Tom-Select .chip-name {}
+
+        .pdt-Tom-Select .chip-email {}
+    </style>
+</head>
+
+<body>
+    <main class="page">
+        <section class="card pdt-Tom-Select">
+            <h1>Gmail-Style Tokenized Autocomplete (Tom Select)</h1>
+            <p class="lead">
+                Type at least 2 characters to search attendees. Click a result to add it as a removable token.
+            </p>
+
+            <label class="field-label" for="attendee-select">Add attendees</label>
+            <input id="attendee-select" type="text" placeholder="Search by name or email..." autocomplete="off" />
+
+            <p class="helper">
+                This demo currently uses mock data in an internal <code>Map</code>, but the async data service is
+                structured so a real backend can replace that logic without changing the UI code.
+            </p>
+
+            <div class="debug-title">Selected values (JSON)</div>
+            <pre id="selected-output">[]</pre>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        class DataService {
+            constructor() {
+                this.collections = new Map([
+                    [
+                        "attendees",
+                        [
+                            { id: "u_101", name: "Ava Thompson", email: "ava.thompson@northstar.dev" },
+                            { id: "u_102", name: "Liam Chen", email: "liam.chen@horizonlabs.io" },
+                            { id: "u_103", name: "Noah Patel", email: "noah.patel@atlasgroup.com" },
+                            { id: "u_104", name: "Emma Williams", email: "emma.williams@brightside.co" },
+                            { id: "u_105", name: "Olivia Martinez", email: "olivia.martinez@zenithsystems.net" },
+                            { id: "u_106", name: "Ethan Brooks", email: "ethan.brooks@acmecorp.org" },
+                            { id: "u_107", name: "Mia Robinson", email: "mia.robinson@riversoft.ai" },
+                            { id: "u_108", name: "Lucas Nguyen", email: "lucas.nguyen@cedarworks.com" },
+                            { id: "u_109", name: "Sophia Kim", email: "sophia.kim@milestone.app" },
+                            { id: "u_110", name: "James Walker", email: "james.walker@solaris.cloud" },
+                            { id: "u_111", name: "Isabella Davis", email: "isabella.davis@peakpoint.io" },
+                            { id: "u_112", name: "Benjamin Lewis", email: "ben.lewis@emeraldtech.dev" },
+                            { id: "u_113", name: "Charlotte Young", email: "charlotte.young@foundryhq.com" },
+                            { id: "u_114", name: "Henry Clark", email: "henry.clark@lighthouse.ai" },
+                            { id: "u_115", name: "Amelia Hall", email: "amelia.hall@oakridge.net" },
+                            { id: "u_116", name: "Daniel Scott", email: "daniel.scott@vectorworks.org" }
+                        ]
+                    ]
+                ]);
+            }
+
+            // This method is async on purpose so the UI layer remains unchanged
+            // when we swap mock data for a real HTTP API later.
+            async get(resource, query = "") {
+                // Simulate network latency for a realistic async workflow.
+                await new Promise((resolve) => setTimeout(resolve, 250));
+
+                const source = this.collections.get(resource) || [];
+                const normalizedQuery = query.trim().toLowerCase();
+
+                if (!normalizedQuery) return [];
+
+                const matches = source.filter((item) => {
+                    const name = item.name.toLowerCase();
+                    const email = item.email.toLowerCase();
+                    return name.includes(normalizedQuery) || email.includes(normalizedQuery);
+                });
+
+                // In a real implementation, this is where an authenticated request would happen.
+                // Example flow:
+                // 1) Read JWT from your auth store
+                // 2) Call backend endpoint with Authorization header
+                // 3) Return parsed JSON results in the same shape
+
+                return matches.slice(0, 12);
+            }
+
+            /*
+            // Real backend version (example only):
+            async get(resource, query = "") {
+              const token = localStorage.getItem("jwt_token");
+              const url = `/api/${encodeURIComponent(resource)}?q=${encodeURIComponent(query)}`;
+      
+              const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+                }
+              });
+      
+              if (!response.ok) {
+                throw new Error(`Request failed: ${response.status}`);
+              }
+      
+              const payload = await response.json();
+              return Array.isArray(payload.items) ? payload.items : [];
+            }
+            */
+        }
+
+        const data = new DataService();
+        const attendeeInput = document.getElementById("attendee-select");
+        const defaultPlaceholder = attendeeInput.getAttribute("placeholder") || "";
+        const output = document.getElementById("selected-output");
+
+        const attendeeSelect = new TomSelect("#attendee-select", {
+            plugins: ["remove_button"],
+            valueField: "id",
+            labelField: "name",
+            searchField: ["name", "email"],
+            maxItems: 8,
+            shouldLoad(query) {
+                return query.length >= 2;
+            },
+            load: async (query, callback) => {
+                try {
+                    const results = await data.get("attendees", query);
+                    callback(results);
+                } catch (error) {
+                    console.error("Search failed:", error);
+                    callback();
+                }
+            },
+            render: {
+                option: (item, escape) => {
+                    return `
+            <div class="option-row">
+              <span class="option-name">${escape(item.name)}</span>
+              <span class="option-email">${escape(item.email)}</span>
+            </div>
+          `;
+                },
+                item: (item, escape) => {
+                    return `
+            <div class="chip" title="${escape(item.email)}">
+              <span class="chip-name">${escape(item.name)}</span>
+              <span class="chip-email">${escape(item.email)}</span>
+            </div>
+          `;
+                }
+            },
+            onItemAdd(value, itemEl) {
+                const selectedOption = this.options[value]; // { id, name, email, ... }
+                // custom logic here (API call, UI update, etc.)
+
+
+                this.setTextboxValue("");
+                this.refreshOptions(false);
+                syncInputLockState(this);
+                updateSelectedOutput(this);
+            },
+            onItemRemove() {
+                syncInputLockState(this);
+                updateSelectedOutput(this);
+            },
+            onChange() {
+                updateSelectedOutput(this);
+            }
+        });
+
+        function syncInputLockState(control) {
+            // Disable only typing once one item is selected; keep token removal available.
+            if (control.items.length >= 1) {
+                control.setTextboxValue("");
+                control.close();
+                control.control_input.setAttribute("disabled", "disabled");
+                control.control_input.setAttribute("placeholder", "");
+                control.input.setAttribute("placeholder", "");
+            } else {
+                control.control_input.removeAttribute("disabled");
+                control.control_input.setAttribute("placeholder", defaultPlaceholder);
+                control.input.setAttribute("placeholder", defaultPlaceholder);
+            }
+
+            control.inputState();
+        }
+
+        function updateSelectedOutput(control) {
+            const selected = control.items
+                .map((id) => control.options[id])
+                .filter(Boolean)
+                .map(({ id, name, email }) => ({ id, name, email }));
+
+            output.textContent = JSON.stringify(selected, null, 2);
+        }
+
+        syncInputLockState(attendeeSelect);
+        updateSelectedOutput(attendeeSelect);
+    </script>
+</body>
+
+</html>

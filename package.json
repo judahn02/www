@@ -1,0 +1,13 @@
+{
+  "name": "attendee-ui-build",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:js": "node scripts/build-js.mjs --mode=production",
+    "build:js:dev": "node scripts/build-js.mjs --mode=development",
+    "watch:js": "node scripts/build-js.mjs --mode=development --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.10"
+  }
+}

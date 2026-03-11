@@ -60,3 +60,6 @@ to “make the smallest possible HTML change, then add only the CSS required to 
 The main thing I had to correct was scope. I read the README as permission to do a broader static-demo pass, but your actual working style was more stepwise and lower-ceremony than that.
 
 
+npm run build:js (production, minified)
+npm run build:js:dev (development, sourcemaps)
+npm run watch:js

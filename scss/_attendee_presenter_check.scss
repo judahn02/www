@@ -1,30 +1,35 @@
 @use 'core-components' as core;
 
 .pdt-presenter-check {
-    border: 3px solid #e11d48 ;
+    border: 3px solid #e11d48;
     border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
 
     width: min(90vw, 300px);
     max-height: 85vh;
     overflow-y: auto;
-    padding: 8px ;
+    padding: 8px;
+
     .pdt-presenter-check__actions {
         @include core.actions-right;
     }
 
     h2 {
-        color: #e11d48 ;
+        color: #e11d48;
         margin-left: 8px;
     }
 
-    button {
-        margin: 8px ;
+    .pdt-button {
+        margin: 8px;
     }
 
     .pdt-is-presenter-btn {
         display: block;
         text-align: center;
-        width: 300px ;
+        width: 300px;
         margin-left: auto;
         margin-right: auto;
     }
@@ -33,16 +38,17 @@
         width: auto;
         margin-left: 8px;
         margin-right: 8px;
-        background-color: #f47b7b ;
+        background-color: #f47b7b;
     }
+
     form {
         p {
-            margin-left: 12px ;
+            margin-left: 12px;
         }
 
         input {
-            width: 250px ;
-            margin-left: 15px ;
+            width: 250px;
+            margin-left: 15px;
         }
     }
 }

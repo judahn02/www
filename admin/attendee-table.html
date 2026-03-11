@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/attendeetable.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
     <title>Attendee Table</title>
 </head>
 
@@ -15,29 +18,29 @@
 
         <div class="pdt-grid">
             <div class="pdt-grid-item">
-                <a class="pdt-grid-link" href="./session-table.html"><b>Session Table</b></a>
+                <a class="pdt-grid-link" href="#"><b>Session Table</b></a>
             </div>
             <div class="pdt-grid-item">
-                <a class="pdt-grid-link" href="./presenter-table.html"><b>Presenter Table</b></a>
+                <a class="pdt-grid-link" href="#"><b>Presenter Table</b></a>
             </div>
             <div class="pdt-grid-item">
-                <a class="pdt-grid-link" href="../index.html"><b>Home</b></a>
+                <a class="pdt-grid-link" href="#"><b>Home</b></a>
             </div>
         </div>
 
         <div class="pdt-topRow">
             <input class="pdt-search" type="search" placeholder="Search by... name/email/phone/wp-id">
-            <input class="pdt-add-member" type="button" value="+ Add Member">
+            <input class="pdt-add-member pdt-button" type="button" id="pdt-add-member" value="+ Add Member">
         </div>
 
         <div class="pdt-page-controls-top">
-            <button class="pdt-page-controls-button" disabled="disabled">Prev</button>
+            <button class="pdt-page-controls-button pdt-button" type="button" disabled="disabled">Prev</button>
             <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
-            <button class="pdt-page-controls-button">Next</button>
+            <button class="pdt-page-controls-button pdt-button" type="button">Next</button>
         </div>
 
         <div class="pdt-attendee-table-wrapper">
-            <table class="pdt-attendee-table">
+            <table id="pdt-attendee-table" class="pdt-attendee-table">
                 <thead>
                     <tr>
                         <th>First Name</th>
@@ -49,126 +52,113 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="pdt-attendee-table__row">
+                    <tr>
+                        <td colspan="6"> No Attendees found or error in retrieving data.</td>
+                    </tr>
+
+                    <!-- <tr class="pdt-attendee-table__row">
                         <td class="pdt-attendee-table__cell">Judah</td>
                         <td class="pdt-attendee-table__cell">Nava</td>
                         <td class="pdt-attendee-table__cell">example@example.com</td>
                         <td class="pdt-attendee-table__cell">
-                            <button class="pdt-attendee-table__link-button" type="button">WP #404</button>
+                            <button class="pdt-attendee-table__link-button pdt-button" type="button">WP # <span>404</span></button>
                         </td>
                         <td class="pdt-attendee-table__cell">7.5</td>
                         <td class="pdt-attendee-table__cell">0.15</td>
-                    </tr>
-                    <tr class="pdt-attendee-table__row">
-                        <td class="pdt-attendee-table__cell">Avery</td>
-                        <td class="pdt-attendee-table__cell">Collins</td>
-                        <td class="pdt-attendee-table__cell">avery.collins@example.com</td>
-                        <td class="pdt-attendee-table__cell">
-                            <button class="pdt-attendee-table__link-button" type="button">Link Account</button>
-                        </td>
-                        <td class="pdt-attendee-table__cell">9.0</td>
-                        <td class="pdt-attendee-table__cell">0.18</td>
-                    </tr>
-                    <tr class="pdt-attendee-table__row">
-                        <td class="pdt-attendee-table__cell">Mason</td>
-                        <td class="pdt-attendee-table__cell">Reed</td>
-                        <td class="pdt-attendee-table__cell">mason.reed@example.com</td>
-                        <td class="pdt-attendee-table__cell">
-                            <button class="pdt-attendee-table__link-button" type="button">Link Account</button>
-                        </td>
-                        <td class="pdt-attendee-table__cell">6.0</td>
-                        <td class="pdt-attendee-table__cell">0.12</td>
-                    </tr>
-                    <tr class="pdt-attendee-table__row">
-                        <td class="pdt-attendee-table__cell">Olivia</td>
-                        <td class="pdt-attendee-table__cell">Turner</td>
-                        <td class="pdt-attendee-table__cell">olivia.turner@example.com</td>
-                        <td class="pdt-attendee-table__cell">
-                            <button class="pdt-attendee-table__link-button" type="button">Link Account</button>
-                        </td>
-                        <td class="pdt-attendee-table__cell">8.5</td>
-                        <td class="pdt-attendee-table__cell">0.17</td>
-                    </tr>
-                    <tr class="pdt-attendee-table__row">
-                        <td class="pdt-attendee-table__cell">Sophia</td>
-                        <td class="pdt-attendee-table__cell">Bennett</td>
-                        <td class="pdt-attendee-table__cell">sophia.bennett@example.com</td>
-                        <td class="pdt-attendee-table__cell">
-                            <button class="pdt-attendee-table__link-button" type="button">Link Account</button>
-                        </td>
-                        <td class="pdt-attendee-table__cell">10.0</td>
-                        <td class="pdt-attendee-table__cell">0.20</td>
-                    </tr>
+                    </tr> -->
+
                 </tbody>
             </table>
         </div>
 
         <div class="pdt-page-controls-bottom">
-            <button class="pdt-page-controls-button" disabled="disabled">Prev</button>
+            <button class="pdt-page-controls-button pdt-button" type="button" disabled="disabled">Prev</button>
             <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
-            <button class="pdt-page-controls-button">Next</button>
+            <button class="pdt-page-controls-button pdt-button" type="button">Next</button>
         </div>
     </div>
 
-    <div class="pdt-for-testing-modal">
-        <div class="pdt-add-new-member">
+    <div class="pdt-link-armember" id="pdt-link-armember" hidden>
+        <div class="pdt-top-row">
+            <h2>Link ARMember Account</h2>
+        </div>
+
+        <div class="pdt-section-divider" aria-hidden="true"></div>
+        <h4>Attendee</h4>
+        <p>John Doe | email@email.com</p>
+        <h4>Curent Link</h4>
+        <p>This attendee is not linked to any ARMember account. | ID: 404</p>
+        <h4>Search ARMember Accounts</h4>
+        <input type="search" name="search_wp" id="search_wp"><br>
+        <small>Start typing an ARMember account name or email.</small>
+        <div class="pdt-section-divider" aria-hidden="true"></div>
+        <div class="pdt-buttons">
+            <button class="pdt-button" id="pdt-link-armember-btn" type="button">Cancel</button>
+            <button class="pdt-button" type="button" disabled>Link Account</button>
+        </div>
+    </div>
+
+    <div class="pdt-modal-wrapper" id="pdt-modal-wrapper-for-add-new-member" hidden>
+        <div class="pdt-add-new-member" hidden>
             <h2>Add New Member</h2>
             <div class="pdt-section-divider"></div>
 
-            <button class="pdt-is-presenter-btn">Are they a registered Presenter?</button>
+            <button id="pdt-is-presenter-btn" class="pdt-is-presenter-btn pdt-button" type="button">Are they a
+                registered
+                Presenter?</button>
 
-            <form action="">
-                <div class="pdt-add-new-member__name-row">
-                    <div class="pdt-first">
-                        <p>First name</p>
-                        <input type="text" name="f_name" id="f_name">
-                    </div>
-                    <div class="pdt-last">
-                        <p>Last name</p>
-                        <input type="text" name="l_name" id="l_name">
-                    </div>
-                </div>
-                <div class="pdt-add-new-member__contact-row">
-                    <div class="pdt-email">
-                        <p>Email</p>
-                        <input type="text" name="email" id="email">
-                    </div>
-                    <div class="pdt-ph-number">
-                        <p>Phone Number</p>
-                        <input type="text" name="ph_number" id="ph_number">
-                    </div>
-                </div>
 
-                <div class="pdt-section-divider"></div>
-
-                <div class="pdt-add-new-member__actions">
-                    <button>Cancel</button>
-                    <button>Mark as Attendee</button>
+            <div class="pdt-add-new-member__name-row">
+                <div class="pdt-first">
+                    <p>First name</p>
+                    <input type="text" name="f_name" id="pdt-f_name">
                 </div>
-            </form>
+                <div class="pdt-last">
+                    <p>Last name - <i>required</i></p>
+                    <input type="text" name="l_name" id="pdt-l_name" required>
+                </div>
+            </div>
+            <div class="pdt-add-new-member__contact-row">
+                <div class="pdt-email">
+                    <p>Email - <i>required</i></p>
+                    <input type="email" name="email" id="pdt-email" required inputmode="email">
+                </div>
+                <div class="pdt-ph-number">
+                    <p>Phone Number</p>
+                    <input type="tel" name="ph_number" id="pdt-ph_number" pattern="^[0-9()+\-\s.]{7,20}$"
+                        title="Phone number must be 7-20 characters using digits and common phone symbols.">
+                </div>
+            </div>
+
+            <div class="pdt-section-divider"></div>
+
+            <div class="pdt-add-new-member__actions">
+                <button class="pdt-button" id="pdt-new-member-cancel" type="button">Cancel</button>
+                <button class="pdt-button" id="pdt-new-member-submit" type="button">Mark as Attendee</button>
+            </div>
+
         </div>
     </div>
 
-    <div class="pdt-for-testing-modal">
+    <div class="pdt-modal-wrapper" id="pdt-modal-wrapper-for-registered-presenter" hidden>
         <div class="pdt-presenter-check">
             <h2>Registered Presenter Check</h2>
 
             <div class="pdt-section-divider"></div>
+            <p>Presenter name</p>
+            <input type="text" name="p_name" id="p_name" autocomplete="off">
+            <div id="pdt-presenter-options" hidden></div>
+            <p><small>Start typing a presenter name...</small></p>
 
-            <form action="">
-                <p>Presenter name</p>
-                <input type="text" name="p_name" id="p_name">
-                <p><small>Start typing a presenter name...</small></p>
+            <div class="pdt-section-divider"></div>
 
-                <div class="pdt-section-divider"></div>
-
-                <div class="pdt-presenter-check__actions">
-                    <button>Cancel</button>
-                    <button>Mark as Attendee</button>
-                </div>
-            </form>
+            <div class="pdt-presenter-check__actions">
+                <button class="pdt-button" type="button" id="pdt-registered-cancel">Cancel</button>
+                <button class="pdt-button" type="button">Mark as Attendee</button>
+            </div>
         </div>
     </div>
+    <script type="module" src="../js/attendee-table.js"></script>
 </body>
 
 </html>

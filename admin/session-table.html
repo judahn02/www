@@ -24,13 +24,13 @@
         </div>
         <div class="pdt-topRow">
             <input class="pdt-search" type="search" placeholder="Search sessions">
-            <input class="pdt-add-session" type="button" value="Add Session">
+            <input class="pdt-add-session" type="button" value="Add Session" disabled="disabled">
         </div>
 
         <div class="pdt-page-controls-top">
             <button class="pdt-page-controls-button" disabled="disabled">Prev</button>
             <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
-            <button class="pdt-page-controls-button">Next</button>
+            <button disabled="disabled" class="pdt-page-controls-button">Next</button>
         </div>
 
         <div class="pdt-session-table-wrapper">
@@ -72,7 +72,7 @@
                         <td>Admin Team</td>
                         <td>45</td>
                         <td class="pdt-actions-column">
-                            <button class="pdt-details-button" type="button">↓ Details</button>
+                            <button disabled="disabled" class="pdt-details-button" type="button">↓ Details</button>
                         </td>
                     </tr>
                     <tr class="pdt-details-row">
@@ -80,10 +80,10 @@
                             <div class="pdt-details-panel">
                                 <div class="pdt-buttons">
                                     <p>Locked by Jason Zinza | Unlocked by Jason Zinza -</p>
-                                    <button>Lock | Unlock</button>
-                                    <button>Sort</button>
-                                    <button>Edit Details</button>
-                                    <button>Edit Sessions</button>
+                                    <button disabled="disabled">Lock | Unlock</button>
+                                    <button disabled="disabled">Sort</button>
+                                    <button disabled="disabled">Edit Details</button>
+                                    <button disabled="disabled">Edit Sessions</button>
                                 </div>
                                 <div class="pdt-details-people">
                                     <div class="pdt-person-card">
@@ -209,7 +209,7 @@
                         <td>Education Team</td>
                         <td>28</td>
                         <td class="pdt-actions-column">
-                            <button class="pdt-details-button" type="button">↓ Details</button>
+                            <button disabled="disabled" class="pdt-details-button" type="button">↓ Details</button>
                         </td>
                     </tr>
                     <tr>
@@ -227,7 +227,7 @@
                         <td>Program Lead</td>
                         <td>52</td>
                         <td class="pdt-actions-column">
-                            <button class="pdt-details-button" type="button">↓ Details</button>
+                            <button disabled="disabled" class="pdt-details-button" type="button">↓ Details</button>
                         </td>
                     </tr>
                 </tbody>
@@ -236,174 +236,26 @@
         <div class="pdt-page-controls-bottom">
             <button class="pdt-page-controls-button" disabled="disabled">Prev</button>
             <p class="pdt-page-controls-status">Page 1 of 4</p><!-- Let the JS reparse and insert here.-->
-            <button class="pdt-page-controls-button">Next</button>
+            <button disabled="disabled" class="pdt-page-controls-button">Next</button>
         </div>
     </div>
 
-    <!-- <div class="pdt-for-testing-modal">
-        <div class="pdt-comment-box">
-            <h2>John Doe Comments</h2>
-            <form action="">
-                <textarea name="comment_box" id="comment_box"></textarea>
-                <br>
-                <button>Close</button>
-                <button type="submit">Submit</button>
-            </form>
+    <div class="pdt-parent">
+        <h2><span>John Doe</span> Comments</h2>
+
+        <!-- <label for="comment_box_admin">For Admin View Only</label> -->
+        <textarea name="comment_box_admin" id="comment_box_admin"></textarea>
+        <label for="comment_box_admin">For Admin View Only</label>
+        <br>
+
+        <textarea name="comment_box" id="comment_box"></textarea>
+        <label for="comment_box">! Will be seen by Member !</label>
+        <br>
+        <div class="pdt-buttons">
+            <button disabled="disabled">Close</button>
+            <button disabled="disabled" type="submit">Submit</button>
         </div>
-    </div> -->
-
-
-    <!-- <div class="pdt-for-testing-modal">
-        <div class="pdt-session-modal add-session">
-            <h2>Add New Session</h2>
-            <div class="pdt-section-divider" aria-hidden="true"></div>
-            <form action="">
-                <div class="pdt-parent">
-                    <div class="div1">
-                        <div class="pdt-date">
-                            <h4>Date</h4>
-                            <div class="pdt-date-options">
-                                <label>
-                                    <input type="radio" name="date_mode" value="single" checked="checked">
-                                    Single Date
-                                </label>
-                                <input type="date" name="date" id="date">
-
-                                <label>
-                                    <input type="radio" name="date_mode" value="range">
-                                    Date Range
-                                </label>
-                                <div class="pdt-date-range">
-                                    <input type="date" name="date_start" id="date-start">
-                                    <span>to</span>
-                                    <input type="date" name="date_end" id="date-end">
-                                </div>
-
-                                <label>
-                                    <input type="radio" name="date_mode" value="self_paced">
-                                    Self Paced
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="div3">
-                        <div class="pdt-Length">
-                            <h4>Length (minutes)</h4>
-                            <input type="text" name="length" id="length">
-                        </div>
-                    </div>
-                    <div class="div4">
-                        <div class="pdt-flags">
-                            <h4>Flags</h4>
-                            <p><u>Frequent Flags</u></p>
-                            <div class="pdt-flag-list" aria-label="Recent flags">
-                                <label>
-                                    <input type="checkbox" name="flags" value="general">
-                                    General
-                                </label>
-                                <label>
-                                    <input type="checkbox" name="flags" value="ppo">
-                                    PPO
-                                </label>
-                                <label>
-                                    <input type="checkbox" name="flags" value="advanced">
-                                    Advanced
-                                </label>
-
-
-                                <div class="pdt-section-divider" aria-hidden="true"></div>
-                            </div>
-
-
-                            <label for="flag-search">Find or Add Flag</label><br>
-                            <input type="search" name="flag_search" id="flag-search" placeholder="Search flags">
-                            <input type="button" value="Add Flag" disabled="disabled">
-                        </div>
-                    </div>
-                    <div class="div5">
-                        <div class="pdt-textfields">
-                            <div class="pdt-session-modal__organizer-field">
-                                <label for="organizer">Organizer</label><br>
-                                <textarea name="organizer" class="textbox" id="organizer" rows="2"></textarea>
-                            </div>
-                            <div class="pdt-session-modal__title-field">
-                                <label for="session_title">Session Title</label><br>
-                                <textarea name="session_title" class="textbox" id="session_title" rows="2"></textarea>
-                            </div>
-                            <div class="pdt-session-modal__parent-event-field">
-                                <label for="parent_event">Parent Event</label><br>
-                                <textarea name="parent_event" class="textbox" id="parent_event" rows="2"
-                                    placeholder="Part of confrence or larger event? Otherwise leave blank"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="div6">
-                        <div class="pdt-session-type">
-                            <h4>Session Type</h4>
-                            <select name="session_type" id="session_type">
-                                <option value="lecture">Lecture</option>
-                                <option value="workshop">Workshop</option>
-                                <option value="panel">Panel</option>
-                                <option value="breakout">Breakout</option>
-                                <option value="roundtable">Roundtable</option>
-                            </select>
-                        </div>
-                        <div class="pdt-event-type">
-                            <h4>Event Type</h4>
-                            <select name="event_type" id="event_type">
-                                <option value="lecture">Lecture</option>
-                                <option value="workshop">Workshop</option>
-                                <option value="panel">Panel</option>
-                                <option value="breakout">Breakout</option>
-                                <option value="roundtable">Roundtable</option>
-                            </select>
-                        </div>
-                        <div class="pdt-rid-qualified">
-                            <h4>RID Qualified?</h4>
-                            <select name="rid_qualified" id="rid_qualified">
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="div7">
-                        <div class="pdt-session-modal__ceu-row">
-                            <div class="pdt-event-type">
-                                <p>Qualify for CEUs?</p>
-                                <select name="qual_for_CEU" id="qual_for_ceu">
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                            <div class="pdt-ceu-weight">
-                                <p>CEU Weight</p>
-                                <input type="text" name="CEU Weight" id="CEU Weight" disabled="disabled"
-                                    placeholder="0.00">
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="div8">
-                        <div class="pdt-session-modal__presenters-field">
-                            <p>Presenter(s)</p>
-                            <input type="text" name="presenters" id="presenters" placeholder="Enter presenter names">
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <div class="pdt-section-divider"></div>
-                <div class="pdt-session-modal__actions">
-                    <button>Cancel</button>
-                    <button>Save Session</button>
-                </div>
-
-            </form>
-        </div>
-
-    </div> -->
-
+    </div>
 
     <div class="pdt-for-testing-modal">
         <div class="pdt-session-attendees">
@@ -460,12 +312,12 @@
                                 <input type="date" name="self-p-end" id="self-p-end">
                             </td>
                             <td>
-                                <button type="button">
+                                <button disabled="disabled" type="button">
                                     <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                                         aria-hidden="true">
                                 </button>
                             </td>
-                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                            <td><button disabled="disabled" class="pdt-session-attendees__delete-button" type="button">X</button></td>
                         </tr>
                         <tr class="pdt-session-attendees__row">
                             <td>Mason Reed</td>
@@ -484,12 +336,12 @@
                                 <input type="date" name="self-p-end" id="self-p-end">
                             </td>
                             <td>
-                                <button type="button">
+                                <button disabled="disabled" type="button">
                                     <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                                         aria-hidden="true">
                                 </button>
                             </td>
-                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                            <td><button disabled="disabled" class="pdt-session-attendees__delete-button" type="button">X</button></td>
                         </tr>
                         <tr class="pdt-session-attendees__row">
                             <td>Olivia Turner</td>
@@ -508,12 +360,12 @@
                                 <input type="date" name="self-p-end" id="self-p-end">
                             </td>
                             <td>
-                                <button type="button">
+                                <button disabled="disabled" type="button">
                                     <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                                         aria-hidden="true">
                                 </button>
                             </td>
-                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                            <td><button disabled="disabled" class="pdt-session-attendees__delete-button" type="button">X</button></td>
                         </tr>
                         <tr class="pdt-session-attendees__row">
                             <td>Ethan Brooks</td>
@@ -532,12 +384,12 @@
                                 <input type="date" name="self-p-end" id="self-p-end">
                             </td>
                             <td>
-                                <button type="button">
+                                <button disabled="disabled" type="button">
                                     <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                                         aria-hidden="true">
                                 </button>
                             </td>
-                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                            <td><button disabled="disabled" class="pdt-session-attendees__delete-button" type="button">X</button></td>
                         </tr>
                         <tr class="pdt-session-attendees__row">
                             <td>Sophia Bennett</td>
@@ -556,169 +408,160 @@
                                 <input type="date" name="self-p-end" id="self-p-end">
                             </td>
                             <td>
-                                <button type="button">
+                                <button disabled="disabled" type="button">
                                     <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                                         aria-hidden="true">
                                 </button>
                             </td>
-                            <td><button class="pdt-session-attendees__delete-button" type="button">X</button></td>
+                            <td><button disabled="disabled" class="pdt-session-attendees__delete-button" type="button">X</button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="pdt-section-divider" aria-hidden="true"></div>
             <div class="pdt-submit">
-                <button>Cancel</button>
-                <button>Save Session</button>
+                <button disabled="disabled">Cancel</button>
+                <button disabled="disabled">Save Session</button>
             </div>
         </div>
     </div>
 
+    <div class="pdt-parent-modal" role="dialog" aria-modal="true">
+        <h2>Add New/Edit Session</h2>
+        <div  class="pdt-section-divider"></div>
+        <form class="pdt-form" action="">
+            <div class="pdt-panel pdt-panel--1">
+                <p>1- Date</p>
+                <div class="pdt-date-options">
+                    <label>
+                        <input type="radio" name="date_mode" value="single" checked="checked">
+                        Single Date
+                    </label>
+                    <input type="date" name="date" id="date">
 
-    <!-- <div class="pdt-for-testing-modal">
-        <div class="pdt-session-modal edit-session">
-            <h2>Edit Session</h2>
-            <div class="pdt-section-divider" aria-hidden="true"></div>
-            <form action="">
-                <div class="pdt-parent">
-                    <div class="div1">
-                        <div class="pdt-date">
-                            <h4>Date</h4>
-                            <div class="pdt-date-options">
-                                <label>
-                                    <input type="radio" name="edit_date_mode" value="single" checked="checked">
-                                    Single Date
-                                </label>
-                                <input type="date" name="date" id="edit-date">
+                    <label>
+                        <input type="radio" name="date_mode" value="range">
+                        Date Range
+                    </label>
+                    <div class="pdt-date-range">
+                        <input type="date" name="date_start" id="date-start">
+                        <span>to</span>
+                        <input type="date" name="date_end" id="date-end">
+                    </div>
 
-                                <label>
-                                    <input type="radio" name="edit_date_mode" value="range">
-                                    Date Range
-                                </label>
-                                <div class="pdt-date-range">
-                                    <input type="date" name="date_start" id="edit-date-start">
-                                    <span>to</span>
-                                    <input type="date" name="date_end" id="edit-date-end">
-                                </div>
+                    <label>
+                        <input type="radio" name="date_mode" value="self_paced">
+                        Self Paced
+                    </label>
+                </div>
+            </div>
+            <div class="pdt-panel pdt-panel--2">
+                <div class="pdt-Length">
+                    <p>2- Length (minutes)</p>
+                    <input type="text" name="length" id="length">
+                </div>
+            </div>
+            <div class="pdt-panel pdt-panel--3">
+                <div class="pdt-flags">
+                    <p>3- Flags</p>
+                    <p><small><u>Frequent Flags</u></small></p>
+                    <div class="pdt-flag-list" aria-label="Recent flags">
+                        <label>
+                            <input type="checkbox" name="flags" value="general">
+                            General
+                        </label>
+                        <label>
+                            <input type="checkbox" name="flags" value="ppo">
+                            PPO
+                        </label>
+                        <label>
+                            <input type="checkbox" name="flags" value="advanced">
+                            Advanced
+                        </label>
 
-                                <label>
-                                    <input type="radio" name="edit_date_mode" value="self_paced">
-                                    Self Paced
-                                </label>
-                            </div>
-                        </div>
+                        <div class="pdt-section-divider" aria-hidden="true"></div>
                     </div>
-                    <div class="div3">
-                        <div class="pdt-Length">
-                            <h4>Length (minutes)</h4>
-                            <input type="text" name="length" id="edit-length">
-                        </div>
-                    </div>
-                    <div class="div4">
-                        <div class="pdt-flags">
-                            <h4>Flags</h4>
-                            <p><u>Frequent Flags</u></p>
-                            <div class="pdt-flag-list" aria-label="Recent flags">
-                                <label>
-                                    <input type="checkbox" name="flags" value="general">
-                                    General
-                                </label>
-                                <label>
-                                    <input type="checkbox" name="flags" value="ppo">
-                                    PPO
-                                </label>
-                                <label>
-                                    <input type="checkbox" name="flags" value="advanced">
-                                    Advanced
-                                </label>
 
-                                <div class="pdt-section-divider" aria-hidden="true"></div>
-                            </div>
 
-                            <label for="edit-flag-search">Find or Add Flag</label><br>
-                            <input type="search" name="flag_search" id="edit-flag-search" placeholder="Search flags">
-                            <input type="button" value="Add Flag" disabled="disabled">
-                        </div>
+                    <label for="flag-search">Find or Add Flag</label><br>
+                    <input type="search" name="flag_search" id="flag-search" placeholder="Search flags">
+                    <button disabled="disabled">Add Flag</button>
+                </div>
+            </div>
+            <div class="pdt-panel pdt-panel--4">
+                <div class="pdt-textfields">
+                    <div class="pdt-session-modal__organizer-field">
+                        <label for="organizer">4- Organizer</label><br>
+                        <textarea name="organizer" class="textbox" id="organizer" rows="2"></textarea>
                     </div>
-                    <div class="div5">
-                        <div class="pdt-textfields">
-                            <div class="pdt-session-modal__organizer-field">
-                                <label for="edit-organizer">Organizer</label><br>
-                                <textarea name="organizer" class="textbox" id="edit-organizer" rows="2"></textarea>
-                            </div>
-                            <div class="pdt-session-modal__title-field">
-                                <label for="edit-session_title">Session Title</label><br>
-                                <textarea name="session_title" class="textbox" id="edit-session_title"
-                                    rows="2"></textarea>
-                            </div>
-                            <div class="pdt-session-modal__parent-event-field">
-                                <label for="edit-parent_event">Parent Event</label><br>
-                                <textarea name="parent_event" class="textbox" id="edit-parent_event" rows="2"
-                                    placeholder="Part of confrence or larger event? Otherwise leave blank"></textarea>
-                            </div>
-                        </div>
+                    <div class="pdt-session-modal__title-field">
+                        <label for="session_title">Session Title</label><br>
+                        <textarea name="session_title" class="textbox" id="session_title" rows="2"></textarea>
                     </div>
-                    <div class="div6">
-                        <div class="pdt-session-type">
-                            <h4>Session Type</h4>
-                            <select name="session_type" id="edit-session_type">
-                                <option value="lecture">Lecture</option>
-                                <option value="workshop">Workshop</option>
-                                <option value="panel">Panel</option>
-                                <option value="breakout">Breakout</option>
-                                <option value="roundtable">Roundtable</option>
-                            </select>
-                        </div>
-                        <div class="pdt-event-type">
-                            <h4>Event Type</h4>
-                            <select name="event_type" id="edit-event_type">
-                                <option value="lecture">Lecture</option>
-                                <option value="workshop">Workshop</option>
-                                <option value="panel">Panel</option>
-                                <option value="breakout">Breakout</option>
-                                <option value="roundtable">Roundtable</option>
-                            </select>
-                        </div>
-                        <div class="pdt-rid-qualified">
-                            <h4>RID Qualified?</h4>
-                            <select name="rid_qualified" id="edit-rid_qualified">
-                                <option value="yes">Yes</option>
-                                <option value="no">No</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="div7">
-                        <div class="pdt-session-modal__ceu-row">
-                            <div class="pdt-event-type">
-                                <p>Qualify for CEUs?</p>
-                                <select name="qual_for_CEU" id="edit-qual_for_ceu">
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
-                            </div>
-                            <div class="pdt-ceu-weight">
-                                <p>CEU Weight</p>
-                                <input type="text" name="CEU Weight" id="edit-ceu-weight" disabled="disabled"
-                                    placeholder="0.00">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="div8">
-                        <div class="pdt-session-modal__presenters-field">
-                            <p>Presenter(s)</p>
-                            <input type="text" name="presenters" id="edit-presenters"
-                                placeholder="Enter presenter names">
-                        </div>
+                    <div class="pdt-session-modal__parent-event-field">
+                        <label for="parent_event">Parent Event</label><br>
+                        <textarea name="parent_event" class="textbox" id="parent_event" rows="2"
+                            placeholder="Part of confrence or larger event? Otherwise leave blank"></textarea>
                     </div>
                 </div>
-                <div class="pdt-section-divider"></div>
-                <div class="pdt-session-modal__actions">
-                    <button>Cancel</button>
-                    <button>Save Session</button>
+            </div>
+            <div class="pdt-panel pdt-panel--5">
+                <div class="pdt-session-type">
+                    <h4>5- Session Type</h4>
+                    <select name="session_type" id="session_type">
+                        <option value="lecture">Lecture</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="panel">Panel</option>
+                        <option value="breakout">Breakout</option>
+                        <option value="roundtable">Roundtable</option>
+                    </select>
                 </div>
-            </form>
-        </div>
-    </div> -->
+                <div class="pdt-event-type">
+                    <h4>Event Type</h4>
+                    <select name="event_type" id="event_type">
+                        <option value="lecture">Lecture</option>
+                        <option value="workshop">Workshop</option>
+                        <option value="panel">Panel</option>
+                        <option value="breakout">Breakout</option>
+                        <option value="roundtable">Roundtable</option>
+                    </select>
+                </div>
+                <div class="pdt-rid-qualified">
+                    <h4>RID Qualified?</h4>
+                    <select name="rid_qualified" id="rid_qualified">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pdt-panel pdt-panel--6">
+                <div class="pdt-event-type">
+                    <p>6- Qualify for CEUs?</p>
+                    <select name="qual_for_CEU" id="qual_for_ceu">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="pdt-panel pdt-panel--7">
+                <div class="pdt-ceu-weight">
+                    <p>7- CEU Weight</p>
+                    <input type="text" name="CEU Weight" id="CEU Weight" disabled="disabled" placeholder="0.00">
+                </div>
+            </div>
+            <div class="pdt-panel pdt-panel--8">
+                <div class="pdt-session-modal__presenters-field">
+                    <p>8- Presenter(s)</p>
+                    <input type="text" name="presenters" id="presenters" placeholder="Enter presenter names">
+                </div>
+            </div>
+            <div class="pdt-panel pdt-panel--9">
+                <button disabled="disabled">Save Session</button>
+                <button disabled="disabled">Cancel</button>
+            </div>
+        </form>
+    </div>
+
 </body>
 
 </html>

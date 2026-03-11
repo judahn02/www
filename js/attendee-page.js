@@ -5,15 +5,25 @@ import { event_hookups } from "./attendee-page/event-hookups.js";
 (function () {
     "use strict" ;
 
-    function initAttendeePage() {
+    const jq = window.jQuery || window.$;
 
-        event_hookups() ;
+    if (typeof jq === "undefined") {
+        console.error("PDT: jQuery is required for pdt-attendee-table.js");
+    } else {
+        // Support environments that expose jQuery as either `jQuery` or `$`.
+        window.jQuery = window.jQuery || jq;
+        window.$ = window.$ || jq;
+
+        function initAttendeePage() {
+
+            event_hookups() ;
+        }
+
+        if (document.readyState === "loading") {
+            document.addEventListener("DOMContentLoaded", initAttendeePage, { once: true });
+            return;
+        }
+
+        initAttendeePage();
     }
-
-    if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initAttendeePage, { once: true });
-        return;
-    }
-
-    initAttendeePage();
 })();

@@ -1,34 +1,36 @@
  @use 'core-components' as core;
+
  * {
      box-sizing: border-box;
  }
 
-//  body {
-//      margin: 0;
-//      background: #f7f7f8;
-//      font-family: Arial, Helvetica, sans-serif;
-//  }
+ //  body {
+ //      margin: 0;
+ //      background: #f7f7f8;
+ //      font-family: Arial, Helvetica, sans-serif;
+ //  }
 
-//  body::before {
-//      content: "";
-//      position: fixed;
-//      inset: 0;
-//      background: rgba(24, 24, 27, 0.5);
-//      z-index: 0;
-//  }
+ //  body::before {
+ //      content: "";
+ //      position: fixed;
+ //      inset: 0;
+ //      background: rgba(24, 24, 27, 0.5);
+ //      z-index: 0;
+ //  }
 
- .pdt-parent {
-     position: fixed;
-     inset: 50% auto auto 50%;
-     transform: translate(-50%, -50%);
-     z-index: 1;
+ .pdt-parent-modal {
+     //  position: fixed;
+     //  inset: 50% auto auto 50%;
+     //  transform: translate(-50%, -50%);
+     //  z-index: 1;
 
-     width: min(calc(100vw - 48px), 560px);
-     max-height: calc(100vh - 48px);
+     //  width: min(calc(100vw - 48px), 560px);
+     //  max-height: calc(100vh - 48px);
+     width: 630px;
      overflow-y: auto;
      padding: 16px;
 
-     
+
      border: 2px solid #d4d4d8;
      border-radius: 12px;
      background: #ffffff;
@@ -46,7 +48,7 @@
      min-width: 0;
      padding: 16px;
      border-radius: 10px;
-    //  background: #ffeaea;
+     //  background: #ffeaea;
      border: 1px solid #e4e4e7;
  }
 
@@ -174,21 +176,23 @@
 
  .pdt-parent {
 
-     h2 {color: #e11d48;}
-     
+     h2 {
+         color: #e11d48;
+     }
+
      button {
-        padding: 4px 8px ;
-        border: 1px solid #e11d48 ;
-        border-radius: 16px ;
-        background-color: #e11d48;
-        color: white ;
+         padding: 4px 8px;
+         border: 1px solid #e11d48;
+         border-radius: 16px;
+         background-color: #e11d48;
+         color: white;
      }
  }
 
  .pdt-section-divider {
-        border-bottom: 1px solid #e11d48;
-        margin-bottom: 8px;
-    }
+     border-bottom: 1px solid #e11d48;
+     margin-bottom: 8px;
+ }
 
  .pdt-panel--1 {
 

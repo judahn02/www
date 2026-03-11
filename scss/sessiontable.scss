@@ -1,7 +1,8 @@
 @use "core-layout";
 @use "core-components" as core;
-@use "session-modal";
+@use "session-modal2";
 @use "session-attendees";
+@use "session-comment-box" ;
 
 
 // Comment Box CSS is under pdt-main {...}

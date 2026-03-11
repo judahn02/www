@@ -1,18 +1,9 @@
 @use 'core-layout';
 @use 'attendee_new_member_modal';
 @use 'attendee_presenter_check';
+@use 'attendeestable-link-armember' ;
 
-.pdt-main {
-    border-width: 0px;
-
-    .pdt-grid,
-    a {
-        color: #e11d48;
-        margin-right: 8px;
-        text-decoration: none;
-    }
-
-    button {
+.pdt-button {
         background-color: #e11d48;
         border: 1px solid #e11d48;
         border-radius: 6px;
@@ -25,14 +16,24 @@
         cursor: pointer;
     }
 
-    button:hover {
-        @extend button;
+    .pdt-button:hover {
         background-color: #c0183c;
         border: 1px solid #c0183c;
     }
 
-    .pdt-add-member {
-        @extend button;
+    .pdt-button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+    }
+
+.pdt-main {
+    border-width: 0px;
+
+    .pdt-grid,
+    a {
+        color: #e11d48;
+        margin-right: 8px;
+        text-decoration: none;
     }
 
     h1 {
@@ -81,7 +82,7 @@
             margin: 8px;
             text-align: center;
             height: 50px;
-            padding: 4x;
+            padding: 4px;
             border-bottom: 0.5px solid #ffa7a7;
 
         }
