@@ -58,6 +58,18 @@ let serverData = {
 };
 
 (function () {
+    // Ensures jQuery
+    const hasDollar = typeof window.$ !== "undefined";
+    const hasJQuery = typeof window.jQuery !== "undefined";
+    if (!hasDollar && hasJQuery) {
+        window.$ = window.jQuery;
+    }
+
+    if (typeof window.$ === "undefined") {
+        console.error("PDT: jQuery is required for pdt-attendee-table.js");
+        return;
+    }
+
     class DataService {
         constructor() {
             this.collections = new Map([
@@ -163,17 +175,6 @@ let serverData = {
         return;
     }
     const defaultPlaceholder = attendeeInput.getAttribute("placeholder") || "";
-    // Ensures jQuery
-    const hasDollar = typeof window.$ !== "undefined";
-    const hasJQuery = typeof window.jQuery !== "undefined";
-    if (!hasDollar && hasJQuery) {
-        window.$ = window.jQuery;
-    }
-
-    if (typeof window.$ === "undefined") {
-        console.error("PDT: jQuery is required for pdt-attendee-table.js");
-        return;
-    }
 
     // ---- Main Logic ----
 

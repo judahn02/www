@@ -1,0 +1,235 @@
+body {
+  background-color: #fafafa;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #1d2327;
+}
+
+.pdt-section-divider {
+  width: 100%;
+  height: 1px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  background-color: #e11d48;
+}
+
+.pdt-modal-shadow {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background-color: rgba(0, 0, 0, 0.35);
+  z-index: 900;
+}
+
+.pdt-modal-shadow[hidden] {
+  display: none;
+}
+
+.pdt-main .button {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+  border-radius: 6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+.pdt-main .button:hover {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+}
+.pdt-main .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.pdt-main .shortcuts a {
+  text-decoration: none;
+  color: #e11d48;
+  margin: 0px 8px;
+}
+.pdt-main .search-n-addMember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 24px 0px;
+}
+.pdt-main .search-n-addMember .search {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
+  height: 26px;
+}
+.pdt-main .search-n-addMember .add-member {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.pdt-main .page-controls {
+  display: flex;
+  height: 25px;
+  align-items: center;
+  margin: 16px 0px;
+}
+.pdt-main .table-wrapper {
+  width: 100%;
+  border: 2px solid #e11d48;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.pdt-main .table-wrapper .table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  text-align: center;
+}
+.pdt-main .table-wrapper .table thead {
+  border-bottom: 2px solid #e11d48;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgb(255, 255, 255) 90%, #ffdede 96%, #e11d48 100%);
+}
+.pdt-main .table-wrapper .table thead th {
+  height: 50px;
+}
+.pdt-main .table-wrapper .table tbody tr {
+  height: 50px;
+}
+.pdt-main .table-wrapper .table tbody tr:nth-child(even) {
+  background-color: #fef2f2;
+}
+.pdt-main .table-wrapper .table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+.pdt-link-armember {
+  border: 2px solid red;
+  border-radius: 16px;
+  padding: 16px 16px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 400px;
+}
+.pdt-link-armember .button {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+  border-radius: 6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+.pdt-link-armember .button:hover {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+}
+.pdt-link-armember .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.pdt-link-armember {
+  /* Custom render hooks used by option/item templates */
+}
+.pdt-add-new-member {
+  border: 2px solid red;
+  border-radius: 16px;
+  padding: 16px 16px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 400px;
+}
+.pdt-add-new-member .button {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+  border-radius: 6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+.pdt-add-new-member .button:hover {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+}
+.pdt-add-new-member .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.pdt-add-new-member .r_presenter_wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 16px 0px;
+}
+.pdt-add-new-member .r_presenter_wrap #r_presenter {
+  width: 200px;
+}
+.pdt-add-new-member .member_inputs {
+  margin: 16px 0px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8px;
+}
+.pdt-add-new-member .member_inputs .div1, .pdt-add-new-member .member_inputs .div2, .pdt-add-new-member .member_inputs .div3, .pdt-add-new-member .member_inputs .div4 {
+  text-align: center;
+}
+.pdt-add-new-member .member_inputs .div3 {
+  grid-row-start: 2;
+}
+.pdt-add-new-member .member_inputs .div4 {
+  grid-row-start: 2;
+}
+.pdt-add-new-member .new-member_buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pdt-attendees-check {
+  border: 2px solid red;
+  border-radius: 16px;
+  padding: 16px 16px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 400px;
+}
+.pdt-attendees-check .button {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+  border-radius: 6px;
+  margin-left: 8px;
+  margin-right: 8px;
+  padding: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+.pdt-attendees-check .button:hover {
+  background-color: #e11d48;
+  border: 1px solid #e11d48;
+}
+.pdt-attendees-check .button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}/*# sourceMappingURL=presenterstable2.css.map */

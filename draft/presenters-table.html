@@ -4,27 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendee Table draft 2</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" />
-    <link rel="stylesheet" href="../css/attendeetable2.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
         integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    <!-- As I drafted the first set of html and css pairings in this project
-        I realized that there are some flaws with what I build in this. 
-        To remedy it, I will be rewriting html along with their classes. 
-        It wont be a significant struggle because I have rough draft to work
-        from.-->
+    
+    <link rel="stylesheet" href="../css/presenterstable2.css">
+    <title>Presenters Table</title>
 </head>
 
 <body>
     <div class="pdt-main">
-        <h1>Attendees Table</h1>
+        <h1>Presenters Table</h1>
 
         <div class="shortcuts">
             <a href="#"><b>Session Table</b></a>
-            <a href="#"><b>Presenter Table</b></a>
+            <a href="#"><b>Attendee Table</b></a>
             <a href="#"><b>Home</b></a>
         </div>
 
@@ -36,55 +32,37 @@
         <div class="page-controls">
             <input type="button" value="Prev" class="page-control button" id="top_prev_btn" disabled>
             <p>Page 1 of 4</p>
-            <input type="button" value="Next" class="page-control button" id="top_Next_btn"disabled>
+            <input type="button" value="Next" class="page-control button" id="top_Next_btn" disabled>
         </div>
 
         <div class="table-wrapper">
-            <table class="attendee-table" id="attendee-table">
+            <table class="table" id="presenter-table">
                 <thead>
                     <tr>
-                        <th id="header_f_name">First Name</th>
-                        <th id="header_l_name">Last Name</th>
+                        <th id="header_name">Name</th>
                         <th id="header_email">Email</th>
-                        <th id="header_wp_id">ARMember ID</th>
-                        <th id="header_t_hours">Total Hours</th>
-                        <th id="header_t_ceus">Total CEUs</th>
+                        <th id="header_phone">Phone</th>
+                        <th id="header_s_count">Registered Session Count</th>
+                        <th id="header_arm_id">ARMember ID</th>
+                        <th id="header_action">Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="6">No Attendees found or error in retrieving data.</td>
+                        <td colspan="6"> No presenters found or loading. </td>
                     </tr>
-                    <tr class="row">
-                        <td class="cell">Judah</td>
-                        <td class="cell">Nava</td>
-                        <td class="cell">example@example.com</td>
-                        <td class="cell">
-                            <button class="link-button button" type="button" disabled>WP # <span>404</span></button>
+                    <!-- <tr>
+                        <td>Avery Collins</td>
+                        <td>avery.collins@example.com</td>
+                        <td>(555) 201-4401</td>
+                        <td>3</td>
+                        <td>
+                            <input type="button" value="Link Account">
                         </td>
-                        <td class="cell">7.5</td>
-                        <td class="cell">0.15</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="cell">Judah</td>
-                        <td class="cell">Nava</td>
-                        <td class="cell">example@example.com</td>
-                        <td class="cell">
-                            <button class="link-button button" type="button" disabled>WP # <span>404</span></button>
+                        <td>
+                            <input type="button" value="↓ Details">
                         </td>
-                        <td class="cell">7.5</td>
-                        <td class="cell">0.15</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="cell">Judah</td>
-                        <td class="cell">Nava</td>
-                        <td class="cell">example@example.com</td>
-                        <td class="cell">
-                            <button class="link-button button" type="button" disabled>WP # <span>404</span></button>
-                        </td>
-                        <td class="cell">7.5</td>
-                        <td class="cell">0.15</td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>
@@ -102,18 +80,18 @@
 
             <div class="pdt-section-divider" aria-hidden="true"></div>
 
-            <h4>Attendee</h4>
+            <h4>Presenter</h4>
             <p id="contact">John Doe | email@email.com</p>
             <h4>Current Link</h4>
-            <p id="id-stat">This attendee is not linked to any ARMember account.</p>
+            <p id="id-stat">This presenter is not linked to any ARMember account.</p>
             <h4>Search ARMember Accounts</h4>
             <p class="lead">
-                Type at least 2 characters to search attendees.
+                Type at least 2 characters to search presenters.
             </p>
 
             <div class="pdt-n-member-Tom-Select">
-                <label class="field-label" for="attendee-select">Link Member</label>
-                <input id="attendee-select" type="text" placeholder="Search by name or email..." autocomplete="off" />
+                <label class="field-label" for="presenter">Link Member</label>
+                <input id="presenter-select" type="text" placeholder="Search by name or email..." autocomplete="off" />
                 <br>
                 <small>Start typing an ARMember account name, email, or id number.</small>
                 <div class="pdt-section-divider" aria-hidden="true"></div>
@@ -126,9 +104,10 @@
         </div>
     </div>
 
-    <div class="pdt-modal-shadow" id="pdt-shadow-new-member" hidden>
-        <div class="pdt-add-new-member" id="pdt-n-member-modal" hidden>
-            <h2>Add New Member</h2>
+    <div class="pdt-modal-shadow" id="pdt-shadow-new-member"hidden>
+        <div class="pdt-add-new-member" id="pdt-n-member-modal">
+            <h2>Add New Presenter</h2>
+
             <div class="pdt-section-divider"></div>
 
             <div class="r_presenter_wrap">
@@ -166,31 +145,30 @@
         </div>
     </div>
 
-    <div class="pdt-modal-shadow" id="pdt-shadow-registered-presenter" hidden>
-        <div class="pdt-presenter-check" id="pdt-presenter-check" hidden>
-            <h2>Registered Presenter Check</h2>
+    <div class="pdt-modal-shadow" id="pdt-shadow-registered-attendee" hidden>
+        <div class="pdt-attendee-check" id="pdt-attendee-check">
+            <h2>Registered Attendee Check</h2>
 
             <div class="pdt-section-divider"></div>
-            <!-- <p>Presenter Name</p> -->
-           
-            <div class="pdt-reg-presenter-Tom-Select">
-                <label class="field-label" for="presenter-select">Presenter Name</label>
-                <input id="presenter-select" type="text" placeholder="Search by name or email..." autocomplete="off" />
+
+            <div class="pdt-reg-attendee-Tom-Select">
+                <label class="field-label" for="attendee-select">Attendee Name</label>
+                <input id="attendee-select" type="text" placeholder="Search by name or email..." autocomplete="off" />
                 <br>
-                <small>Start typing an Presenter account name, email, or id number.</small>
-                <!-- <div class="pdt-section-divider" aria-hidden="true"></div> -->
+                <small>Start typing an Attendee account name, email, or id number.</small>
             </div>
 
             <div class="pdt-section-divider"></div>
 
-            <div class="reg-presenter_buttons">
-                <input type="button" class="button" value="Cancel" id="reg-presenter-cancel">
-                <input type="button" class="button" value="Submit" id="reg-presenter-submit" disabled>
+            <div class="reg-attendee_buttons">
+                <input type="button" class="button" value="Cancel" id="reg-attendee-cancel">
+                <input type="button" class="button" value="Submit" id="reg-attendee-submit" disabled>
             </div>
         </div>
     </div>
 
-    <script type="module" src="../js/attendee-table2.js"></script>
+
+    <script type="module" src="../js/presenter-table2.js"></script>
 </body>
 
 </html>
