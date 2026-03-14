@@ -10,12 +10,8 @@ export class main_page {
         this.attendeeCheck = aCheck ;
     } ;
 
-    async init (params) {
-        // pull in data
-        const presenters = await this.db.get("presenters") ;
-
-        // load up table
-        const tableBody = $("#presenter-table tbody") ;
+    async renderTable (tableBody) {
+        let presenters = await this.db.get("presenters") ;
         if (tableBody.length === 0 || !Array.isArray(presenters)) {
             return ;
         }
@@ -24,8 +20,8 @@ export class main_page {
 
         for (const presenter of presenters) {
             const armemberCell = presenter.armember_id === -1 ?
-                `<input type="button" value="Link Account">` :
-                presenter.armember_id ;
+                `<input type="button" class="link-button button" data-id="${presenter.id}" value="Link Account">` :
+                `<input type="button" class="link-button button" data-id="${presenter.id}" value="${presenter.armember_id}">`;
 
             const row = `
                 <td>${presenter.name ?? ""}</td>
@@ -33,14 +29,37 @@ export class main_page {
                 <td>${presenter.phone ?? ""}</td>
                 <td>${presenter.session_count ?? 0}</td>
                 <td>${armemberCell}</td>
-                <td><input type="button" value="↓ Details"></td>
+                <td><input type="button" class="button" value="↓ Details"></td>
             ` ;
 
             tableBody.append(`<tr>${row}</tr>`) ;
         }
+    }
 
+    async init (params) {
+        const tableBody = $(".pdt-main #presenter-table tbody") ;
+        if (tableBody.length === 0) {
+            return ;
+        }
 
-        
+        const refreshTable = async () => {
+            await this.renderTable(tableBody) ;
+        } ;
+
+        await refreshTable() ;
+        await this.linkModal.init(
+            tableBody, 
+            this.db, 
+            this.host);
+        await this.newMember.init(
+            this.db,
+            refreshTable
+        ) ;
+        await this.attendeeCheck.init(
+            this.db,
+            this.host,
+            refreshTable
+        ) ;
         return ;
     }
 }

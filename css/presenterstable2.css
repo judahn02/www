@@ -202,7 +202,7 @@ body {
   justify-content: flex-end;
 }
 
-.pdt-attendees-check {
+.pdt-attendee-check {
   border: 2px solid red;
   border-radius: 16px;
   padding: 16px 16px;
@@ -213,7 +213,7 @@ body {
   background-color: #fff;
   width: 400px;
 }
-.pdt-attendees-check .button {
+.pdt-attendee-check .button {
   background-color: #e11d48;
   border: 1px solid #e11d48;
   border-radius: 6px;
@@ -225,11 +225,11 @@ body {
   color: #fff;
   cursor: pointer;
 }
-.pdt-attendees-check .button:hover {
+.pdt-attendee-check .button:hover {
   background-color: #e11d48;
   border: 1px solid #e11d48;
 }
-.pdt-attendees-check .button:disabled {
+.pdt-attendee-check .button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
 }/*# sourceMappingURL=presenterstable2.css.map */

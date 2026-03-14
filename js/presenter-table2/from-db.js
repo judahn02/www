@@ -17,7 +17,7 @@ export class db_connection {
                 "email": "noah.patel@example.com",
                 "phone": "(555) 318-2294",
                 "session_count": 5,
-                "armember_id": "arm_204"
+                "armember_id": -1
             },
             {
                 "id": 3,
@@ -33,7 +33,7 @@ export class db_connection {
                 "email": "lucas.nguyen@example.com",
                 "phone": "(555) 109-7732",
                 "session_count": 4,
-                "armember_id": "arm_318"
+                "armember_id": -1
             },
             {
                 "id": 5,
@@ -70,8 +70,13 @@ export class db_connection {
         ]
     } ;
 
-
+    // this function will do the following. 
+    // it will return a refrence to the data it caches on its own. 
+    // so every class that uses it won't have to worry about passing refrence alwas.
     async get (resource, search) {
+
+        await new Promise((resolve) => setTimeout(resolve, 250));
+
         if (typeof resource !== "string" || resource.trim() === "") {
             return undefined ;
         }
@@ -106,6 +111,36 @@ export class db_connection {
                 armemberId.includes(query)
             ) ;
         }) ;
+    }
+
+    async set (resource, data) {
+
+        await new Promise((resolve) => setTimeout(resolve, 250));
+
+        if (resource !== "presenters" || data === null || typeof data !== "object") {
+            return null ;
+        }
+
+        if (!Array.isArray(db_connection.data.presenters)) {
+            db_connection.data.presenters = [] ;
+        }
+
+        const maxId = db_connection.data.presenters.reduce((maxValue, presenter) => {
+            const presenterId = Number(presenter?.id) ;
+            return Number.isFinite(presenterId) ? Math.max(maxValue, presenterId) : maxValue ;
+        }, 0) ;
+
+        const newPresenter = {
+            id: maxId + 1,
+            name: String(data.name ?? "").trim(),
+            email: String(data.email ?? "").trim(),
+            phone: String(data.phone ?? "").trim(),
+            session_count: Number(data.session_count ?? 0) || 0,
+            armember_id: data.armember_id ?? -1
+        } ;
+
+        db_connection.data.presenters.push(newPresenter) ;
+        return newPresenter ;
     }
 
 }

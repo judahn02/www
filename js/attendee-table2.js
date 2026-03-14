@@ -240,7 +240,7 @@ let serverData = {
                 );
             } else {
                 $(".pdt-link-armember #id-stat").text(
-                    `ARMember[ ID: ${attendeeCopy["WP-id"]} ]`
+                    `This attendee is not linked to any ARMember account.`
                 );
             }
         }
@@ -390,6 +390,9 @@ let serverData = {
 
     });
 
+
+
+    
     // ---- New Member Logic ----
 
     // initializing

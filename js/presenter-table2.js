@@ -4,7 +4,7 @@ import { host_connection } from "./presenter-table2/from-host.js";
 import { main_page } from "./presenter-table2/main_page.js";
 import { link_modal } from "./presenter-table2/link_modal.js";
 import { new_member } from "./presenter-table2/new_member.js";
-import { attendee_check } from "./presenter-table2/attendee_check.js";
+import { presenter_check } from "./presenter-table2/presenter_check.js";
 
 // jQuery Check
 const hasDollar = typeof window.$ !== "undefined";
@@ -29,7 +29,7 @@ if (typeof window.$ === "undefined") {
             hostC,
             new link_modal(),
             new new_member(),
-            new attendee_check()
+            new presenter_check()
         );
 
 
