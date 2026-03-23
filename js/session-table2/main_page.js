@@ -8,6 +8,12 @@ export class main_page {
         this.showAttendees = showAttendees;
         this.addEditSession = addEditSession;
         this.commentManager = new comment_manager(db);
+        this.attendeeSortModes = [
+            { field: "first", direction: "asc", label: "Sort: First A-Z" },
+            { field: "last", direction: "asc", label: "Sort: Last A-Z" },
+            { field: "first", direction: "desc", label: "Sort: First Z-A" },
+            { field: "last", direction: "desc", label: "Sort: Last Z-A" }
+        ];
     }
 
     async init() {
@@ -38,6 +44,10 @@ export class main_page {
             }
 
             detailsRow.prop("hidden", !detailsRow.prop("hidden")); // on off logic
+        });
+
+        tableBody.off("click.pdtSortAttendees", ".pdt-sort-attendees-button").on("click.pdtSortAttendees", ".pdt-sort-attendees-button", (event) => {
+            this.sortAttendees($(event.currentTarget));
         });
 
         await this.addEditSession.init(this) ;
@@ -92,6 +102,8 @@ export class main_page {
             for (let attendee of session.Attendees) {
                 let attendeeContact = document.createElement("div");
                 attendeeContact.className = "pdt-person-card";
+                attendeeContact.dataset.attendeeName = attendee[0];
+                attendeeContact.dataset.personId = String(attendee[4]);
 
                 if (attendee[2] === null) {
                     attendeeContact.innerHTML = `
@@ -134,7 +146,7 @@ export class main_page {
                             <div data-session-id="${session.sessionID}" class="pdt-buttons">
                                 ${lockStat}
                                 <button data-session-id="${session.sessionID}" type="button" disabled>${lockStatBtn}</button>
-                                <button data-session-id="${session.sessionID}" type="button" disabled>Sort</button>
+                                <button data-session-id="${session.sessionID}" data-sort-index="-1" class="pdt-sort-attendees-button" type="button">Sort: Original</button>
                                 <button data-session-id="${session.sessionID}" class="pdt-edit-session-button" type="button">Edit Details</button>
                                 <button data-session-id="${session.sessionID}" type="button" disabled>Edit Attendees</button>
                             </div>
@@ -170,5 +182,84 @@ export class main_page {
         }, 1000);
     }
 
-   
+    sortAttendees(sortButton) {
+        const attendeeContainer = sortButton.closest(".pdt-details-panel").find(".pdt-details-people").first();
+        if (attendeeContainer.length === 0) {
+            return ;
+        }
+
+        const sortIndex = this.getNextAttendeeSortIndex(sortButton);
+        const sortMode = this.attendeeSortModes[sortIndex];
+        const attendeeCards = attendeeContainer.children(".pdt-person-card").get();
+
+        attendeeCards.sort((leftCard, rightCard) => {
+            return this.compareAttendeeCards(leftCard, rightCard, sortMode);
+        });
+
+        attendeeContainer.append(attendeeCards);
+        sortButton.attr("data-sort-index", String(sortIndex));
+        sortButton.text(sortMode.label);
+    }
+
+    getNextAttendeeSortIndex(sortButton) {
+        const currentSortIndex = Number(sortButton.attr("data-sort-index"));
+        if (!Number.isInteger(currentSortIndex) || currentSortIndex < 0) {
+            return 0;
+        }
+
+        return (currentSortIndex + 1) % this.attendeeSortModes.length;
+    }
+
+    compareAttendeeCards(leftCard, rightCard, sortMode) {
+        const leftSortData = this.getAttendeeSortData(leftCard);
+        const rightSortData = this.getAttendeeSortData(rightCard);
+
+        let comparison = 0;
+        if (sortMode.field === "first") {
+            comparison = this.compareSortValues(leftSortData.firstName, rightSortData.firstName);
+            if (comparison === 0) {
+                comparison = this.compareSortValues(leftSortData.lastName, rightSortData.lastName);
+            }
+        }
+        else {
+            comparison = this.compareSortValues(leftSortData.lastName, rightSortData.lastName);
+            if (comparison === 0) {
+                comparison = this.compareSortValues(leftSortData.firstName, rightSortData.firstName);
+            }
+        }
+
+        if (comparison === 0) {
+            comparison = this.compareSortValues(leftSortData.fullName, rightSortData.fullName);
+        }
+
+        if (comparison === 0) {
+            comparison = leftSortData.personID - rightSortData.personID;
+        }
+
+        if (sortMode.direction === "desc") {
+            comparison *= -1;
+        }
+
+        return comparison;
+    }
+
+    getAttendeeSortData(attendeeCard) {
+        const attendeeName = String(attendeeCard.dataset.attendeeName ?? "").trim();
+        const normalizedName = attendeeName.replace(/\s+/g, " ").trim();
+        const nameParts = normalizedName === "" ? [] : normalizedName.split(" ");
+        const firstName = (nameParts[0] ?? "").toLocaleLowerCase();
+        const lastName = (nameParts[nameParts.length - 1] ?? firstName).toLocaleLowerCase();
+        const personID = Number(attendeeCard.dataset.personId);
+
+        return {
+            firstName,
+            lastName,
+            fullName: normalizedName.toLocaleLowerCase(),
+            personID: Number.isFinite(personID) ? personID : 0
+        };
+    }
+
+    compareSortValues(leftValue, rightValue) {
+        return String(leftValue).localeCompare(String(rightValue), undefined, { sensitivity: "base" });
+    }
 }
