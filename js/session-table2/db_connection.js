@@ -2,7 +2,7 @@ import { session_state } from "./state.js";
 export class db_connection {
     /*
     {
-    "localID" : null,
+    "sessionID" : null,
     "Date": ("Self Paced" | "MM/DD/YYYY" | "MM/DD/YYYY to MM/DD/YYYY"),
     "SessionTitle" : "Name",
     "Length" : 60,
@@ -28,7 +28,7 @@ export class db_connection {
     static data = {
         "sessions" : [
             {
-                "localID" : null,
+                "sessionID" : 1,
                 "Date": "03/11/2026",
                 "SessionTitle" : "Interpreter Ethics in Hybrid Teams",
                 "Length" : 75,
@@ -52,7 +52,7 @@ export class db_connection {
                 ]
             },
             {
-                "localID" : null,
+                "sessionID" : 2,
                 "Date": "03/18/2026",
                 "SessionTitle" : "Medical Terminology Drill",
                 "Length" : 90,
@@ -75,7 +75,7 @@ export class db_connection {
                 ]
             },
             {
-                "localID" : null,
+                "sessionID" : 3,
                 "Date": "Self Paced",
                 "SessionTitle" : "Boundary Setting for Freelance Interpreters",
                 "Length" : 45,
@@ -100,7 +100,7 @@ export class db_connection {
                 ]
             },
             {
-                "localID" : null,
+                "sessionID" : 4,
                 "Date": "04/02/2026 to 04/04/2026",
                 "SessionTitle" : "Leadership Intensive",
                 "Length" : 180,
@@ -124,7 +124,7 @@ export class db_connection {
                 ]
             },
             {
-                "localID" : null,
+                "sessionID" : 5,
                 "Date": "04/09/2026",
                 "SessionTitle" : "Legal Prep: Depositions and Hearings",
                 "Length" : 120,
@@ -147,7 +147,7 @@ export class db_connection {
                 ]
             },
             {
-                "localID" : null,
+                "sessionID" : 6,
                 "Date": "04/21/2026 to 04/22/2026",
                 "SessionTitle" : "Mentor Circle Facilitation Lab",
                 "Length" : 150,
@@ -344,6 +344,7 @@ export class db_connection {
         }
         /*
         {
+            sessionID: #|null,
             ceuQualify: "Yes|No",
             ceuType: #|null,
             ceuWeight: #.#|null,

@@ -139,6 +139,7 @@ export class add_edit_session {
 
             // --- Send Data ---
             const sessionPayload = {
+                sessionID: null,
                 dateOption,
                 length,
                 flags,

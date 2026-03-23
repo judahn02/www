@@ -32,8 +32,8 @@ export class comment_manager {
             const icon = $(event.currentTarget);
             const personCard = icon.closest(".pdt-person-card");
             const personName = String(personCard.find("p").first().text() ?? "").trim();
-            const sessionID = Number(icon.attr("data-id"));
-            const personID = Number(icon.attr("data-aid"));
+            const sessionID = Number(icon.attr("data-session-id"));
+            const personID = Number(icon.attr("data-person-id"));
 
             if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
                 return;

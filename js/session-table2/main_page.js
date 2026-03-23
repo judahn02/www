@@ -2,8 +2,6 @@ import { session_state } from "./state.js";
 import { comment_manager } from "./comment_manager.js";
 export class main_page {
 
-    static index = 1 ;
-
     constructor(db, host, showAttendees, addEditSession) {
         this.db = db;
         this.host = host;
@@ -56,15 +54,13 @@ export class main_page {
         const sessions = await this.db.get("sessions");
         // This is an array of objects
         tableBody.empty() ;
-        this.index = 1 ;
 
 
         // fill in table
         // first generates the data points row, than the body of attendees.
         for (let session of sessions) {
-            session.localID = this.index ;
             let entry = `
-                <tr data-id="${session.localID}">
+                <tr data-session-id="${session.sessionID}">
                     <td>${session.Date}</td>
                     <td>${session.SessionTitle}</td>
                     <td>${session.Length} min</td>
@@ -78,7 +74,7 @@ export class main_page {
                     <td>${session.Organizer}</td>
                     <td>${session.AttendeesCt}</td>
                     <td class="pdt-actions-column">
-                        <button data-id="${session.localID}" class="pdt-details-button" type="button">Details</button>
+                        <button data-session-id="${session.sessionID}" class="pdt-details-button" type="button">Details</button>
                     </td>
                 </tr>
             ` ;
@@ -91,7 +87,7 @@ export class main_page {
 
                 if (attendee[2] === null) {
                     attendeeContact.innerHTML = `
-                        <img data-id="${session.localID}" data-aid="${attendee[4]}" class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                        <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                         aria-hidden="true">
                         <p>${attendee[0]}</p>
                         <p>${attendee[1]}</p>
@@ -100,7 +96,7 @@ export class main_page {
                 }
                 else {
                     attendeeContact.innerHTML = `
-                        <img data-id="${session.localID}" data-aid="${attendee[4]}" class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                        <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                         aria-hidden="true">
                         <p>${attendee[0]}</p>
                         <p>${attendee[1]}</p>
@@ -124,15 +120,15 @@ export class main_page {
             }
 
             let attendeeSpace = `
-                <tr data-id="${session.localID}" class="details-row" hidden>
+                <tr data-session-id="${session.sessionID}" class="details-row" hidden>
                     <td colspan="13">
                         <div class="pdt-details-panel">
-                            <div data-id="${session.localID}" class="pdt-buttons">
+                            <div data-session-id="${session.sessionID}" class="pdt-buttons">
                                 ${lockStat}
-                                <button data-id="${session.localID}" type="button" disabled>${lockStatBtn}</button>
-                                <button data-id="${session.localID}" type="button" disabled>Sort</button>
-                                <button data-id="${session.localID}" type="button" disabled>Edit Details</button>
-                                <button data-id="${session.localID}" type="button" disabled>Edit Attendees</button>
+                                <button data-session-id="${session.sessionID}" type="button" disabled>${lockStatBtn}</button>
+                                <button data-session-id="${session.sessionID}" type="button" disabled>Sort</button>
+                                <button data-session-id="${session.sessionID}" type="button" disabled>Edit Details</button>
+                                <button data-session-id="${session.sessionID}" type="button" disabled>Edit Attendees</button>
                             </div>
                             ${attendeeContacts.outerHTML}
                         </div>
@@ -140,7 +136,6 @@ export class main_page {
                 </tr> ` ;
 
             tableBody.append(entry, attendeeSpace) ;
-            this.index = this.index + 1 ;
         }
 
         return tableBody ;
