@@ -100,7 +100,7 @@ body {
   height: 50px;
 }
 .pdt-main .table-wrapper .table tbody tr:nth-child(even) {
-  background-color: #fef2f2;
+  background-color: #fcd5d5;
 }
 .pdt-main .table-wrapper .table tbody tr:nth-child(odd) {
   background-color: #ffffff;
@@ -115,7 +115,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  width: 400px;
+  width: 450px;
 }
 .pdt-link-armember .button {
   background-color: #e11d48;
@@ -149,7 +149,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  width: 400px;
+  width: 450px;
 }
 .pdt-add-new-member .button {
   background-color: #e11d48;
@@ -211,7 +211,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
-  width: 400px;
+  width: 450px;
 }
 .pdt-attendee-check .button {
   background-color: #e11d48;

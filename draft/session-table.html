@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+
+    <!-- <link rel="stylesheet" href="../css/presenterstable2.css"> -->
+    <link rel="stylesheet" href="../css/sessiontable2.css">
+    <title>Session Table</title>
+</head>
+
+<body>
+    <!-- Almost Done -->
+    <div class="pdt-main">
+        <h1>Session Table</h1>
+
+        <div class="shortcuts">
+            <a href="#"><b>Presenter Table</b></a>
+            <a href="#"><b>Attendee Table</b></a>
+            <a href="#"><b>Home</b></a>
+        </div>
+
+        <div class="search-n-addSession">
+            <input type="search" id="session-search" class="search"
+                placeholder="Search by... title/date/type/organizer/parent event">
+            <input type="button" id="add-session" value="+ Add Session" class="add-session button">
+        </div>
+
+        <div class="page-controls">
+            <input type="button" value="Prev" class="page-control button" id="top-prev-btn" disabled>
+            <p>Page 1 of 4</p>
+            <input type="button" value="Next" class="page-control button" id="top-next-btn" disabled>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Session Title</th>
+                        <th>Length</th>
+                        <th>Session Type</th>
+                        <th>CEU Weight</th>
+                        <th>CEU Consideration</th>
+                        <th>Qualify for CEUs?</th>
+                        <th>RID Qualified?</th>
+                        <th>Event Type</th>
+                        <th>Parent Event</th>
+                        <th>Organizer</th>
+                        <th>Attendees</th>
+                        <th class="pdt-actions-column">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- <tr>
+                        <td>03/14/2026</td>
+                        <td>Opening Keynote: Interpreting Tomorrow</td>
+                        <td>60 min</td>
+                        <td>Lecture</td>
+                        <td>1.0</td>
+                        <td>General credit</td>
+                        <td>Approved</td>
+                        <td>Yes</td>
+                        <td>Conference</td>
+                        <td>Spring Summit 2026</td>
+                        <td>Admin Team</td>
+                        <td>45</td>
+                        <td class="pdt-actions-column">
+                            <button class="pdt-details-button" type="button">Details</button>
+                        </td>
+                    </tr>
+                    <tr class="details-row" hidden>
+                        <td colspan="13">
+                            <div class="pdt-details-panel">
+                                <div class="pdt-buttons">
+                                    <p>Locked by Jason Zinza | Unlocked by Jason Zinza</p>
+                                    <button type="button" disabled>Lock | Unlock</button>
+                                    <button type="button" disabled>Sort</button>
+                                    <button type="button" disabled>Edit Details</button>
+                                    <button type="button" disabled>Edit Attendees</button>
+                                </div>
+                                <div class="pdt-details-people">
+                                    <div class="pdt-person-card">
+                                        <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                            aria-hidden="true">
+                                        <p>Avery Collins</p>
+                                        <p>avery.collins@example.com</p>
+                                        <p>Master</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-controls">
+            <input type="button" value="Prev" class="page-control button" id="bot-prev-btn" disabled>
+            <p>Page 1 of 4</p>
+            <input type="button" value="Next" class="page-control button" id="bot-next-btn" disabled>
+        </div>
+    </div>
+
+    <!-- Not Started -->
+    <div class="pdt-modal-shadow" id="pdt-shadow-comments" hidden>
+        <div class="pdt-comment-box">
+            <h2><span>Avery Collins</span> Comments</h2>
+            <textarea name="comment_box_admin" id="comment_box_admin" rows="5"></textarea>
+            <label for="comment_box_admin">For Admin View Only</label>
+            <br>
+            <textarea name="comment_box" id="comment_box" rows="5"></textarea>
+            <label for="comment_box">Will be seen by Member</label>
+            <div class="pdt-buttons">
+                <button type="button" class="button" disabled>Close</button>
+                <button type="button" class="button" disabled>Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Not Started -->
+    <div class="pdt-modal-shadow" id="pdt-shadow-attendees" hidden>
+        <div class="pdt-session-attendees">
+            <h2>Edit Attendees</h2>
+            <div class="pdt-section-divider" aria-hidden="true"></div>
+            <h3 class="label">Session</h3>
+            <p class="session-name">Opening Keynote: Interpreting Tomorrow</p>
+            <div class="search">
+                <input type="search" name="attendee-search" id="attendee-search"
+                    placeholder="Search attendees by name or email">
+            </div>
+            <h3>Attendees</h3>
+            <div class="table-wrapper">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Attendee</th>
+                            <th>Certification Status at time of Attending</th>
+                            <th>RID certified?</th>
+                            <th>Self Paced Date Range</th>
+                            <th>Comments</th>
+                            <th>Delete?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="search-row">
+                            <td colspan="6">
+                                <input type="text" name="search-attendee" id="search-attendee"
+                                    placeholder="Type attendee name">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Avery Collins</td>
+                            <td>
+                                <select name="attendee_status_1" id="attendee_status_1">
+                                    <option value="master">Master</option>
+                                    <option value="associate">Associate</option>
+                                    <option value="not_assigned">Not Assigned</option>
+                                    <option value="none">None</option>
+                                </select>
+                            </td>
+                            <td><input type="checkbox" name="rid_certified_1" id="rid_certified_1" checked></td>
+                            <td class="date-range-cell">
+                                <input type="date" name="self_p_start_1" id="self_p_start_1">
+                                <p>to</p>
+                                <input type="date" name="self_p_end_1" id="self_p_end_1">
+                            </td>
+                            <td>
+                                <button type="button" disabled>
+                                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                        aria-hidden="true">
+                                </button>
+                            </td>
+                            <td><button class="delete-button" type="button" disabled>X</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Mason Reed</td>
+                            <td>
+                                <select name="attendee_status_2" id="attendee_status_2">
+                                    <option value="not_assigned">Not Assigned</option>
+                                    <option value="master">Master</option>
+                                    <option value="associate">Associate</option>
+                                    <option value="none">None</option>
+                                </select>
+                            </td>
+                            <td><input type="checkbox" name="rid_certified_2" id="rid_certified_2"></td>
+                            <td class="date-range-cell">
+                                <input type="date" name="self_p_start_2" id="self_p_start_2">
+                                <p>to</p>
+                                <input type="date" name="self_p_end_2" id="self_p_end_2">
+                            </td>
+                            <td>
+                                <button type="button" disabled>
+                                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                                        aria-hidden="true">
+                                </button>
+                            </td>
+                            <td><button class="delete-button" type="button" disabled>X</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="actions">
+                <button class="button" type="button" disabled>Cancel</button>
+                <button class="button" type="button" disabled>Save Session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Almost Done -->
+    <div class="pdt-modal-shadow" id="pdt-shadow-session-modal" hidden>
+        <div class="pdt-add-edit-modal" role="dialog" aria-modal="true" aria-labelledby="session-modal-title">
+            <h2 id="session-modal-title">Add New/Edit Session</h2>
+            <div class="pdt-section-divider"></div>
+            <div class="pdt-form">
+                <div class="pdt-panel pdt-panel--1">
+                    <p>Date</p>
+                    <div id="date-options" class="pdt-date-options">
+                        <label>
+                            <input type="radio" name="date_mode" value="single" checked>
+                            Single Date
+                        </label>
+                        <input type="date" name="date" id="date" value="">
+
+                        <label>
+                            <input type="radio" name="date_mode" value="range">
+                            Date Range
+                        </label>
+                        <div class="pdt-date-range">
+                            <input type="date" name="date_start" id="date-start">
+                            <span>to</span>
+                            <input type="date" name="date_end" id="date-end">
+                        </div>
+
+                        <label>
+                            <input type="radio" name="date_mode" value="self_paced">
+                            Self Paced
+                        </label>
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--2">
+                    <div class="pdt-Length">
+                        <p>Length (minutes)</p>
+                        <input type="text" name="length" id="length" value="" placeholder="1.5hr = 30min">
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--3">
+                    <div class="pdt-flags">
+                        <p>Flags</p>
+                        <div class="pdt-section-divider" aria-hidden="true"></div>
+                        <div class="pdt-flag-list">
+
+                            <!-- <label>
+                                <input type="checkbox" name="flags" value="ethics">
+                                Ethics
+                            </label> -->
+
+                        </div>
+
+                        <label for="flag-search">Find or Add Flag</label><br>
+                        <input type="search" name="flag_search" id="flag-search" placeholder="Search flags">
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--4">
+                    <div class="pdt-textfields">
+                        <div class="pdt-session-modal__organizer-field">
+                            <label for="organizer">Organizer</label><br>
+                            <textarea name="organizer" class="textbox" id="organizer" rows="2"
+                                placeholder="Optional"></textarea>
+                        </div>
+                        <div class="pdt-session-modal__title-field">
+                            <label for="session_title">Session Title</label><br>
+                            <textarea name="session_title" class="textbox" id="session_title" rows="2"
+                                placeholder="Required"></textarea>
+                        </div>
+                        <div class="pdt-session-modal__parent-event-field">
+                            <label for="parent_event">Parent Event</label><br>
+                            <textarea name="parent_event" class="textbox" id="parent_event" rows="2"
+                                placeholder="Part of conference or larger event? Otherwise leave blank"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--5">
+                    <div class="pdt-session-type">
+                        <h4>Session Type</h4>
+                        <select name="session_type" id="session_type">
+                            <option value="0" selected>None</option>
+                            <option class="option-add-new" value="-1">Add New</option>
+                        </select>
+                    </div>
+                    <div class="pdt-event-type">
+                        <h4>Event Type</h4>
+                        <select name="event_type" id="event_type">
+                            <option value="0" selected>None</option>
+                            <option class="option-add-new" value="-1">Add New</option>
+                        </select>
+                    </div>
+                    <div class="pdt-ceu-type">
+                        <h4>CEU Type</h4>
+                        <select name="event_type" id="ceu_type">
+                            <option value="0" selected>None</option>
+                            <option class="option-add-new" value="-1">Add New</option>
+                        </select>
+                    </div>
+                    <div class="pdt-rid-qualified">
+                        <h4>RID Qualified?</h4>
+                        <select name="rid_qualified" id="rid_qualified">
+                            <option value="yes">Yes</option>
+                            <option value="no" selected>No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--6">
+                    <div class="pdt-event-type">
+                        <p>Qualify for CEUs?</p>
+                        <select name="qual_for_ceu" id="qual_for_ceu">
+                            <option value="yes" selected>Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--7">
+                    <div class="pdt-ceu-weight">
+                        <p>CEU Weight</p>
+                        <input type="number" name="ceu_weight" id="ceu_weight" value="1.0" placeholder="0.00" min="0.01" step="0.01">
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--8">
+                    <div class="pdt-session-modal__presenters-field">
+                        <label for="presenter-select">8- Search Presenter(s) - type to filter and add one or more
+                            presenters.</label>
+                        <select id="presenter-select" name="presenters" multiple
+                            placeholder="Search by presenter name or email..."></select>
+
+                    </div>
+                </div>
+
+                <div class="pdt-panel pdt-panel--9">
+                    <button type="button" id="submitModal" class="button">Save Session</button>
+                    <button type="button" id="cancelModal" class="button">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Completed -->
+    <div class="pdt-modal-shadow" id="pdt-shadow-add-option-modal" hidden>
+        <div class="pdt-add-edit-modal pdt-add-option-modal" role="dialog" aria-modal="true"
+            aria-labelledby="add-option-title">
+            <h2 id="add-option-title">Add New Option</h2>
+            <div class="pdt-section-divider"></div>
+            <div class="pdt-panel">
+                <label for="add-option-input">New Label</label><br>
+                <small id="add-option-helper">Enter a new label.</small>
+                <input type="text" id="add-option-input" value="" placeholder="Type a new label">
+                <small id="add-option-feedback" hidden></small>
+            </div>
+            <div class="pdt-panel pdt-panel--9">
+                <button type="button" id="submitAddOption" class="button">Add</button>
+                <button type="button" id="cancelAddOption" class="button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <script type="module" src="../js/session-table2.js"></script>
+
+</body>
+
+</html>

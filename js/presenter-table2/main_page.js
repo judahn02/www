@@ -29,7 +29,7 @@ export class main_page {
                 <td>${presenter.phone ?? ""}</td>
                 <td>${presenter.session_count ?? 0}</td>
                 <td>${armemberCell}</td>
-                <td><input type="button" class="button" value="↓ Details"></td>
+                <td><input type="button" class="button" value="↓ Details" disabled></td>
             ` ;
 
             tableBody.append(`<tr>${row}</tr>`) ;

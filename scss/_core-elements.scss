@@ -34,7 +34,7 @@ $primary-color: #e11d48;
 }
 
 @mixin table-component($accent-color: $primary-color,
-    $even-row-color: #fef2f2,
+    $even-row-color: #fcd5d5,
     $odd-row-color: #ffffff,
     $header-accent-fade: #ffdede) {
     .table-wrapper {
