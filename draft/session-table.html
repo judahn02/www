@@ -83,7 +83,7 @@
                                     <button type="button" disabled>Lock | Unlock</button>
                                     <button type="button" class="pdt-sort-attendees-button">Sort: Original</button>
                                     <button type="button" disabled>Edit Details</button>
-                                    <button type="button" disabled>Edit Attendees</button>
+                                    <button type="button" class="pdt-edit-attendees-button">Edit Attendees</button>
                                 </div>
                                 <div class="pdt-details-people">
                                     <div class="pdt-person-card">
@@ -108,7 +108,7 @@
         </div>
     </div>
 
-    <!-- Not Started -->
+    <!-- Completed -->
     <div class="pdt-modal-shadow" id="pdt-shadow-comments" hidden>
         <div class="pdt-comment-box">
             <h2><span>Avery Collins</span> Comments</h2>
@@ -126,8 +126,8 @@
 
     <!-- Not Started -->
     <div class="pdt-modal-shadow" id="pdt-shadow-attendees" hidden>
-        <div class="pdt-session-attendees">
-            <h2>Edit Attendees</h2>
+        <div class="pdt-session-attendees" role="dialog" aria-modal="true" aria-labelledby="attendees-modal-title">
+            <h2 id="attendees-modal-title">Edit Attendees</h2>
             <div class="pdt-section-divider" aria-hidden="true"></div>
             <h3 class="label">Session</h3>
             <p class="session-name">Opening Keynote: Interpreting Tomorrow</p>
@@ -209,13 +209,13 @@
                 </table>
             </div>
             <div class="actions">
-                <button class="button" type="button" disabled>Cancel</button>
-                <button class="button" type="button" disabled>Save Session</button>
+                <button class="button" type="button" id="closeAttendeesModal">Cancel</button>
+                <button class="button" type="button" id="saveAttendeesModal" disabled>Save Session</button>
             </div>
         </div>
     </div>
 
-    <!-- Almost Done -->
+    <!-- Completed -->
     <div class="pdt-modal-shadow" id="pdt-shadow-session-modal" hidden>
         <div class="pdt-add-edit-modal" role="dialog" aria-modal="true" aria-labelledby="session-modal-title">
             <h2 id="session-modal-title">Add New/Edit Session</h2>

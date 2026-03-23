@@ -33,6 +33,7 @@ export class main_page {
 
         this.bumpTableScrollHint();
         this.commentManager.init(commentFields, tableBody);
+        await this.showAttendees.init(this);
 
         // hook up table row details button
         tableBody.off("click.pdtDetails", ".pdt-details-button").on("click.pdtDetails", ".pdt-details-button", function () {
@@ -48,6 +49,15 @@ export class main_page {
 
         tableBody.off("click.pdtSortAttendees", ".pdt-sort-attendees-button").on("click.pdtSortAttendees", ".pdt-sort-attendees-button", (event) => {
             this.sortAttendees($(event.currentTarget));
+        });
+
+        tableBody.off("click.pdtOpenAttendeesModal", ".pdt-edit-attendees-button").on("click.pdtOpenAttendeesModal", ".pdt-edit-attendees-button", async (event) => {
+            const sessionID = Number($(event.currentTarget).attr("data-session-id"));
+            if (!Number.isFinite(sessionID)) {
+                return ;
+            }
+
+            await this.showAttendees.openForSession(sessionID);
         });
 
         await this.addEditSession.init(this) ;
@@ -148,7 +158,7 @@ export class main_page {
                                 <button data-session-id="${session.sessionID}" type="button" disabled>${lockStatBtn}</button>
                                 <button data-session-id="${session.sessionID}" data-sort-index="-1" class="pdt-sort-attendees-button" type="button">Sort: Original</button>
                                 <button data-session-id="${session.sessionID}" class="pdt-edit-session-button" type="button">Edit Details</button>
-                                <button data-session-id="${session.sessionID}" type="button" disabled>Edit Attendees</button>
+                                <button data-session-id="${session.sessionID}" class="pdt-edit-attendees-button" type="button">Edit Attendees</button>
                             </div>
                             ${attendeeContacts.outerHTML}
                         </div>

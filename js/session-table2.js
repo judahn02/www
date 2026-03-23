@@ -22,7 +22,7 @@ if (typeof window.$ === "undefined") {
         const mainPage = new main_page(
             dbC,
             hostC,
-            new show_attendees(),
+            new show_attendees(dbC, hostC),
             new add_edit_session(dbC, hostC)
         );
         session_state.state = "mainPage" ;
