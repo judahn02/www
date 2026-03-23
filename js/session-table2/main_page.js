@@ -1,4 +1,5 @@
 import { session_state } from "./state.js";
+import { comment_manager } from "./comment_manager.js";
 export class main_page {
 
     static index = 1 ;
@@ -8,6 +9,7 @@ export class main_page {
         this.host = host;
         this.showAttendees = showAttendees;
         this.addEditSession = addEditSession;
+        this.commentManager = new comment_manager(db);
     }
 
     async init() {
@@ -15,8 +17,18 @@ export class main_page {
         if (tableBody.length === 0) {
             return ;
         }
+        const commentFields = {
+            wrapper: $("#pdt-shadow-comments"),
+            modal: $("#pdt-shadow-comments .pdt-comment-box"),
+            titleName: $("#pdt-shadow-comments h2 span"),
+            admin: $("#comment_box_admin"),
+            member: $("#comment_box"),
+            close: $("#closeCommentModal"),
+            submit: $("#submitCommentModal")
+        };
 
         this.bumpTableScrollHint();
+        this.commentManager.init(commentFields, tableBody);
 
         // hook up table row details button
         tableBody.off("click.pdtDetails", ".pdt-details-button").on("click.pdtDetails", ".pdt-details-button", function () {

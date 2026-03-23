@@ -236,13 +236,14 @@ export class db_connection {
             ["Victor Hughes", "victor.hughes@example.com", 1, 1, 28],
             ["Claire Adams", "claire.adams@example.com", 1, 0, 29],
         ],
+        "comments" : [],
     }
 
     constructor() {
         
     }
 
-    async get(resource) {
+    async get(resource, query = null) {
         if (resource === "sessions")
             return structuredClone(db_connection.data.sessions);
         else if (resource === "flags")
@@ -251,6 +252,29 @@ export class db_connection {
             return structuredClone(
                 db_connection.data.members.filter((member) => member[3] === 1)
             );
+        else if (resource === "comments") {
+            const sessionID = Number(query?.sessionID);
+            const personID = Number(query?.personID);
+            if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+                return {
+                    sessionID: null,
+                    personID: null,
+                    adminComment: "",
+                    memberComment: ""
+                };
+            }
+
+            const comment = db_connection.data.comments.find((entry) => {
+                return entry.sessionID === sessionID && entry.personID === personID;
+            });
+
+            return structuredClone(comment ?? {
+                sessionID,
+                personID,
+                adminComment: "",
+                memberComment: ""
+            });
+        }
         else if (resource === "sessionTypes")
             return structuredClone(db_connection.data.sessionTypes);
         else if (resource === "EventTypes")
@@ -261,6 +285,33 @@ export class db_connection {
     }
 
     async set(resource, value) {
+        if (resource === "comments") {
+            const sessionID = Number(value?.sessionID);
+            const personID = Number(value?.personID);
+            if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+                return null;
+            }
+
+            const commentData = {
+                sessionID,
+                personID,
+                adminComment: String(value?.adminComment ?? ""),
+                memberComment: String(value?.memberComment ?? "")
+            };
+
+            const existingCommentIndex = db_connection.data.comments.findIndex((entry) => {
+                return entry.sessionID === sessionID && entry.personID === personID;
+            });
+
+            if (existingCommentIndex >= 0) {
+                db_connection.data.comments[existingCommentIndex] = commentData;
+            } else {
+                db_connection.data.comments.push(commentData);
+            }
+
+            return commentData;
+        }
+
         if (!["sessionTypes", "EventTypes", "CEUTypes"].includes(resource)) {
             return -1;
         }
