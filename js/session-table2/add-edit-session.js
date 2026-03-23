@@ -175,7 +175,7 @@ export class add_edit_session {
         });
 
         // Delete once done developing. 
-        sessionModal.wrapper.prop("hidden", false);
+        // sessionModal.wrapper.prop("hidden", false);
     }
 
     // The following are supporting functions for init, please understand init before continuing.

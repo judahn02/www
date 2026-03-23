@@ -16,6 +16,8 @@ export class main_page {
             return ;
         }
 
+        this.bumpTableScrollHint();
+
         // hook up table row details button
         tableBody.off("click.pdtDetails", ".pdt-details-button").on("click.pdtDetails", ".pdt-details-button", function () {
             const sessionRow = $(this).closest("tr");
@@ -130,6 +132,27 @@ export class main_page {
         }
 
         return tableBody ;
+    }
+
+    bumpTableScrollHint() {
+        const tableWrapper = $(".pdt-main .table-wrapper");
+        if (tableWrapper.length === 0) {
+            return ;
+        }
+
+        const wrapperElement = tableWrapper[0];
+        const hasMoreRight = wrapperElement.scrollWidth > wrapperElement.clientWidth + 1;
+        if (!hasMoreRight) {
+            return ;
+        }
+
+        window.setTimeout(() => {
+            if (wrapperElement.scrollLeft !== 0) {
+                return ;
+            }
+
+            tableWrapper.stop(true).animate({ scrollLeft: 28 }, 180).animate({ scrollLeft: 0 }, 220);
+        }, 1000);
     }
 
    
