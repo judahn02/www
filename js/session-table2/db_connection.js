@@ -246,6 +246,15 @@ export class db_connection {
     async get(resource, query = null) {
         if (resource === "sessions")
             return structuredClone(db_connection.data.sessions);
+        else if (resource === "session") {
+            const sessionID = Number(query?.sessionID);
+            if (!Number.isFinite(sessionID)) {
+                return null;
+            }
+
+            const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+            return structuredClone(session ?? null);
+        }
         else if (resource === "flags")
             return structuredClone(db_connection.data.flags);
         else if (resource === "presenters")
@@ -360,8 +369,132 @@ export class db_connection {
             sessionType: 2
         }
         */
-        console.log(value) ;
-        return null;
+        const sessionID = value?.sessionID;
+        if (sessionID === null) {
+            const nextSessionID = this.getNextSessionID();
+            const newSession = this.buildSessionRecord(value, nextSessionID);
+            db_connection.data.sessions.push(newSession);
+            return structuredClone(newSession);
+        }
+
+        const numericSessionID = Number(sessionID);
+        if (!Number.isFinite(numericSessionID)) {
+            return null;
+        }
+
+        const existingSession = db_connection.data.sessions.find((session) => session.sessionID === numericSessionID);
+        if (!existingSession) {
+            return null;
+        }
+
+        const updatedSession = this.buildSessionRecord(value, numericSessionID, existingSession);
+        Object.assign(existingSession, updatedSession);
+        return structuredClone(existingSession);
+    }
+
+    getNextSessionID() {
+        return db_connection.data.sessions
+            .map((session) => Number(session.sessionID))
+            .filter((sessionID) => Number.isFinite(sessionID))
+            .reduce((maxSessionID, sessionID) => Math.max(maxSessionID, sessionID), 0) + 1;
+    }
+
+    buildSessionRecord(value, sessionID, existingSession = null) {
+        const sessionTypeID = this.normalizeOptionId(value?.sessionType) ?? existingSession?.SessionTypeID ?? null;
+        const eventTypeID = this.normalizeOptionId(value?.eventType) ?? existingSession?.EventTypeID ?? null;
+        const ceuTypeID = this.normalizeOptionId(value?.ceuType) ?? existingSession?.CEUTypeID ?? null;
+        const sessionTypeLabel = this.getOptionLabel("sessionTypes", sessionTypeID) ?? existingSession?.SessionType ?? "";
+        const eventTypeLabel = this.getOptionLabel("EventTypes", eventTypeID) ?? existingSession?.EventType ?? "";
+        const ceuTypeLabel = this.getOptionLabel("CEUTypes", ceuTypeID);
+        const ceuQualify = String(value?.ceuQualify ?? existingSession?.CEUQualify ?? "No");
+        const ceuWeight = ceuQualify === "Yes"
+            ? (Number(value?.ceuWeight) > 0 ? Number(value.ceuWeight) : (existingSession?.CEUWeight ?? 0))
+            : 0;
+
+        return {
+            sessionID,
+            Date: this.formatDateOption(value?.dateOption) ?? existingSession?.Date ?? "",
+            SessionTitle: String(value?.sessionTitle ?? existingSession?.SessionTitle ?? "").trim(),
+            Length: Number(value?.length) > 0 ? Number(value.length) : (existingSession?.Length ?? 0),
+            SessionType: sessionTypeLabel,
+            SessionTypeID: sessionTypeID,
+            CEUWeight: ceuWeight,
+            CEUConsideration: ceuTypeLabel ?? existingSession?.CEUConsideration ?? (ceuQualify === "No" ? "None" : ""),
+            CEUTypeID: ceuTypeID,
+            CEUQualify: ceuQualify,
+            RIDQualify: this.formatYesNoLabel(value?.ridQualified ?? existingSession?.RIDQualify ?? "No"),
+            EventType: eventTypeLabel,
+            EventTypeID: eventTypeID,
+            ParentType: String(value?.parentEvent ?? existingSession?.ParentType ?? "").trim(),
+            Organizer: String(value?.organizer ?? existingSession?.Organizer ?? "").trim(),
+            AttendeesCt: existingSession?.AttendeesCt ?? 0,
+            Lock: existingSession?.Lock ?? 0,
+            Locker: existingSession?.Locker ?? null,
+            Attendees: structuredClone(existingSession?.Attendees ?? []),
+            FlagIDs: Array.isArray(value?.flags)
+                ? value.flags.filter((flagId) => Number.isFinite(Number(flagId))).map((flagId) => Number(flagId))
+                : structuredClone(existingSession?.FlagIDs ?? []),
+            PresenterIDs: Array.isArray(value?.presenters)
+                ? value.presenters.filter((personId) => Number.isFinite(Number(personId))).map((personId) => Number(personId))
+                : structuredClone(existingSession?.PresenterIDs ?? [])
+        };
+    }
+
+    normalizeOptionId(value) {
+        const optionId = Number(value);
+        return Number.isFinite(optionId) ? optionId : null;
+    }
+
+    getOptionLabel(resource, optionId) {
+        if (optionId === null || optionId === undefined) {
+            return null;
+        }
+
+        const resourceData = db_connection.data[resource] ?? {};
+        return resourceData[optionId] ?? null;
+    }
+
+    formatYesNoLabel(value) {
+        return String(value).toLowerCase() === "yes" ? "Yes" : "No";
+    }
+
+    formatDateOption(dateOption) {
+        if (!Array.isArray(dateOption) || dateOption.length < 3) {
+            return null;
+        }
+
+        const [dateType, startDate, endDate] = dateOption;
+        if (dateType === 3) {
+            return "Self Paced";
+        }
+
+        if (dateType === 2) {
+            const formattedStartDate = this.formatInputDate(startDate);
+            const formattedEndDate = this.formatInputDate(endDate);
+            if (!formattedStartDate || !formattedEndDate) {
+                return null;
+            }
+
+            return `${formattedStartDate} to ${formattedEndDate}`;
+        }
+
+        const formattedSingleDate = this.formatInputDate(startDate);
+        return formattedSingleDate ?? null;
+    }
+
+    formatInputDate(dateValue) {
+        const normalizedDate = String(dateValue ?? "").trim();
+        const parts = normalizedDate.split("-");
+        if (parts.length !== 3) {
+            return null;
+        }
+
+        const [year, month, day] = parts;
+        if (year === "" || month === "" || day === "") {
+            return null;
+        }
+
+        return `${month}/${day}/${year}`;
     }
 
     async addFlag(flag) {

@@ -172,4 +172,25 @@ export class flag_manager {
 
         return flagIds;
     }
+
+    setFlags(flagFields, selectedFlagIds = []) {
+        const validSelectedIds = selectedFlagIds.filter((flagId) => this.flagsData[flagId]);
+        this.topFlagIds = new Set(this.flagsData.top);
+        this.loadFlags(flagFields.list, this.flagsData);
+
+        for (const flagId of validSelectedIds) {
+            this.addFlagToList(flagFields.list, flagId, this.flagsData[flagId], true);
+            this.topFlagIds.add(flagId);
+        }
+
+        if (!this.flagSearchSelect) {
+            return;
+        }
+
+        const flagOptions = this.getflagOptions(this.flagsData, this.topFlagIds);
+        this.flagSearchSelect.clearOptions();
+        this.flagSearchSelect.addOptions(flagOptions);
+        this.flagSearchSelect.clear();
+        this.flagSearchSelect.refreshOptions(false);
+    }
 }

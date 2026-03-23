@@ -179,6 +179,22 @@ export class dropdown_add_manager {
         };
     }
 
+    setDropDownFields(dropDownFields, values = {}) {
+        this.setDropDownValue(dropDownFields.sessionType, values.sessionType);
+        this.setDropDownValue(dropDownFields.eventType, values.eventType);
+        this.setDropDownValue(dropDownFields.ceuType, values.ceuType);
+        dropDownFields.ridQualified.val(String(values.ridQualified ?? "no"));
+    }
+
+    setDropDownValue(selectField, value) {
+        if (value === null || value === undefined) {
+            selectField.val("0");
+            return;
+        }
+
+        selectField.val(String(value));
+    }
+
     normalizeDropDownValue(value) {
         if (value === "0" || value === "-1" || value === null || value === undefined) {
             return null;

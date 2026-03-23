@@ -78,4 +78,18 @@ export class presenter_manager {
             })
             .filter((presenterOption) => Number.isFinite(presenterOption.id));
     }
+
+    setPresenters(presenterFields, selectedPresenterIds = []) {
+        const presenterIds = selectedPresenterIds
+            .map((presenterId) => Number(presenterId))
+            .filter((presenterId) => Number.isFinite(presenterId))
+            .map((presenterId) => String(presenterId));
+
+        if (this.presenterSearchSelect) {
+            this.presenterSearchSelect.setValue(presenterIds, true);
+            return;
+        }
+
+        presenterFields.select.val(presenterIds);
+    }
 }

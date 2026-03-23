@@ -41,6 +41,14 @@ export class main_page {
         });
 
         await this.addEditSession.init(this) ;
+        tableBody.off("click.pdtEditSession", ".pdt-edit-session-button").on("click.pdtEditSession", ".pdt-edit-session-button", async (event) => {
+            const sessionID = Number($(event.currentTarget).attr("data-session-id"));
+            if (!Number.isFinite(sessionID)) {
+                return ;
+            }
+
+            await this.addEditSession.openForEdit(sessionID);
+        });
     }
 
     async loadTable() {
@@ -127,7 +135,7 @@ export class main_page {
                                 ${lockStat}
                                 <button data-session-id="${session.sessionID}" type="button" disabled>${lockStatBtn}</button>
                                 <button data-session-id="${session.sessionID}" type="button" disabled>Sort</button>
-                                <button data-session-id="${session.sessionID}" type="button" disabled>Edit Details</button>
+                                <button data-session-id="${session.sessionID}" class="pdt-edit-session-button" type="button">Edit Details</button>
                                 <button data-session-id="${session.sessionID}" type="button" disabled>Edit Attendees</button>
                             </div>
                             ${attendeeContacts.outerHTML}

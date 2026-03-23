@@ -9,12 +9,20 @@ export class add_edit_session {
         this.flagManager = new flag_manager(db);
         this.dropDownAddManager = new dropdown_add_manager(db);
         this.presenterManager = new presenter_manager(db);
+        this.mainPage = null;
+        this.formRefs = null;
+        this.sessionModalState = {
+            mode: "create",
+            activeSessionID: null
+        };
     }
 
     async init(mainPage) {
+        this.mainPage = mainPage;
         const sessionModal = {
             wrapper: $("#pdt-shadow-session-modal"),
             modal: $("#pdt-shadow-session-modal .pdt-add-edit-modal"),
+            title: $("#session-modal-title"),
             submit: $("#pdt-shadow-session-modal #submitModal"),
             cancel: $("#pdt-shadow-session-modal #cancelModal")
         };
@@ -69,25 +77,35 @@ export class add_edit_session {
         await this.presenterManager.init(presenterFields);
         this.bindCEUFieldState(ceuFields, dropDownFields);
         this.applyCEUFieldState(ceuFields, dropDownFields);
+        this.formRefs = {
+            sessionModal,
+            flagFields,
+            dateFields,
+            textFields,
+            ceuFields,
+            presenterFields,
+            lengthField,
+            dropDownFields
+        };
 
 
         // Add session button
-        addSessionButton.off("click.pdtAddSession").on("click.pdtAddSession", function () {
-            sessionModal.wrapper.prop("hidden", false);
+        addSessionButton.off("click.pdtAddSession").on("click.pdtAddSession", async () => {
+            await this.openForCreate();
         });
 
 
         // Click outside of Modal
-        sessionModal.wrapper.off("click.pdtAddSession").on("click.pdtAddSession", function (e) {
-            if (e.target === this) {
-                sessionModal.wrapper.prop("hidden", true);
+        sessionModal.wrapper.off("click.pdtAddSession").on("click.pdtAddSession", async (event) => {
+            if (event.target === sessionModal.wrapper[0]) {
+                await this.closeModal();
             }
         });
 
 
         // Cancel Button
-        sessionModal.cancel.off("click.pdtAddSession").on("click.pdtAddSession", function () {
-            sessionModal.wrapper.prop("hidden", true);
+        sessionModal.cancel.off("click.pdtAddSession").on("click.pdtAddSession", async () => {
+            await this.closeModal();
         });
 
 
@@ -139,7 +157,7 @@ export class add_edit_session {
 
             // --- Send Data ---
             const sessionPayload = {
-                sessionID: null,
+                sessionID: this.sessionModalState.activeSessionID,
                 dateOption,
                 length,
                 flags,
@@ -158,19 +176,8 @@ export class add_edit_session {
 
 
             // --- refresh sessions ---
-            await mainPage.loadTable();
-            sessionModal.wrapper.prop("hidden", true);
-            
-            // --- Clean Data ---
-            this.resetDateInputs(dateFields);
-            this.resetLengthInput(lengthField);
-            this.resetTextFields(textFields);
-            ceuFields.qualify.val("yes");
-            ceuFields.weight.val("1.0");
-            await this.dropDownAddManager.reset(dropDownFields);
-            await this.presenterManager.reset(presenterFields);
-            this.applyCEUFieldState(ceuFields, dropDownFields);
-            await this.flagManager.reset(flagFields);
+            await this.mainPage.loadTable();
+            await this.closeModal();
 
 
         });
@@ -179,7 +186,135 @@ export class add_edit_session {
         // sessionModal.wrapper.prop("hidden", false);
     }
 
+    async openForCreate() {
+        if (!this.formRefs) {
+            return;
+        }
+
+        await this.resetForm();
+        this.formRefs.sessionModal.wrapper.prop("hidden", false);
+    }
+
+    async openForEdit(sessionID) {
+        if (!this.formRefs) {
+            return;
+        }
+
+        const sessionData = await this.db.get("session", { sessionID });
+        if (!sessionData) {
+            alert("That session could not be found. Please refresh the page and try again.");
+            return;
+        }
+
+        await this.resetForm();
+        this.setModalMode("edit", sessionData.sessionID);
+        await this.populateFormFromSession(sessionData);
+        this.formRefs.sessionModal.wrapper.prop("hidden", false);
+    }
+
+    async closeModal() {
+        if (!this.formRefs) {
+            return;
+        }
+
+        this.formRefs.sessionModal.wrapper.prop("hidden", true);
+        await this.resetForm();
+    }
+
     // The following are supporting functions for init, please understand init before continuing.
+
+    async resetForm() {
+        if (!this.formRefs) {
+            return;
+        }
+
+        const {
+            dateFields,
+            textFields,
+            ceuFields,
+            presenterFields,
+            lengthField,
+            dropDownFields,
+            flagFields
+        } = this.formRefs;
+
+        this.setModalMode("create", null);
+        this.resetDateInputs(dateFields);
+        this.resetLengthInput(lengthField);
+        this.resetTextFields(textFields);
+        ceuFields.qualify.val("yes");
+        ceuFields.weight.val("1.0");
+        await this.dropDownAddManager.reset(dropDownFields);
+        await this.presenterManager.reset(presenterFields);
+        await this.flagManager.reset(flagFields);
+        this.applyCEUFieldState(ceuFields, dropDownFields);
+    }
+
+    setModalMode(mode, sessionID = null) {
+        this.sessionModalState = {
+            mode,
+            activeSessionID: sessionID
+        };
+
+        if (!this.formRefs) {
+            return;
+        }
+
+        if (mode === "edit") {
+            this.formRefs.sessionModal.title.text("Edit Session");
+            this.formRefs.sessionModal.submit.text("Save Changes");
+            return;
+        }
+
+        this.formRefs.sessionModal.title.text("Add Session");
+        this.formRefs.sessionModal.submit.text("Save Session");
+    }
+
+    async populateFormFromSession(sessionData) {
+        const {
+            dateFields,
+            textFields,
+            ceuFields,
+            presenterFields,
+            lengthField,
+            dropDownFields,
+            flagFields
+        } = this.formRefs;
+
+        this.setDateFieldsFromSession(sessionData.Date, dateFields);
+        if (this.isSingleDateSession(sessionData.Date) && Number(sessionData.Length) > 0) {
+            lengthField.val(String(sessionData.Length));
+        }
+
+        textFields.organizer.val(String(sessionData.Organizer ?? ""));
+        textFields.sessionTitle.val(String(sessionData.SessionTitle ?? ""));
+        textFields.parentEvent.val(String(sessionData.ParentType ?? ""));
+
+        const dropDownValues = await this.getSessionDropDownValues(sessionData);
+        this.dropDownAddManager.setDropDownFields(dropDownFields, dropDownValues);
+
+        ceuFields.qualify.val(String(sessionData.CEUQualify ?? "No").toLowerCase() === "yes" ? "yes" : "no");
+        ceuFields.weight.val(Number(sessionData.CEUWeight) > 0 ? String(sessionData.CEUWeight) : "1.0");
+        this.applyCEUFieldState(ceuFields, dropDownFields);
+
+        this.flagManager.setFlags(flagFields, sessionData.FlagIDs ?? []);
+        this.presenterManager.setPresenters(presenterFields, sessionData.PresenterIDs ?? []);
+    }
+
+    async getSessionDropDownValues(sessionData) {
+        const [sessionTypes, eventTypes, ceuTypes] = await Promise.all([
+            this.db.get("sessionTypes"),
+            this.db.get("EventTypes"),
+            this.db.get("CEUTypes")
+        ]);
+
+        return {
+            sessionType: sessionData.SessionTypeID ?? this.findOptionIdByLabel(sessionTypes, sessionData.SessionType),
+            eventType: sessionData.EventTypeID ?? this.findOptionIdByLabel(eventTypes, sessionData.EventType),
+            ceuType: sessionData.CEUTypeID ?? this.findOptionIdByLabel(ceuTypes, sessionData.CEUConsideration),
+            ridQualified: String(sessionData.RIDQualify ?? "No").toLowerCase() === "yes" ? "yes" : "no"
+        };
+    }
 
     getDate(dateFields) {
         const dateType = dateFields.options.find('input[name="date_mode"]:checked').val();
@@ -293,6 +428,61 @@ export class add_edit_session {
         const qualifiesForCEU = String(ceuFields.qualify.val() ?? "yes") === "yes";
         ceuFields.weight.prop("disabled", !qualifiesForCEU);
         dropDownFields.ceuType.prop("disabled", !qualifiesForCEU);
+    }
+
+    setDateFieldsFromSession(dateValue, dateFields) {
+        this.resetDateInputs(dateFields);
+        const normalizedDateValue = String(dateValue ?? "").trim();
+        if (normalizedDateValue === "" || normalizedDateValue === "Self Paced") {
+            dateFields.options.find('input[name="date_mode"][value="self_paced"]').prop("checked", true);
+            return;
+        }
+
+        if (normalizedDateValue.includes(" to ")) {
+            const [startDate, endDate] = normalizedDateValue.split(" to ");
+            dateFields.options.find('input[name="date_mode"][value="range"]').prop("checked", true);
+            dateFields.startDate.val(this.displayDateToInputValue(startDate));
+            dateFields.endDate.val(this.displayDateToInputValue(endDate));
+            return;
+        }
+
+        dateFields.options.find('input[name="date_mode"][value="single"]').prop("checked", true);
+        dateFields.singleDate.val(this.displayDateToInputValue(normalizedDateValue));
+    }
+
+    displayDateToInputValue(displayDate) {
+        const normalizedDate = String(displayDate ?? "").trim();
+        const dateParts = normalizedDate.split("/");
+        if (dateParts.length !== 3) {
+            return "";
+        }
+
+        const [month, day, year] = dateParts;
+        if (month === "" || day === "" || year === "") {
+            return "";
+        }
+
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+
+    isSingleDateSession(dateValue) {
+        const normalizedDateValue = String(dateValue ?? "").trim();
+        return normalizedDateValue !== "" && normalizedDateValue !== "Self Paced" && !normalizedDateValue.includes(" to ");
+    }
+
+    findOptionIdByLabel(optionsData, label) {
+        const normalizedLabel = String(label ?? "").trim().toLowerCase();
+        if (normalizedLabel === "") {
+            return null;
+        }
+
+        for (const [optionId, optionLabel] of Object.entries(optionsData ?? {})) {
+            if (String(optionLabel ?? "").trim().toLowerCase() === normalizedLabel) {
+                return Number(optionId);
+            }
+        }
+
+        return null;
     }
 
 }
