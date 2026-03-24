@@ -494,6 +494,8 @@ export class db_connection {
     normalizeSessionForRead(session) {
         return {
             ...structuredClone(session),
+            IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
+            IsSelfPacedSession: this.isSelfPacedSession(session),
             Attendees: this.normalizeSessionAttendees(session?.Attendees)
         };
     }
@@ -519,6 +521,14 @@ export class db_connection {
     getAttendeeStatusLabel(statusValue) {
         const statusID = this.normalizeAttendeeStatusId(statusValue);
         return db_connection.data.attendeeStatuses[statusID] ?? db_connection.data.attendeeStatuses[4];
+    }
+
+    isRIDQualifiedSession(session) {
+        return String(session?.RIDQualify ?? "").trim().toLowerCase() === "yes";
+    }
+
+    isSelfPacedSession(session) {
+        return String(session?.Date ?? "").trim() === "Self Paced";
     }
 
     normalizeAttendeeStatusId(statusValue) {

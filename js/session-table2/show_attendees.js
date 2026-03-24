@@ -9,7 +9,9 @@ export class show_attendees {
         this.modalRefs = null;
         this.attendeeStatuses = {};
         this.attendeeModalState = {
-            activeSessionID: null
+            activeSessionID: null,
+            showRIDColumn: false,
+            showSelfPacedDateRangeColumn: false
         };
     }
 
@@ -22,7 +24,7 @@ export class show_attendees {
             modal: $("#pdt-shadow-attendees .pdt-session-attendees"),
             sessionName: $("#pdt-shadow-attendees .session-name"),
             attendeeSearch: $("#pdt-shadow-attendees #attendee-search"),
-            attendeeRowSearch: $("#pdt-shadow-attendees #search-attendee"),
+            tableHead: $("#pdt-shadow-attendees .table-wrapper table thead"),
             tableBody: $("#pdt-shadow-attendees .table-wrapper table tbody"),
             cancel: $("#pdt-shadow-attendees #closeAttendeesModal"),
             submit: $("#pdt-shadow-attendees #saveAttendeesModal")
@@ -78,11 +80,15 @@ export class show_attendees {
         }
 
         this.attendeeStatuses = attendeeStatuses ?? {};
-        this.attendeeModalState.activeSessionID = sessionID;
+        this.attendeeModalState = {
+            activeSessionID: sessionID,
+            showRIDColumn: this.shouldShowRIDColumn(sessionData),
+            showSelfPacedDateRangeColumn: this.shouldShowSelfPacedDateRangeColumn(sessionData)
+        };
         this.modalRefs.sessionName.text(String(sessionData.SessionTitle ?? ""));
         this.modalRefs.attendeeSearch.val("");
-        this.modalRefs.attendeeRowSearch.val("");
         this.renderAttendeeRows(attendees);
+        this.getAttendeeRowSearchField().val("");
         this.modalRefs.wrapper.prop("hidden", false);
         session_state.state = "showAttendees";
     }
@@ -118,10 +124,23 @@ export class show_attendees {
 
         this.modalRefs.wrapper.prop("hidden", true);
         this.modalRefs.attendeeSearch.val("");
-        this.modalRefs.attendeeRowSearch.val("");
+        this.getAttendeeRowSearchField().val("");
+        this.clearTableHead();
         this.clearAttendeeRows();
-        this.attendeeModalState.activeSessionID = null;
+        this.attendeeModalState = {
+            activeSessionID: null,
+            showRIDColumn: false,
+            showSelfPacedDateRangeColumn: false
+        };
         session_state.state = "mainPage";
+    }
+
+    clearTableHead() {
+        if (!this.modalRefs || this.modalRefs.tableHead.length === 0) {
+            return;
+        }
+
+        this.modalRefs.tableHead.empty();
     }
 
     clearAttendeeRows() {
@@ -129,7 +148,7 @@ export class show_attendees {
             return;
         }
 
-        this.modalRefs.tableBody.find("tr").not(".search-row").remove();
+        this.modalRefs.tableBody.empty();
     }
 
     async refreshAttendees() {
@@ -142,17 +161,25 @@ export class show_attendees {
         this.renderAttendeeRows(attendees);
     }
 
+    getAttendeeRowSearchField() {
+        return $("#pdt-shadow-attendees #search-attendee");
+    }
+
     renderAttendeeRows(attendees = []) {
-        if (!this.modalRefs || this.modalRefs.tableBody.length === 0) {
+        if (!this.modalRefs || this.modalRefs.tableHead.length === 0 || this.modalRefs.tableBody.length === 0) {
             return;
         }
 
+        const visibleColumnLabels = this.getVisibleColumnLabels();
+        const visibleColumnCount = visibleColumnLabels.length;
+        this.renderTableHead(visibleColumnLabels);
         this.clearAttendeeRows();
+        this.modalRefs.tableBody.append(this.buildSearchRow(visibleColumnCount));
 
         if (!Array.isArray(attendees) || attendees.length === 0) {
             this.modalRefs.tableBody.append(`
                 <tr class="pdt-attendees-placeholder-row">
-                    <td colspan="6">No attendees are attached to this session yet.</td>
+                    <td colspan="${visibleColumnCount}">No attendees are attached to this session yet.</td>
                 </tr>
             `);
             return;
@@ -164,37 +191,112 @@ export class show_attendees {
         }
     }
 
+    renderTableHead(columnLabels) {
+        const headerCells = columnLabels.map((columnLabel) => {
+            return `<th>${this.escapeHtml(columnLabel)}</th>`;
+        }).join("");
+
+        this.modalRefs.tableHead.html(`
+            <tr>
+                ${headerCells}
+            </tr>
+        `);
+    }
+
+    buildSearchRow(columnCount) {
+        return `
+            <tr class="search-row">
+                <td colspan="${columnCount}">
+                    <input type="text" name="search-attendee" id="search-attendee"
+                        placeholder="Add attendee: start searching members">
+                </td>
+            </tr>
+        `;
+    }
+
     buildAttendeeRow(attendee) {
         const attendeeName = this.escapeHtml(attendee?.name);
         const attendeeEmail = this.escapeHtml(attendee?.email);
         const certStatusID = this.getSafeAttendeeStatusID(attendee?.certStatusID);
         const commentButtonTitle = this.getCommentButtonTitle(attendee);
         const dateRangeMarkup = this.buildDateRangeMarkup(attendee?.dateRange);
-
-        return `
-            <tr class="pdt-attendees-row" data-person-id="${this.getSafePersonID(attendee?.personID)}" data-attendee-email="${attendeeEmail}">
+        const attendeeCells = [
+            `
                 <td>
                     <p>${attendeeName}</p>
                     <p>${attendeeEmail}</p>
                 </td>
+            `,
+            `
                 <td>
                     <select disabled>
                         ${this.buildCertStatusOptions(certStatusID)}
                     </select>
                 </td>
-                <td><input type="checkbox" disabled ${attendee?.ridCertified === true ? "checked" : ""}></td>
+            `
+        ];
+
+        if (this.attendeeModalState.showRIDColumn) {
+            attendeeCells.push(`<td><input type="checkbox" disabled ${attendee?.ridCertified === true ? "checked" : ""}></td>`);
+        }
+
+        if (this.attendeeModalState.showSelfPacedDateRangeColumn) {
+            attendeeCells.push(`
                 <td class="date-range-cell">
                     ${dateRangeMarkup}
                 </td>
-                <td>
-                    <button type="button" class="pdt-attendee-comment-button" title="${commentButtonTitle}">
-                        <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
-                            aria-hidden="true">
-                    </button>
-                </td>
-                <td><button class="delete-button" type="button" disabled>X</button></td>
+            `);
+        }
+
+        attendeeCells.push(`
+            <td>
+                <button type="button" class="pdt-attendee-comment-button" title="${commentButtonTitle}">
+                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                        aria-hidden="true">
+                </button>
+            </td>
+        `);
+        attendeeCells.push(`<td><button class="delete-button" type="button" disabled>X</button></td>`);
+
+        return `
+            <tr class="pdt-attendees-row" data-person-id="${this.getSafePersonID(attendee?.personID)}" data-attendee-email="${attendeeEmail}">
+                ${attendeeCells.join("")}
             </tr>
         `;
+    }
+
+    getVisibleColumnLabels() {
+        const columnLabels = [
+            "Attendee",
+            "Certification Status at time of Attending"
+        ];
+
+        if (this.attendeeModalState.showRIDColumn) {
+            columnLabels.push("RID certified?");
+        }
+
+        if (this.attendeeModalState.showSelfPacedDateRangeColumn) {
+            columnLabels.push("Self Paced Date Range");
+        }
+
+        columnLabels.push("Comments", "Delete?");
+        return columnLabels;
+    }
+
+    shouldShowRIDColumn(sessionData) {
+        if (typeof sessionData?.IsRIDQualifiedSession === "boolean") {
+            return sessionData.IsRIDQualifiedSession;
+        }
+
+        return String(sessionData?.RIDQualify ?? "").trim().toLowerCase() === "yes";
+    }
+
+    shouldShowSelfPacedDateRangeColumn(sessionData) {
+        if (typeof sessionData?.IsSelfPacedSession === "boolean") {
+            return sessionData.IsSelfPacedSession;
+        }
+
+        return String(sessionData?.Date ?? "").trim() === "Self Paced";
     }
 
     buildCertStatusOptions(selectedStatusID) {
