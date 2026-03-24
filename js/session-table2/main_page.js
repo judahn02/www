@@ -8,6 +8,7 @@ export class main_page {
         this.showAttendees = showAttendees;
         this.addEditSession = addEditSession;
         this.commentManager = new comment_manager(db);
+        this.commentFields = null;
         this.attendeeSortModes = [
             { field: "first", direction: "asc", label: "Sort: First A-Z" },
             { field: "last", direction: "asc", label: "Sort: Last A-Z" },
@@ -30,10 +31,11 @@ export class main_page {
             close: $("#closeCommentModal"),
             submit: $("#submitCommentModal")
         };
+        this.commentFields = commentFields;
 
         this.bumpTableScrollHint();
         this.commentManager.init(commentFields, tableBody);
-        await this.showAttendees.init(this);
+        await this.showAttendees.init(this, this.commentManager, commentFields);
 
         // hook up table row details button
         tableBody.off("click.pdtDetails", ".pdt-details-button").on("click.pdtDetails", ".pdt-details-button", function () {

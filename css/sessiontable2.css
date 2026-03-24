@@ -253,6 +253,10 @@ body {
   margin-top: 8px;
 }
 
+#pdt-shadow-comments {
+  z-index: 950;
+}
+
 .pdt-session-attendees {
   border: 2px solid red;
   border-radius: 16px;

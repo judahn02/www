@@ -4,6 +4,8 @@ export class show_attendees {
         this.db = db;
         this.host = host;
         this.mainPage = null;
+        this.commentManager = null;
+        this.commentFields = null;
         this.modalRefs = null;
         this.attendeeStatuses = {};
         this.attendeeModalState = {
@@ -11,8 +13,10 @@ export class show_attendees {
         };
     }
 
-    async init(mainPage) {
+    async init(mainPage, commentManager = null, commentFields = null) {
         this.mainPage = mainPage;
+        this.commentManager = commentManager;
+        this.commentFields = commentFields;
         this.modalRefs = {
             wrapper: $("#pdt-shadow-attendees"),
             modal: $("#pdt-shadow-attendees .pdt-session-attendees"),
@@ -26,6 +30,7 @@ export class show_attendees {
 
         this.clearAttendeeRows();
         this.bindModalEvents();
+        this.bindCommentTriggers();
     }
 
     bindModalEvents() {
@@ -43,6 +48,16 @@ export class show_attendees {
             }
 
             await this.closeModal();
+        });
+    }
+
+    bindCommentTriggers() {
+        if (!this.modalRefs) {
+            return;
+        }
+
+        this.modalRefs.tableBody.off("click.pdtAttendeeComment", ".pdt-attendee-comment-button").on("click.pdtAttendeeComment", ".pdt-attendee-comment-button", async (event) => {
+            await this.openCommentModal($(event.currentTarget));
         });
     }
 
@@ -72,6 +87,30 @@ export class show_attendees {
         session_state.state = "showAttendees";
     }
 
+    async openCommentModal(commentButton) {
+        if (!this.commentManager || !this.commentFields) {
+            return;
+        }
+
+        const sessionID = Number(this.attendeeModalState.activeSessionID);
+        const attendeeRow = commentButton.closest(".pdt-attendees-row");
+        const personID = Number(attendeeRow.attr("data-person-id"));
+        const personName = String(attendeeRow.find("td").first().find("p").first().text() ?? "").trim();
+
+        if (!Number.isFinite(sessionID) || !Number.isFinite(personID) || personName === "") {
+            return;
+        }
+
+        await this.commentManager.open(this.commentFields, {
+            sessionID,
+            personID,
+            personName,
+            onSave: async () => {
+                await this.refreshAttendees();
+            }
+        });
+    }
+
     async closeModal() {
         if (!this.modalRefs) {
             return;
@@ -91,6 +130,16 @@ export class show_attendees {
         }
 
         this.modalRefs.tableBody.find("tr").not(".search-row").remove();
+    }
+
+    async refreshAttendees() {
+        const sessionID = Number(this.attendeeModalState.activeSessionID);
+        if (!Number.isFinite(sessionID)) {
+            return;
+        }
+
+        const attendees = await this.db.get("attendees", { sessionID });
+        this.renderAttendeeRows(attendees);
     }
 
     renderAttendeeRows(attendees = []) {
@@ -138,7 +187,7 @@ export class show_attendees {
                     ${dateRangeMarkup}
                 </td>
                 <td>
-                    <button type="button" disabled title="${commentButtonTitle}">
+                    <button type="button" class="pdt-attendee-comment-button" title="${commentButtonTitle}">
                         <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
                             aria-hidden="true">
                     </button>

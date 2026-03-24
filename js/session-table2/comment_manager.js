@@ -70,6 +70,8 @@ export class comment_manager {
             return;
         }
 
+        const onSave = this.activeCommentContext?.onSave;
+
         await this.db.set("comments", {
             sessionID: this.activeCommentContext.sessionID,
             personID: this.activeCommentContext.personID,
@@ -78,6 +80,10 @@ export class comment_manager {
         });
 
         this.close(commentFields);
+
+        if (typeof onSave === "function") {
+            await onSave();
+        }
     }
 
     close(commentFields) {

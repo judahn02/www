@@ -196,6 +196,10 @@ body {
     }
 }
 
+#pdt-shadow-comments {
+    z-index: 950;
+}
+
 .pdt-session-attendees {
     @include core.modal-base;
     @include core.table-component;
