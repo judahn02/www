@@ -9,6 +9,10 @@ export class host_connection {
             return this.resolveUserID();
         }
 
+        if (resource === "userName") {
+            return this.resolveUserName();
+        }
+
         return null;
     }
 
@@ -40,10 +44,53 @@ export class host_connection {
         return 1;
     }
 
+    resolveUserName() {
+        const configuredUserName = this.normalizeUserName(this.config?.userName ?? this.config?.displayName);
+        if (configuredUserName !== null) {
+            return configuredUserName;
+        }
+
+        const wpDataUserName = this.getWordPressUserName();
+        if (wpDataUserName !== null) {
+            return wpDataUserName;
+        }
+
+        const globalCandidates = [
+            globalThis?.PDTSessionTable2UserName,
+            globalThis?.PDTSessionTable2?.userName,
+            globalThis?.PDTSessionTable2?.displayName,
+            globalThis?.PDTAttendeeModalData?.userName,
+            globalThis?.PDTAttendeeModalData?.displayName
+        ];
+
+        for (const candidate of globalCandidates) {
+            const normalizedCandidate = this.normalizeUserName(candidate);
+            if (normalizedCandidate !== null) {
+                return normalizedCandidate;
+            }
+        }
+
+        return `User ${this.resolveUserID()}`;
+    }
+
     getWordPressUserID() {
         try {
             const currentUser = globalThis?.wp?.data?.select?.("core")?.getCurrentUser?.();
             return this.normalizeUserID(currentUser?.id);
+        } catch (_error) {
+            return null;
+        }
+    }
+
+    getWordPressUserName() {
+        try {
+            const currentUser = globalThis?.wp?.data?.select?.("core")?.getCurrentUser?.();
+            return this.normalizeUserName(
+                currentUser?.name
+                ?? currentUser?.display_name
+                ?? currentUser?.nickname
+                ?? currentUser?.username
+            );
         } catch (_error) {
             return null;
         }
@@ -56,5 +103,14 @@ export class host_connection {
         }
 
         return numericUserID;
+    }
+
+    normalizeUserName(value) {
+        const normalizedUserName = String(value ?? "").trim();
+        if (normalizedUserName === "") {
+            return null;
+        }
+
+        return normalizedUserName;
     }
 }

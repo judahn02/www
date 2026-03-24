@@ -29,13 +29,103 @@ export class attendee_rid_manager {
         return this.attendeeRIDState.attendeesDraft;
     }
 
+    getDraftPersonIDs() {
+        return this.attendeeRIDState.attendeesDraft
+            .map((attendee) => this.getSafePersonID(attendee?.personID))
+            .filter((personID) => personID > 0);
+    }
+
     isSaving() {
         return this.attendeeRIDState.isSaving === true;
     }
 
     hasPendingChanges() {
-        return JSON.stringify(this.buildComparableRIDState(this.attendeeRIDState.attendeesDraft))
-            !== JSON.stringify(this.buildComparableRIDState(this.attendeeRIDState.savedAttendees));
+        return JSON.stringify(this.buildComparableAttendeeState(this.attendeeRIDState.attendeesDraft))
+            !== JSON.stringify(this.buildComparableAttendeeState(this.attendeeRIDState.savedAttendees));
+    }
+
+    addAttendee(attendee) {
+        const personID = this.getSafePersonID(attendee?.personID);
+        if (personID <= 0 || this.getDraftPersonIDs().includes(personID)) {
+            return false;
+        }
+
+        this.attendeeRIDState.attendeesDraft = this.cloneAttendees([
+            attendee,
+            ...this.attendeeRIDState.attendeesDraft
+        ]);
+        return true;
+    }
+
+    updateAttendeeCertificationStatus(personID, nextCertStatusID, nextCertStatusLabel = "") {
+        const attendeeIndex = this.attendeeRIDState.attendeesDraft.findIndex((attendee) => {
+            return this.getSafePersonID(attendee?.personID) === personID;
+        });
+        if (attendeeIndex < 0) {
+            return;
+        }
+
+        const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
+        const normalizedStatusID = this.getPositiveIntegerOrDefault(nextCertStatusID, 4);
+        const normalizedStatusLabel = String(nextCertStatusLabel ?? "").trim();
+
+        this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
+            ...currentAttendee,
+            certStatusID: normalizedStatusID,
+            certStatus: normalizedStatusLabel,
+            certStatusLabel: normalizedStatusLabel
+        };
+    }
+
+    updateAttendeeDateRange(personID, nextDateRange = {}) {
+        const attendeeIndex = this.attendeeRIDState.attendeesDraft.findIndex((attendee) => {
+            return this.getSafePersonID(attendee?.personID) === personID;
+        });
+        if (attendeeIndex < 0) {
+            return null;
+        }
+
+        const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
+        const normalizedStartDate = this.normalizeDateInputValue(
+            nextDateRange?.dateRangeStart ?? currentAttendee?.dateRangeStart
+        );
+        let normalizedEndDate = this.normalizeDateInputValue(
+            nextDateRange?.dateRangeEnd ?? currentAttendee?.dateRangeEnd
+        );
+
+        if (normalizedStartDate === null) {
+            normalizedEndDate = null;
+        } else if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
+            normalizedEndDate = null;
+        }
+
+        this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
+            ...currentAttendee,
+            dateRangeStart: normalizedStartDate,
+            dateRangeEnd: normalizedEndDate,
+            dateRangeDisplay: null,
+            dateRange: null
+        };
+
+        return this.attendeeRIDState.attendeesDraft[attendeeIndex];
+    }
+
+    removeAttendee(personID) {
+        const normalizedPersonID = this.getSafePersonID(personID);
+        if (normalizedPersonID <= 0) {
+            return false;
+        }
+
+        const nextDraftAttendees = this.attendeeRIDState.attendeesDraft.filter((attendee) => {
+            return this.getSafePersonID(attendee?.personID) !== normalizedPersonID;
+        });
+
+        if (nextDraftAttendees.length === this.attendeeRIDState.attendeesDraft.length) {
+            return false;
+        }
+
+        this.attendeeRIDState.attendeesDraft = this.cloneAttendees(nextDraftAttendees);
+        return true;
     }
 
     handleCheckboxChange(ridCheckbox) {
@@ -116,10 +206,10 @@ export class attendee_rid_manager {
                 return null;
             }
 
-            const attendees = await this.db.put("attendeeRIDCertifications", {
+            const attendees = await this.db.put("sessionAttendees", {
                 sessionID: numericSessionID,
                 certifiedByUserID: currentUserID,
-                attendees: this.buildRIDCertificationPayload()
+                attendees: this.buildSessionAttendeePayload()
             });
 
             this.attendeeRIDState.attendeesDraft = this.cloneAttendees(attendees);
@@ -132,15 +222,17 @@ export class attendee_rid_manager {
 
     mergeIncomingAttendeeData(attendees = []) {
         const incomingAttendees = this.cloneAttendees(attendees);
-        const currentDraftRIDLookup = this.buildAttendeeRIDLookup(this.attendeeRIDState.attendeesDraft);
-        const currentSavedRIDLookup = this.buildAttendeeRIDLookup(this.attendeeRIDState.savedAttendees);
+        const deletedDraftPersonIDs = this.getDeletedPersonIDs(
+            this.attendeeRIDState.savedAttendees,
+            this.attendeeRIDState.attendeesDraft
+        );
 
-        this.attendeeRIDState.attendeesDraft = incomingAttendees.map((attendee) => {
-            return this.applyRIDLookupToAttendee(attendee, currentDraftRIDLookup);
-        });
-        this.attendeeRIDState.savedAttendees = incomingAttendees.map((attendee) => {
-            return this.applyRIDLookupToAttendee(attendee, currentSavedRIDLookup);
-        });
+        this.attendeeRIDState.attendeesDraft = this.mergeAttendeeCollections(
+            incomingAttendees,
+            this.attendeeRIDState.attendeesDraft,
+            { excludedPersonIDs: deletedDraftPersonIDs }
+        );
+        this.attendeeRIDState.savedAttendees = this.cloneAttendees(incomingAttendees);
     }
 
     updateAttendeeRIDState(personID, nextRIDState) {
@@ -160,54 +252,91 @@ export class attendee_rid_manager {
         };
     }
 
-    buildRIDCertificationPayload() {
+    buildSessionAttendeePayload() {
         return this.attendeeRIDState.attendeesDraft.map((attendee) => {
             const personID = this.getSafePersonID(attendee?.personID);
             const isRIDCertified = attendee?.ridCertified === true;
             return {
                 personID,
+                certStatusID: Number(attendee?.certStatusID),
+                dateRangeStart: attendee?.dateRangeStart ?? null,
+                dateRangeEnd: attendee?.dateRangeEnd ?? null,
                 ridCertified: isRIDCertified,
                 ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee?.ridCertifiedAt) : null
             };
         });
     }
 
-    buildAttendeeRIDLookup(attendees = []) {
-        const ridLookup = new Map();
+    mergeAttendeeCollections(incomingAttendees = [], existingAttendees = [], options = {}) {
+        const incomingAttendeeMap = new Map(
+            incomingAttendees.map((attendee) => [this.getSafePersonID(attendee?.personID), attendee])
+        );
+        const excludedPersonIDs = options?.excludedPersonIDs instanceof Set
+            ? options.excludedPersonIDs
+            : new Set();
+        const mergedAttendees = [];
+        const seenPersonIDs = new Set();
 
-        for (const attendee of Array.isArray(attendees) ? attendees : []) {
+        for (const attendee of Array.isArray(existingAttendees) ? existingAttendees : []) {
             const personID = this.getSafePersonID(attendee?.personID);
-            ridLookup.set(personID, {
-                ridCertified: attendee?.ridCertified === true,
-                ridCertifiedAt: this.normalizeRIDDateTimeValue(attendee?.ridCertifiedAt),
-                ridCertifiedByUserID: this.getPositiveIntegerOrNull(attendee?.ridCertifiedByUserID)
-            });
+            if (personID <= 0 || seenPersonIDs.has(personID)) {
+                continue;
+            }
+
+            const incomingAttendee = incomingAttendeeMap.get(personID);
+            if (incomingAttendee) {
+                mergedAttendees.push(this.applyDraftStateToAttendee(incomingAttendee, attendee));
+            } else {
+                mergedAttendees.push(this.cloneAttendees([attendee])[0]);
+            }
+            seenPersonIDs.add(personID);
         }
 
-        return ridLookup;
+        for (const attendee of incomingAttendees) {
+            const personID = this.getSafePersonID(attendee?.personID);
+            if (personID <= 0 || seenPersonIDs.has(personID) || excludedPersonIDs.has(personID)) {
+                continue;
+            }
+
+            mergedAttendees.push(this.cloneAttendees([attendee])[0]);
+            seenPersonIDs.add(personID);
+        }
+
+        return mergedAttendees;
     }
 
-    applyRIDLookupToAttendee(attendee, ridLookup) {
-        const personID = this.getSafePersonID(attendee?.personID);
-        const ridData = ridLookup.get(personID);
-        if (!ridData) {
-            return attendee;
+    applyDraftStateToAttendee(baseAttendee, draftAttendee) {
+        if (!draftAttendee) {
+            return this.cloneAttendees([baseAttendee])[0];
         }
 
+        const certStatusID = Number(draftAttendee?.certStatusID);
+        const normalizedCertStatusID = Number.isFinite(certStatusID) ? certStatusID : Number(baseAttendee?.certStatusID);
+
         return {
-            ...attendee,
-            ridCertified: ridData.ridCertified,
-            ridCertifiedAt: ridData.ridCertified ? ridData.ridCertifiedAt : null,
-            ridCertifiedByUserID: ridData.ridCertified ? ridData.ridCertifiedByUserID : null
+            ...this.cloneAttendees([baseAttendee])[0],
+            dateRangeStart: draftAttendee?.dateRangeStart ?? baseAttendee?.dateRangeStart ?? null,
+            dateRangeEnd: draftAttendee?.dateRangeEnd ?? baseAttendee?.dateRangeEnd ?? null,
+            dateRangeDisplay: draftAttendee?.dateRangeDisplay ?? baseAttendee?.dateRangeDisplay ?? null,
+            dateRange: draftAttendee?.dateRange ?? baseAttendee?.dateRange ?? null,
+            certStatusID: normalizedCertStatusID,
+            certStatus: draftAttendee?.certStatus ?? baseAttendee?.certStatus ?? "",
+            certStatusLabel: draftAttendee?.certStatusLabel ?? baseAttendee?.certStatusLabel ?? "",
+            ridCertified: draftAttendee?.ridCertified === true,
+            ridCertifiedAt: draftAttendee?.ridCertified === true ? this.normalizeRIDDateTimeValue(draftAttendee?.ridCertifiedAt) : null,
+            ridCertifiedByUserID: draftAttendee?.ridCertified === true ? this.getPositiveIntegerOrNull(draftAttendee?.ridCertifiedByUserID) : null
         };
     }
 
-    buildComparableRIDState(attendees = []) {
+    buildComparableAttendeeState(attendees = []) {
         return (Array.isArray(attendees) ? attendees : [])
             .map((attendee) => {
                 const isRIDCertified = attendee?.ridCertified === true;
                 return {
                     personID: this.getSafePersonID(attendee?.personID),
+                    certStatusID: Number(attendee?.certStatusID),
+                    dateRangeStart: String(attendee?.dateRangeStart ?? ""),
+                    dateRangeEnd: String(attendee?.dateRangeEnd ?? ""),
                     ridCertified: isRIDCertified,
                     ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee?.ridCertifiedAt) : null
                 };
@@ -257,6 +386,19 @@ export class attendee_rid_manager {
         return new Date(parsedTimestamp).toISOString();
     }
 
+    normalizeDateInputValue(dateValue) {
+        const normalizedDateValue = String(dateValue ?? "").trim();
+        if (normalizedDateValue === "") {
+            return null;
+        }
+
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDateValue)) {
+            return null;
+        }
+
+        return normalizedDateValue;
+    }
+
     getSafePersonID(personID) {
         const numericPersonID = Number(personID);
         return Number.isFinite(numericPersonID) ? numericPersonID : 0;
@@ -269,5 +411,28 @@ export class attendee_rid_manager {
         }
 
         return numericValue;
+    }
+
+    getPositiveIntegerOrDefault(value, defaultValue) {
+        const numericValue = Number(value);
+        if (Number.isInteger(numericValue) && numericValue > 0) {
+            return numericValue;
+        }
+
+        return defaultValue;
+    }
+
+    getDeletedPersonIDs(savedAttendees = [], draftAttendees = []) {
+        const draftPersonIDs = new Set(
+            (Array.isArray(draftAttendees) ? draftAttendees : [])
+                .map((attendee) => this.getSafePersonID(attendee?.personID))
+                .filter((personID) => personID > 0)
+        );
+
+        return new Set(
+            (Array.isArray(savedAttendees) ? savedAttendees : [])
+                .map((attendee) => this.getSafePersonID(attendee?.personID))
+                .filter((personID) => personID > 0 && !draftPersonIDs.has(personID))
+        );
     }
 }

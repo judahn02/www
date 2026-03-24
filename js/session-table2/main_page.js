@@ -53,6 +53,10 @@ export class main_page {
             this.sortAttendees($(event.currentTarget));
         });
 
+        tableBody.off("click.pdtToggleSessionLock", ".pdt-lock-toggle-button").on("click.pdtToggleSessionLock", ".pdt-lock-toggle-button", async (event) => {
+            await this.toggleSessionLock($(event.currentTarget));
+        });
+
         tableBody.off("click.pdtOpenAttendeesModal", ".pdt-edit-attendees-button").on("click.pdtOpenAttendeesModal", ".pdt-edit-attendees-button", async (event) => {
             const sessionID = Number($(event.currentTarget).attr("data-session-id"));
             if (!Number.isFinite(sessionID)) {
@@ -89,6 +93,7 @@ export class main_page {
         // fill in table
         // first generates the data points row, than the body of attendees.
         for (let session of sessions) {
+            const lockView = this.getSessionLockView(session);
             let entry = `
                 <tr data-session-id="${session.sessionID}">
                     <td>${session.Date}</td>
@@ -116,39 +121,23 @@ export class main_page {
                 attendeeContact.className = "pdt-person-card";
                 attendeeContact.dataset.attendeeName = attendee[0];
                 attendeeContact.dataset.personId = String(attendee[4]);
+                const commentIconClassName = lockView.isLocked
+                    ? "pdt-person-card__icon pdt-person-card__icon--disabled"
+                    : "pdt-person-card__icon";
+                const commentIconTitle = lockView.isLocked
+                    ? `Comments are locked for this session. ${lockView.statusText}.`
+                    : "Open comments";
+                const attendeeDateMarkup = attendee[2] === null ? "" : `<p>${attendee[2]}</p>`;
 
-                if (attendee[2] === null) {
-                    attendeeContact.innerHTML = `
-                        <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
-                        aria-hidden="true">
-                        <p>${attendee[0]}</p>
-                        <p>${attendee[1]}</p>
-                        <p>${attendee[3]}</p>
-                    `;
-                }
-                else {
-                    attendeeContact.innerHTML = `
-                        <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
-                        aria-hidden="true">
-                        <p>${attendee[0]}</p>
-                        <p>${attendee[1]}</p>
-                        <p>${attendee[2]}</p>
-                        <p>${attendee[3]}</p>
-                    `;
-                }
+                attendeeContact.innerHTML = `
+                    <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" data-session-locked="${lockView.isLocked ? "1" : "0"}" class="${commentIconClassName}" src="../assets/speech-bubble-1130.svg" alt=""
+                    aria-hidden="true" title="${commentIconTitle}">
+                    <p>${attendee[0]}</p>
+                    <p>${attendee[1]}</p>
+                    ${attendeeDateMarkup}
+                    <p>${attendee[3]}</p>
+                `;
                 attendeeContacts.append(attendeeContact) ;
-            }
-
-            let lockStat = `<p></p>`;
-            let lockStatBtn = `Lock` ;
-            if (session.Locker !== null) {
-                if (session.Lock === 1) { //locked
-                    lockStat = `<p>Locked by ${session.Locker}</p>`;
-                    lockStatBtn = `Unlock` ;
-                }
-                else {
-                    lockStat = `<p>Unlocked by ${session.Locker}</p>`;
-                }
             }
 
             let attendeeSpace = `
@@ -156,11 +145,11 @@ export class main_page {
                     <td colspan="13">
                         <div class="pdt-details-panel">
                             <div data-session-id="${session.sessionID}" class="pdt-buttons">
-                                ${lockStat}
-                                <button data-session-id="${session.sessionID}" type="button" disabled>${lockStatBtn}</button>
+                                <p>${lockView.statusText}</p>
+                                <button data-session-id="${session.sessionID}" class="pdt-lock-toggle-button" type="button">${lockView.toggleLabel}</button>
                                 <button data-session-id="${session.sessionID}" data-sort-index="-1" class="pdt-sort-attendees-button" type="button">Sort: Original</button>
-                                <button data-session-id="${session.sessionID}" class="pdt-edit-session-button" type="button">Edit Details</button>
-                                <button data-session-id="${session.sessionID}" class="pdt-edit-attendees-button" type="button">Edit Attendees</button>
+                                <button data-session-id="${session.sessionID}" class="pdt-edit-session-button" type="button" ${lockView.canEdit ? "" : "disabled"}>Edit Details</button>
+                                <button data-session-id="${session.sessionID}" class="pdt-edit-attendees-button" type="button" ${lockView.canEdit ? "" : "disabled"}>Edit Attendees</button>
                             </div>
                             ${attendeeContacts.outerHTML}
                         </div>
@@ -171,6 +160,77 @@ export class main_page {
         }
 
         return tableBody ;
+    }
+
+    getSessionLockView(session) {
+        const lockerName = String(session?.Locker ?? "").trim();
+        const hasLocker = lockerName !== "";
+        const isLocked = hasLocker && Number(session?.Lock) === 1;
+
+        return {
+            canEdit: !isLocked,
+            isLocked,
+            statusText: hasLocker
+                ? (isLocked ? `Locked by ${lockerName}` : `Unlocked by ${lockerName}`)
+                : "Unlocked",
+            toggleLabel: isLocked ? "Unlock" : "Lock"
+        };
+    }
+
+    async toggleSessionLock(lockButton) {
+        const sessionID = Number(lockButton.attr("data-session-id"));
+        if (!Number.isFinite(sessionID) || lockButton.prop("disabled")) {
+            return ;
+        }
+
+        const detailsRow = lockButton.closest(".details-row");
+        const shouldKeepDetailsOpen = detailsRow.length > 0 && detailsRow.prop("hidden") === false;
+        const session = await this.db.get("session", { sessionID });
+        if (!session) {
+            alert("That session could not be found. Please refresh the page and try again.");
+            return ;
+        }
+
+        const userName = String(await this.host?.get("userName") ?? "").trim();
+        if (userName === "") {
+            alert("The current WordPress user name could not be determined, so the lock could not be updated.");
+            return ;
+        }
+
+        const currentLockView = this.getSessionLockView(session);
+        const nextLockState = currentLockView.isLocked ? 0 : 1;
+
+        lockButton.prop("disabled", true);
+        lockButton.text(nextLockState === 1 ? "Locking..." : "Unlocking...");
+
+        try {
+            await this.db.set("sessionLock", {
+                sessionID,
+                lock: nextLockState,
+                locker: userName
+            });
+
+            await this.loadTable();
+            this.restoreDetailsRowVisibility(sessionID, shouldKeepDetailsOpen);
+        }
+        catch (_error) {
+            alert("The session lock could not be updated. Please refresh the page and try again.");
+            lockButton.prop("disabled", false);
+            lockButton.text(currentLockView.toggleLabel);
+        }
+    }
+
+    restoreDetailsRowVisibility(sessionID, shouldBeOpen) {
+        if (!shouldBeOpen) {
+            return ;
+        }
+
+        const sessionRow = $(`.pdt-main .table-wrapper table tbody > tr[data-session-id="${sessionID}"]`).not(".details-row").first();
+        if (sessionRow.length === 0) {
+            return ;
+        }
+
+        sessionRow.next(".details-row").prop("hidden", false);
     }
 
     bumpTableScrollHint() {

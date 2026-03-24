@@ -7,6 +7,7 @@ export class attendee_table_renderer {
         const attendees = Array.isArray(options?.attendees) ? options.attendees : [];
         const showRIDColumn = options?.showRIDColumn === true;
         const showSelfPacedDateRangeColumn = options?.showSelfPacedDateRangeColumn === true;
+        const dateRangeRenderMode = options?.dateRangeRenderMode === "edit" ? "edit" : "display";
         const attendeeStatuses = options?.attendeeStatuses ?? {};
         const buildAttendeeSearchText = typeof options?.buildAttendeeSearchText === "function"
             ? options.buildAttendeeSearchText
@@ -29,6 +30,7 @@ export class attendee_table_renderer {
         for (const attendee of attendees) {
             tableBody.append(this.buildAttendeeRow(attendee, {
                 attendeeStatuses,
+                dateRangeRenderMode,
                 showRIDColumn,
                 showSelfPacedDateRangeColumn,
                 attendeeSearchText: buildAttendeeSearchText(attendee)
@@ -74,8 +76,8 @@ export class attendee_table_renderer {
         return `
             <tr class="search-row">
                 <td colspan="${columnCount}">
-                    <input type="text" name="search-attendee" id="search-attendee"
-                        placeholder="Add attendee: start searching members">
+                    <input type="text" name="add-attendee" id="add-attendee"
+                        placeholder="Add attendee: search attendees by name or email">
                 </td>
             </tr>
         `;
@@ -95,7 +97,7 @@ export class attendee_table_renderer {
         const attendeeSearchText = this.escapeHtml(options?.attendeeSearchText);
         const certStatusID = this.getSafeAttendeeStatusID(attendee?.certStatusID, options?.attendeeStatuses);
         const commentButtonTitle = this.getCommentButtonTitle(attendee);
-        const dateRangeMarkup = this.buildDateRangeMarkup(attendee?.dateRange);
+        const dateRangeMarkup = this.buildDateRangeMarkup(attendee, options?.dateRangeRenderMode);
         const attendeeCells = [
             `
                 <td>
@@ -105,7 +107,7 @@ export class attendee_table_renderer {
             `,
             `
                 <td>
-                    <select disabled>
+                    <select class="pdt-attendee-cert-status">
                         ${this.buildCertStatusOptions(options?.attendeeStatuses, certStatusID)}
                     </select>
                 </td>
@@ -136,7 +138,7 @@ export class attendee_table_renderer {
                 </button>
             </td>
         `);
-        attendeeCells.push(`<td><button class="delete-button" type="button" disabled>X</button></td>`);
+        attendeeCells.push(`<td><button class="delete-button pdt-attendee-delete-button" type="button">X</button></td>`);
 
         return `
             <tr class="pdt-attendees-row" data-person-id="${this.getSafePersonID(attendee?.personID)}" data-attendee-email="${attendeeEmail}" data-search-text="${attendeeSearchText}">
@@ -179,27 +181,37 @@ export class attendee_table_renderer {
         }).join("");
     }
 
-    buildDateRangeMarkup(dateRange) {
-        const normalizedDateRange = String(dateRange ?? "").trim();
-        if (normalizedDateRange === "") {
-            return `
-                <input type="date" disabled>
-                <p>to</p>
-                <input type="date" disabled>
-            `;
+    buildDateRangeMarkup(attendee, renderMode = "display") {
+        if (renderMode === "edit") {
+            return this.buildEditableDateRangeMarkup(attendee);
         }
 
-        if (normalizedDateRange.toLowerCase() === "not started") {
+        return this.buildDisplayDateRangeMarkup(attendee);
+    }
+
+    buildEditableDateRangeMarkup(attendee) {
+        const startDateValue = this.escapeHtml(this.normalizeDateInputValue(attendee?.dateRangeStart));
+        const endDateValue = this.escapeHtml(this.normalizeDateInputValue(attendee?.dateRangeEnd));
+
+        return `
+            <div class="pdt-date-range-inputs">
+                <input type="date" class="pdt-attendee-date-start" value="${startDateValue}">
+                <p>to</p>
+                <input type="date" class="pdt-attendee-date-end" value="${endDateValue}">
+            </div>
+        `;
+    }
+
+    buildDisplayDateRangeMarkup(attendee) {
+        const startDateValue = this.normalizeDateInputValue(attendee?.dateRangeStart);
+        const endDateValue = this.normalizeDateInputValue(attendee?.dateRangeEnd);
+        const dateRangeDisplay = String(attendee?.dateRangeDisplay ?? attendee?.dateRange ?? "").trim();
+
+        if (startDateValue === "" && endDateValue === "") {
             return `<p>Not started</p>`;
         }
 
-        const [startDate, endDate] = normalizedDateRange.split(" to ");
-        const startDateValue = this.displayDateToInputValue(startDate);
-        if (startDateValue === "") {
-            return `<p>${this.escapeHtml(normalizedDateRange)}</p>`;
-        }
-
-        if (String(endDate ?? "").trim().toLowerCase() === "ongoing") {
+        if (startDateValue !== "" && endDateValue === "") {
             return `
                 <input type="date" value="${startDateValue}" disabled>
                 <p>to</p>
@@ -207,9 +219,8 @@ export class attendee_table_renderer {
             `;
         }
 
-        const endDateValue = this.displayDateToInputValue(endDate);
         if (endDateValue === "") {
-            return `<p>${this.escapeHtml(normalizedDateRange)}</p>`;
+            return `<p>${this.escapeHtml(dateRangeDisplay)}</p>`;
         }
 
         return `
@@ -258,19 +269,13 @@ export class attendee_table_renderer {
         return new Date(parsedTimestamp).toISOString();
     }
 
-    displayDateToInputValue(displayDate) {
-        const normalizedDate = String(displayDate ?? "").trim();
-        const dateParts = normalizedDate.split("/");
-        if (dateParts.length !== 3) {
+    normalizeDateInputValue(dateValue) {
+        const normalizedDate = String(dateValue ?? "").trim();
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) {
             return "";
         }
 
-        const [month, day, year] = dateParts;
-        if (month === "" || day === "" || year === "") {
-            return "";
-        }
-
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+        return normalizedDate;
     }
 
     getSafePersonID(personID) {

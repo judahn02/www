@@ -18,12 +18,14 @@ export class db_connection {
     "Lock" : (0 | 1),
     "Locker" : (null | "Jason Zinza"),
     "Attendees" : [
-        ["Name", "Email", (null | "MM/DD/YYYY to MM/DD/YYYY" | "MM/DD/YYYY to ongoing" | "not started"), attendeeStatusID, personID ],
+        ["Name", "Email", (null | "YYYY-MM-DD"), (null | "YYYY-MM-DD"), attendeeStatusID, personID ],
         ...
     ]
     }
-    Note, if date is not self paced, then attendees date is null
+    Note, if date is not self paced, then attendee start/end dates are null
     */
+
+    static attendeeDateRangesNormalized = false;
 
     static data = {
         "sessions" : [
@@ -44,11 +46,11 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Priya Singh",
                 "Attendees" : [
-                    ["Talia Morgan", "talia.morgan@example.com", null, 2, 1],
-                    ["Evan Price", "evan.price@example.com", null, 1, 2],
-                    ["Sofia Kim", "sofia.kim@example.com", null, 3, 3],
-                    ["Daniel Ross", "daniel.ross@example.com", null, 4, 4],
-                    ["Mina Ali", "mina.ali@example.com", null, 2, 5],
+                    ["Talia Morgan", "talia.morgan@example.com", null, null, 2, 1],
+                    ["Evan Price", "evan.price@example.com", null, null, 1, 2],
+                    ["Sofia Kim", "sofia.kim@example.com", null, null, 3, 3],
+                    ["Daniel Ross", "daniel.ross@example.com", null, null, 4, 4],
+                    ["Mina Ali", "mina.ali@example.com", null, null, 2, 5],
                 ]
             },
             {
@@ -68,10 +70,10 @@ export class db_connection {
                 "Lock" : 0,
                 "Locker" : null,
                 "Attendees" : [
-                    ["Harper Nguyen", "harper.nguyen@example.com", null, 1, 6],
-                    ["Jonah Clark", "jonah.clark@example.com", null, 4, 7],
-                    ["Layla Scott", "layla.scott@example.com", null, 3, 8],
-                    ["Isaac Bell", "isaac.bell@example.com", null, 2, 9],
+                    ["Harper Nguyen", "harper.nguyen@example.com", null, null, 1, 6],
+                    ["Jonah Clark", "jonah.clark@example.com", null, null, 4, 7],
+                    ["Layla Scott", "layla.scott@example.com", null, null, 3, 8],
+                    ["Isaac Bell", "isaac.bell@example.com", null, null, 2, 9],
                 ]
             },
             {
@@ -91,12 +93,12 @@ export class db_connection {
                 "Lock" : 0,
                 "Locker" : null,
                 "Attendees" : [
-                    ["Nora Diaz", "nora.diaz@example.com", "not started", 1, 10],
-                    ["Caleb Foster", "caleb.foster@example.com", "03/01/2026 to ongoing", 2, 11],
-                    ["Ivy Chen", "ivy.chen@example.com", "03/07/2026 to 03/10/2026", 3, 12],
-                    ["Peter Shah", "peter.shah@example.com", "not started", 4, 13],
-                    ["Grace Hill", "grace.hill@example.com", "03/05/2026 to ongoing", 1, 14],
-                    ["Owen Reed", "owen.reed@example.com", "03/07/2026 to 03/10/2026", 2, 15],
+                    ["Nora Diaz", "nora.diaz@example.com", null, null, 1, 10],
+                    ["Caleb Foster", "caleb.foster@example.com", "2026-03-01", null, 2, 11],
+                    ["Ivy Chen", "ivy.chen@example.com", "2026-03-07", "2026-03-10", 3, 12],
+                    ["Peter Shah", "peter.shah@example.com", null, null, 4, 13],
+                    ["Grace Hill", "grace.hill@example.com", "2026-03-05", null, 1, 14],
+                    ["Owen Reed", "owen.reed@example.com", "2026-03-07", "2026-03-10", 2, 15],
                 ]
             },
             {
@@ -116,11 +118,11 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Jason Zinza",
                 "Attendees" : [
-                    ["Amara Lewis", "amara.lewis@example.com", null, 2, 16],
-                    ["Theo Grant", "theo.grant@example.com", null, 1, 17],
-                    ["Jade Rivera", "jade.rivera@example.com", null, 3, 18],
-                    ["Miles Cooper", "miles.cooper@example.com", null, 4, 19],
-                    ["Zoe Brooks", "zoe.brooks@example.com", null, 2, 20],
+                    ["Amara Lewis", "amara.lewis@example.com", null, null, 2, 16],
+                    ["Theo Grant", "theo.grant@example.com", null, null, 1, 17],
+                    ["Jade Rivera", "jade.rivera@example.com", null, null, 3, 18],
+                    ["Miles Cooper", "miles.cooper@example.com", null, null, 4, 19],
+                    ["Zoe Brooks", "zoe.brooks@example.com", null, null, 2, 20],
                 ]
             },
             {
@@ -140,10 +142,10 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Marta Silva",
                 "Attendees" : [
-                    ["Leo Bennett", "leo.bennett@example.com", null, 2, 21],
-                    ["Aisha Coleman", "aisha.coleman@example.com", null, 1, 22],
-                    ["Riley Ward", "riley.ward@example.com", null, 3, 23],
-                    ["Emma Stone", "emma.stone@example.com", null, 2, 24],
+                    ["Leo Bennett", "leo.bennett@example.com", null, null, 2, 21],
+                    ["Aisha Coleman", "aisha.coleman@example.com", null, null, 1, 22],
+                    ["Riley Ward", "riley.ward@example.com", null, null, 3, 23],
+                    ["Emma Stone", "emma.stone@example.com", null, null, 2, 24],
                 ]
             },
             {
@@ -163,11 +165,11 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Jason Zinza",
                 "Attendees" : [
-                    ["Seth Howard", "seth.howard@example.com", null, 1, 25],
-                    ["Priya Desai", "priya.desai@example.com", null, 2, 26],
-                    ["Naomi Turner", "naomi.turner@example.com", null, 4, 27],
-                    ["Victor Hughes", "victor.hughes@example.com", null, 3, 28],
-                    ["Claire Adams", "claire.adams@example.com", null, 1, 29],
+                    ["Seth Howard", "seth.howard@example.com", null, null, 1, 25],
+                    ["Priya Desai", "priya.desai@example.com", null, null, 2, 26],
+                    ["Naomi Turner", "naomi.turner@example.com", null, null, 4, 27],
+                    ["Victor Hughes", "victor.hughes@example.com", null, null, 3, 28],
+                    ["Claire Adams", "claire.adams@example.com", null, null, 1, 29],
                 ]
             }
         ],
@@ -247,7 +249,21 @@ export class db_connection {
     }
 
     constructor() {
-        
+        this.ensureNormalizedAttendeeDateRanges();
+    }
+
+    ensureNormalizedAttendeeDateRanges() {
+        if (db_connection.attendeeDateRangesNormalized) {
+            return;
+        }
+
+        for (const session of db_connection.data.sessions) {
+            const normalizedAttendees = this.normalizeStoredAttendeeEntries(session?.Attendees, session);
+            session.Attendees = normalizedAttendees.map((attendeeEntry) => this.buildStoredAttendeeEntry(attendeeEntry));
+            session.AttendeesCt = session.Attendees.length;
+        }
+
+        db_connection.attendeeDateRangesNormalized = true;
     }
 
     async get(resource, query = null) {
@@ -264,10 +280,24 @@ export class db_connection {
             const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
             return structuredClone(session ? this.normalizeSessionForRead(session) : null);
         }
+        else if (resource === "attendee") {
+            const sessionID = Number(query?.sessionID);
+            const personID = Number(query?.personID);
+            if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+                return null;
+            }
+
+            const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+            if (!session) {
+                return null;
+            }
+
+            return structuredClone(this.buildSessionAttendeeCandidate(session, personID));
+        }
         else if (resource === "attendees") {
             const sessionID = Number(query?.sessionID);
             if (!Number.isFinite(sessionID)) {
-                return [];
+                return structuredClone(this.buildAttendeeDirectoryRecords());
             }
 
             const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
@@ -318,6 +348,10 @@ export class db_connection {
     }
 
     async set(resource, value) {
+        if (resource === "sessionLock") {
+            return structuredClone(this.updateSessionLock(value));
+        }
+
         if (resource === "comments") {
             const sessionID = Number(value?.sessionID);
             const personID = Number(value?.personID);
@@ -370,7 +404,46 @@ export class db_connection {
         return nextId;
     }
 
+    updateSessionLock(value) {
+        const sessionID = Number(value?.sessionID);
+        if (!Number.isFinite(sessionID)) {
+            return null;
+        }
+
+        const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+        if (!session) {
+            return null;
+        }
+
+        session.Lock = Number(value?.lock) === 1 ? 1 : 0;
+
+        const lockerName = String(value?.locker ?? "").trim();
+        session.Locker = lockerName === "" ? null : lockerName;
+
+        return this.normalizeSessionForRead(session);
+    }
+
     async put(resource, value) {
+        /*
+            {
+            sessionID: 3,
+            certifiedByUserID: 1,
+            attendees: [
+                {
+                personID: 10,
+                certStatusID: 1,
+                dateRangeStart: "2026-03-24", // or null
+                dateRangeEnd: null,           // or "2026-03-30"
+                ridCertified: false,
+                ridCertifiedAt: null          // or ISO datetime string
+                }
+            ]
+            }
+        */
+        if (resource === "sessionAttendees") {
+            return structuredClone(this.updateSessionAttendees(value));
+        }
+
         if (resource === "attendeeRIDCertifications") {
             return structuredClone(this.updateAttendeeRIDCertifications(value));
         }
@@ -469,23 +542,30 @@ export class db_connection {
 
     buildAttendeeRecords(session) {
         const sessionID = Number(session?.sessionID);
-        const attendeeEntries = Array.isArray(session?.Attendees) ? session.Attendees : [];
+        const attendeeEntries = this.normalizeStoredAttendeeEntries(session?.Attendees, session);
 
         return attendeeEntries.map((attendeeEntry) => {
-            const [name, email, dateRange, certStatusID, personID] = attendeeEntry;
             const attendeeComments = db_connection.data.comments.find((commentEntry) => {
-                return commentEntry.sessionID === sessionID && commentEntry.personID === Number(personID);
+                return commentEntry.sessionID === sessionID && commentEntry.personID === Number(attendeeEntry.personID);
             });
-            const ridCertification = this.getRIDCertificationRecord(sessionID, personID);
-            const normalizedStatusID = this.normalizeAttendeeStatusId(certStatusID);
+            const ridCertification = this.getRIDCertificationRecord(sessionID, attendeeEntry.personID);
+            const normalizedStatusID = this.normalizeAttendeeStatusId(attendeeEntry.certStatusID);
             const certStatusLabel = this.getAttendeeStatusLabel(normalizedStatusID);
+            const dateRangeDisplay = this.buildAttendeeDateRangeDisplay(
+                attendeeEntry.dateRangeStart,
+                attendeeEntry.dateRangeEnd,
+                session
+            );
 
             return {
                 sessionID,
-                personID: Number(personID),
-                name: String(name ?? "").trim(),
-                email: String(email ?? "").trim(),
-                dateRange: dateRange === null ? null : String(dateRange),
+                personID: Number(attendeeEntry.personID),
+                name: String(attendeeEntry.name ?? "").trim(),
+                email: String(attendeeEntry.email ?? "").trim(),
+                dateRangeStart: attendeeEntry.dateRangeStart,
+                dateRangeEnd: attendeeEntry.dateRangeEnd,
+                dateRangeDisplay,
+                dateRange: dateRangeDisplay,
                 certStatusID: normalizedStatusID,
                 certStatus: certStatusLabel,
                 certStatusLabel,
@@ -496,6 +576,123 @@ export class db_connection {
                 memberComment: String(attendeeComments?.memberComment ?? "")
             };
         });
+    }
+
+    buildAttendeeDirectoryRecords() {
+        const attendeeDirectory = new Map();
+
+        for (const memberEntry of db_connection.data.members) {
+            if (Number(memberEntry?.[2]) !== 1) {
+                continue;
+            }
+
+            const attendeeRecord = this.buildAttendeeDirectoryRecord(memberEntry?.[4], memberEntry?.[0], memberEntry?.[1]);
+            if (!attendeeRecord) {
+                continue;
+            }
+
+            attendeeDirectory.set(attendeeRecord.personID, attendeeRecord);
+        }
+
+        for (const session of db_connection.data.sessions) {
+            const attendeeEntries = this.normalizeStoredAttendeeEntries(session?.Attendees, session);
+            for (const attendeeEntry of attendeeEntries) {
+                const attendeeRecord = this.buildAttendeeDirectoryRecord(attendeeEntry?.personID, attendeeEntry?.name, attendeeEntry?.email);
+                if (!attendeeRecord || attendeeDirectory.has(attendeeRecord.personID)) {
+                    continue;
+                }
+
+                attendeeDirectory.set(attendeeRecord.personID, attendeeRecord);
+            }
+        }
+
+        return Array.from(attendeeDirectory.values()).sort((leftAttendee, rightAttendee) => {
+            return leftAttendee.name.localeCompare(rightAttendee.name)
+                || leftAttendee.email.localeCompare(rightAttendee.email)
+                || leftAttendee.personID - rightAttendee.personID;
+        });
+    }
+
+    buildAttendeeDirectoryRecord(personID, name, email) {
+        const numericPersonID = Number(personID);
+        const normalizedName = String(name ?? "").trim();
+        const normalizedEmail = String(email ?? "").trim();
+        if (!Number.isFinite(numericPersonID) || normalizedName === "" || normalizedEmail === "") {
+            return null;
+        }
+
+        return {
+            personID: numericPersonID,
+            name: normalizedName,
+            email: normalizedEmail,
+            label: `${normalizedName} (${normalizedEmail})`
+        };
+    }
+
+    getAttendeeDirectoryRecord(personID) {
+        const numericPersonID = Number(personID);
+        if (!Number.isFinite(numericPersonID)) {
+            return null;
+        }
+
+        const attendeeMemberEntry = db_connection.data.members.find((memberEntry) => {
+            return Number(memberEntry?.[4]) === numericPersonID && Number(memberEntry?.[2]) === 1;
+        });
+        if (attendeeMemberEntry) {
+            return this.buildAttendeeDirectoryRecord(attendeeMemberEntry[4], attendeeMemberEntry[0], attendeeMemberEntry[1]);
+        }
+
+        for (const session of db_connection.data.sessions) {
+            const attendeeEntries = this.normalizeStoredAttendeeEntries(session?.Attendees, session);
+            const attendeeEntry = attendeeEntries.find((sessionAttendeeEntry) => {
+                return Number(sessionAttendeeEntry?.personID) === numericPersonID;
+            });
+            if (attendeeEntry) {
+                return this.buildAttendeeDirectoryRecord(attendeeEntry.personID, attendeeEntry.name, attendeeEntry.email);
+            }
+        }
+
+        return null;
+    }
+
+    buildSessionAttendeeCandidate(session, personID) {
+        const existingAttendeeRecord = this.buildAttendeeRecords(session).find((attendee) => {
+            return attendee.personID === Number(personID);
+        });
+        if (existingAttendeeRecord) {
+            return existingAttendeeRecord;
+        }
+
+        const attendeeDirectoryRecord = this.getAttendeeDirectoryRecord(personID);
+        if (!attendeeDirectoryRecord) {
+            return null;
+        }
+
+        const sessionID = Number(session?.sessionID);
+        const attendeeComments = db_connection.data.comments.find((commentEntry) => {
+            return commentEntry.sessionID === sessionID && commentEntry.personID === Number(personID);
+        });
+        const defaultStatusID = 4;
+        const defaultStatusLabel = this.getAttendeeStatusLabel(defaultStatusID);
+
+        return {
+            sessionID,
+            personID: attendeeDirectoryRecord.personID,
+            name: attendeeDirectoryRecord.name,
+            email: attendeeDirectoryRecord.email,
+            dateRangeStart: null,
+            dateRangeEnd: null,
+            dateRangeDisplay: this.buildAttendeeDateRangeDisplay(null, null, session),
+            dateRange: this.buildAttendeeDateRangeDisplay(null, null, session),
+            certStatusID: defaultStatusID,
+            certStatus: defaultStatusLabel,
+            certStatusLabel: defaultStatusLabel,
+            ridCertified: false,
+            ridCertifiedAt: null,
+            ridCertifiedByUserID: null,
+            adminComment: String(attendeeComments?.adminComment ?? ""),
+            memberComment: String(attendeeComments?.memberComment ?? "")
+        };
     }
 
     updateAttendeeRIDCertifications(value) {
@@ -522,8 +719,8 @@ export class db_connection {
             attendeePayloadMap.set(normalizedAttendeeEntry.personID, normalizedAttendeeEntry);
         }
 
-        const sessionPersonIDs = (Array.isArray(session.Attendees) ? session.Attendees : [])
-            .map((attendeeEntry) => Number(attendeeEntry?.[4]))
+        const sessionPersonIDs = this.normalizeStoredAttendeeEntries(session.Attendees, session)
+            .map((attendeeEntry) => Number(attendeeEntry?.personID))
             .filter((personID) => Number.isFinite(personID));
         const nextRIDCertificates = [];
 
@@ -565,29 +762,79 @@ export class db_connection {
         return this.buildAttendeeRecords(session);
     }
 
+    updateSessionAttendees(value) {
+        const sessionID = Number(value?.sessionID);
+        if (!Number.isFinite(sessionID)) {
+            return [];
+        }
+
+        const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+        if (!session) {
+            return [];
+        }
+
+        const certifiedByUserID = this.normalizePositiveInteger(value?.certifiedByUserID);
+        const attendeePayload = Array.isArray(value?.attendees) ? value.attendees : [];
+        const nextAttendeeEntries = [];
+        const nextRIDCertificates = [];
+        const seenPersonIDs = new Set();
+
+        for (const attendeeEntry of attendeePayload) {
+            const normalizedAttendeeEntry = this.normalizeSessionAttendeePayloadEntry(attendeeEntry, session);
+            if (!normalizedAttendeeEntry || seenPersonIDs.has(normalizedAttendeeEntry.personID)) {
+                continue;
+            }
+
+            seenPersonIDs.add(normalizedAttendeeEntry.personID);
+            nextAttendeeEntries.push(this.buildStoredAttendeeEntry(normalizedAttendeeEntry));
+
+            if (!normalizedAttendeeEntry.ridCertified) {
+                continue;
+            }
+
+            const existingCertification = this.getRIDCertificationRecord(sessionID, normalizedAttendeeEntry.personID);
+            const certifiedAt = normalizedAttendeeEntry.ridCertifiedAt
+                ?? existingCertification?.certifiedAt
+                ?? new Date().toISOString();
+            const certificationChanged = !existingCertification
+                || existingCertification.certifiedAt !== certifiedAt;
+
+            nextRIDCertificates.push({
+                sessionID,
+                personID: normalizedAttendeeEntry.personID,
+                certifiedAt,
+                certifiedByUserID: certificationChanged
+                    ? (certifiedByUserID ?? existingCertification?.certifiedByUserID ?? null)
+                    : (existingCertification?.certifiedByUserID ?? certifiedByUserID ?? null)
+            });
+        }
+
+        session.Attendees = nextAttendeeEntries;
+        session.AttendeesCt = nextAttendeeEntries.length;
+        db_connection.data.ridCertificates = db_connection.data.ridCertificates
+            .filter((certificationEntry) => certificationEntry.sessionID !== sessionID)
+            .concat(nextRIDCertificates);
+
+        return this.buildAttendeeRecords(session);
+    }
+
     normalizeSessionForRead(session) {
         return {
             ...structuredClone(session),
             IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
             IsSelfPacedSession: this.isSelfPacedSession(session),
-            Attendees: this.normalizeSessionAttendees(session?.Attendees)
+            Attendees: this.normalizeSessionAttendees(session?.Attendees, session)
         };
     }
 
-    normalizeSessionAttendees(attendeeEntries = []) {
-        if (!Array.isArray(attendeeEntries)) {
-            return [];
-        }
-
-        return attendeeEntries.map((attendeeEntry) => {
-            const [name, email, dateRange, certStatusID, personID] = attendeeEntry;
-
+    normalizeSessionAttendees(attendeeEntries = [], session = null) {
+        return this.normalizeStoredAttendeeEntries(attendeeEntries, session).map((attendeeEntry) => {
             return [
-                String(name ?? "").trim(),
-                String(email ?? "").trim(),
-                dateRange === null ? null : String(dateRange),
-                this.getAttendeeStatusLabel(certStatusID),
-                Number(personID)
+                String(attendeeEntry.name ?? "").trim(),
+                String(attendeeEntry.email ?? "").trim(),
+                this.buildAttendeeDateRangeDisplay(attendeeEntry.dateRangeStart, attendeeEntry.dateRangeEnd, session),
+                this.getAttendeeStatusLabel(attendeeEntry.certStatusID),
+                Number(attendeeEntry.personID)
             ];
         });
     }
@@ -664,6 +911,232 @@ export class db_connection {
             ridCertified,
             ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry?.ridCertifiedAt) : null
         };
+    }
+
+    normalizeSessionAttendeePayloadEntry(attendeeEntry, session) {
+        const personID = Number(attendeeEntry?.personID);
+        if (!Number.isFinite(personID)) {
+            return null;
+        }
+
+        const attendeeDirectoryRecord = this.getAttendeeDirectoryRecord(personID);
+        if (!attendeeDirectoryRecord) {
+            return null;
+        }
+
+        const certStatusID = this.normalizeAttendeeStatusId(attendeeEntry?.certStatusID);
+        const isRIDQualifiedSession = this.isRIDQualifiedSession(session);
+        const ridCertified = isRIDQualifiedSession && attendeeEntry?.ridCertified === true;
+        const normalizedDateRange = this.normalizeSessionAttendeeDateRange(attendeeEntry, session);
+
+        return {
+            personID,
+            name: attendeeDirectoryRecord.name,
+            email: attendeeDirectoryRecord.email,
+            dateRangeStart: normalizedDateRange.dateRangeStart,
+            dateRangeEnd: normalizedDateRange.dateRangeEnd,
+            certStatusID,
+            ridCertified,
+            ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry?.ridCertifiedAt) : null
+        };
+    }
+
+    normalizeSessionAttendeeDateRange(attendeeEntry, session) {
+        if (!this.isSelfPacedSession(session)) {
+            return {
+                dateRangeStart: null,
+                dateRangeEnd: null
+            };
+        }
+
+        const normalizedSeparatedDateRange = this.normalizeAttendeeDateRangeValues(
+            attendeeEntry?.dateRangeStart,
+            attendeeEntry?.dateRangeEnd,
+            session
+        );
+        if (normalizedSeparatedDateRange.dateRangeStart !== null || normalizedSeparatedDateRange.dateRangeEnd !== null) {
+            return normalizedSeparatedDateRange;
+        }
+
+        return this.parseLegacyAttendeeDateRange(attendeeEntry?.dateRange, session);
+    }
+
+    normalizeStoredAttendeeEntries(attendeeEntries = [], session = null) {
+        if (!Array.isArray(attendeeEntries)) {
+            return [];
+        }
+
+        return attendeeEntries
+            .map((attendeeEntry) => this.normalizeStoredAttendeeEntry(attendeeEntry, session))
+            .filter((attendeeEntry) => attendeeEntry !== null);
+    }
+
+    normalizeStoredAttendeeEntry(attendeeEntry, session = null) {
+        if (!Array.isArray(attendeeEntry)) {
+            return null;
+        }
+
+        const normalizedName = String(attendeeEntry?.[0] ?? "").trim();
+        const normalizedEmail = String(attendeeEntry?.[1] ?? "").trim();
+        if (normalizedName === "" || normalizedEmail === "") {
+            return null;
+        }
+
+        const isExpandedTuple = attendeeEntry.length >= 6;
+        const dateRangeValues = isExpandedTuple
+            ? this.normalizeAttendeeDateRangeValues(attendeeEntry?.[2], attendeeEntry?.[3], session)
+            : this.parseLegacyAttendeeDateRange(attendeeEntry?.[2], session);
+        const certStatusID = isExpandedTuple ? attendeeEntry?.[4] : attendeeEntry?.[3];
+        const personID = Number(isExpandedTuple ? attendeeEntry?.[5] : attendeeEntry?.[4]);
+        if (!Number.isFinite(personID)) {
+            return null;
+        }
+
+        return {
+            name: normalizedName,
+            email: normalizedEmail,
+            dateRangeStart: dateRangeValues.dateRangeStart,
+            dateRangeEnd: dateRangeValues.dateRangeEnd,
+            certStatusID: this.normalizeAttendeeStatusId(certStatusID),
+            personID
+        };
+    }
+
+    buildStoredAttendeeEntry(attendeeEntry) {
+        return [
+            String(attendeeEntry?.name ?? "").trim(),
+            String(attendeeEntry?.email ?? "").trim(),
+            attendeeEntry?.dateRangeStart ?? null,
+            attendeeEntry?.dateRangeEnd ?? null,
+            this.normalizeAttendeeStatusId(attendeeEntry?.certStatusID),
+            Number(attendeeEntry?.personID)
+        ];
+    }
+
+    normalizeAttendeeDateRangeValues(dateRangeStart, dateRangeEnd, session = null) {
+        if (!this.isSelfPacedSession(session)) {
+            return {
+                dateRangeStart: null,
+                dateRangeEnd: null
+            };
+        }
+
+        const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
+        const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
+
+        if (normalizedStartDate === null) {
+            return {
+                dateRangeStart: null,
+                dateRangeEnd: null
+            };
+        }
+
+        if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
+            return {
+                dateRangeStart: normalizedStartDate,
+                dateRangeEnd: null
+            };
+        }
+
+        return {
+            dateRangeStart: normalizedStartDate,
+            dateRangeEnd: normalizedEndDate
+        };
+    }
+
+    parseLegacyAttendeeDateRange(dateRange, session = null) {
+        if (!this.isSelfPacedSession(session)) {
+            return {
+                dateRangeStart: null,
+                dateRangeEnd: null
+            };
+        }
+
+        const normalizedDateRange = String(dateRange ?? "").trim();
+        if (normalizedDateRange === "" || normalizedDateRange.toLowerCase() === "not started") {
+            return {
+                dateRangeStart: null,
+                dateRangeEnd: null
+            };
+        }
+
+        const [startDate, endDate] = normalizedDateRange.split(/\s+to\s+/i);
+        const normalizedStartDate = this.normalizeFlexibleDateValue(startDate);
+        if (normalizedStartDate === null) {
+            return {
+                dateRangeStart: null,
+                dateRangeEnd: null
+            };
+        }
+
+        const normalizedEndDateLabel = String(endDate ?? "").trim().toLowerCase();
+        if (normalizedEndDateLabel === "" || normalizedEndDateLabel === "ongoing") {
+            return {
+                dateRangeStart: normalizedStartDate,
+                dateRangeEnd: null
+            };
+        }
+
+        const normalizedEndDate = this.normalizeFlexibleDateValue(endDate);
+        if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
+            return {
+                dateRangeStart: normalizedStartDate,
+                dateRangeEnd: null
+            };
+        }
+
+        return {
+            dateRangeStart: normalizedStartDate,
+            dateRangeEnd: normalizedEndDate
+        };
+    }
+
+    buildAttendeeDateRangeDisplay(dateRangeStart, dateRangeEnd, session = null) {
+        if (!this.isSelfPacedSession(session)) {
+            return null;
+        }
+
+        const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
+        const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
+
+        if (normalizedStartDate === null) {
+            return "Not started";
+        }
+
+        const formattedStartDate = this.formatInputDate(normalizedStartDate);
+        if (formattedStartDate === null) {
+            return "Not started";
+        }
+
+        if (normalizedEndDate === null) {
+            return `${formattedStartDate} to Ongoing`;
+        }
+
+        const formattedEndDate = this.formatInputDate(normalizedEndDate);
+        if (formattedEndDate === null) {
+            return `${formattedStartDate} to Ongoing`;
+        }
+
+        return `${formattedStartDate} to ${formattedEndDate}`;
+    }
+
+    normalizeFlexibleDateValue(dateValue) {
+        const normalizedDateValue = String(dateValue ?? "").trim();
+        if (normalizedDateValue === "") {
+            return null;
+        }
+
+        if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedDateValue)) {
+            return normalizedDateValue;
+        }
+
+        const displayDateMatch = normalizedDateValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (!displayDateMatch) {
+            return null;
+        }
+
+        const [, month, day, year] = displayDateMatch;
+        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     }
 
     normalizeRIDCertificationDateTime(value) {

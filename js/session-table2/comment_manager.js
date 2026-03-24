@@ -30,6 +30,10 @@ export class comment_manager {
     bindOpenTriggers(commentFields, tableBody) {
         tableBody.off("click.pdtComment", ".pdt-person-card__icon").on("click.pdtComment", ".pdt-person-card__icon", async (event) => {
             const icon = $(event.currentTarget);
+            if (icon.attr("data-session-locked") === "1") {
+                return;
+            }
+
             const personCard = icon.closest(".pdt-person-card");
             const personName = String(personCard.find("p").first().text() ?? "").trim();
             const sessionID = Number(icon.attr("data-session-id"));

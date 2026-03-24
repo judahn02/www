@@ -167,6 +167,15 @@ body {
         .pdt-person-card__icon:hover {
             transform: translateY(-2px);
         }
+
+        .pdt-person-card__icon--disabled {
+            cursor: not-allowed;
+            opacity: 0.45;
+        }
+
+        .pdt-person-card__icon--disabled:hover {
+            transform: none;
+        }
     }
 }
 
@@ -275,7 +284,42 @@ body {
             text-align: left;
         }
 
+        .search-row .ts-wrapper {
+            width: 100%;
+        }
+
+        .search-row .ts-control {
+            text-align: left;
+        }
+
+        .search-row .ts-dropdown {
+            z-index: 3;
+        }
+
+        .pdt-add-attendee-option {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pdt-add-attendee-option__email {
+            font-size: 0.92em;
+            color: #6b7280;
+        }
+
         .date-range-cell {
+            .pdt-date-range-inputs {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 220px;
+            }
+
+            .pdt-date-range-inputs input[type='date'] {
+                flex: 1 1 0;
+                min-width: 0;
+            }
+
             >p {
                 margin: 0px;
                 padding: 0px;

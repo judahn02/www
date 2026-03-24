@@ -2,6 +2,7 @@ import { session_state } from "./state.js";
 import { attendee_table_renderer } from "./attendee_table_renderer.js";
 import { attendee_rid_manager } from "./attendee_rid_manager.js";
 import { attendee_filter_manager } from "./attendee_filter_manager.js";
+import { attendee_add_manager } from "./attendee_add_manager.js";
 
 export class show_attendees {
     constructor(db = null, host = null) {
@@ -10,6 +11,7 @@ export class show_attendees {
         this.tableRenderer = new attendee_table_renderer();
         this.attendeeRIDManager = new attendee_rid_manager(db, host);
         this.attendeeFilterManager = new attendee_filter_manager();
+        this.attendeeAddManager = new attendee_add_manager(db);
         this.mainPage = null;
         this.commentManager = null;
         this.commentFields = null;
@@ -37,7 +39,8 @@ export class show_attendees {
         this.clearAttendeeRows();
         this.bindModalEvents();
         this.bindCommentTriggers();
-        this.bindRIDFieldEvents();
+        this.bindAttendeeFieldEvents();
+        await this.attendeeAddManager.init();
         this.attendeeFilterManager.init({
             searchField: this.modalRefs.attendeeSearch,
             tableBody: this.modalRefs.tableBody,
@@ -72,7 +75,7 @@ export class show_attendees {
         });
 
         this.modalRefs.submit.off("click.pdtShowAttendees").on("click.pdtShowAttendees", async () => {
-            await this.saveRIDChanges();
+            await this.saveAttendeeChanges();
         });
     }
 
@@ -86,7 +89,7 @@ export class show_attendees {
         });
     }
 
-    bindRIDFieldEvents() {
+    bindAttendeeFieldEvents() {
         if (!this.modalRefs) {
             return;
         }
@@ -100,6 +103,69 @@ export class show_attendees {
             this.attendeeRIDManager.handleDateTimeChange($(event.currentTarget));
             this.updateSubmitButtonState();
         });
+
+        this.modalRefs.tableBody.off("change.pdtAttendeeCertStatus", ".pdt-attendee-cert-status").on("change.pdtAttendeeCertStatus", ".pdt-attendee-cert-status", (event) => {
+            const certificationStatusField = $(event.currentTarget);
+            const attendeeRow = certificationStatusField.closest(".pdt-attendees-row");
+            const personID = Number(attendeeRow.attr("data-person-id"));
+            if (!Number.isFinite(personID)) {
+                return;
+            }
+
+            const statusID = Number(certificationStatusField.val());
+            this.attendeeRIDManager.updateAttendeeCertificationStatus(
+                personID,
+                statusID,
+                this.getAttendeeStatusLabel(statusID)
+            );
+            this.updateSubmitButtonState();
+        });
+
+        this.modalRefs.tableBody.off("change.pdtAttendeeDateStart", ".pdt-attendee-date-start").on("change.pdtAttendeeDateStart", ".pdt-attendee-date-start", (event) => {
+            this.handleAttendeeDateRangeChange($(event.currentTarget));
+        });
+
+        this.modalRefs.tableBody.off("change.pdtAttendeeDateEnd", ".pdt-attendee-date-end").on("change.pdtAttendeeDateEnd", ".pdt-attendee-date-end", (event) => {
+            this.handleAttendeeDateRangeChange($(event.currentTarget));
+        });
+
+        this.modalRefs.tableBody.off("click.pdtDeleteAttendee", ".pdt-attendee-delete-button").on("click.pdtDeleteAttendee", ".pdt-attendee-delete-button", (event) => {
+            const attendeeRow = $(event.currentTarget).closest(".pdt-attendees-row");
+            const personID = Number(attendeeRow.attr("data-person-id"));
+            if (!Number.isFinite(personID)) {
+                return;
+            }
+
+            const didRemoveAttendee = this.attendeeRIDManager.removeAttendee(personID);
+            if (!didRemoveAttendee) {
+                return;
+            }
+
+            this.renderAttendeeRows();
+            this.updateSubmitButtonState();
+        });
+    }
+
+    handleAttendeeDateRangeChange(dateField) {
+        const attendeeRow = dateField.closest(".pdt-attendees-row");
+        const personID = Number(attendeeRow.attr("data-person-id"));
+        if (!Number.isFinite(personID)) {
+            return;
+        }
+
+        const startDateField = attendeeRow.find(".pdt-attendee-date-start").first();
+        const endDateField = attendeeRow.find(".pdt-attendee-date-end").first();
+        const updatedAttendee = this.attendeeRIDManager.updateAttendeeDateRange(personID, {
+            dateRangeStart: startDateField.val(),
+            dateRangeEnd: endDateField.val()
+        });
+        if (!updatedAttendee) {
+            return;
+        }
+
+        startDateField.val(updatedAttendee.dateRangeStart ?? "");
+        endDateField.val(updatedAttendee.dateRangeEnd ?? "");
+        this.updateSubmitButtonState();
     }
 
     async openForSession(sessionID) {
@@ -107,10 +173,11 @@ export class show_attendees {
             return;
         }
 
-        const [sessionData, attendees, attendeeStatuses] = await Promise.all([
+        const [sessionData, attendees, attendeeStatuses, attendeeDirectory] = await Promise.all([
             this.db.get("session", { sessionID }),
             this.db.get("attendees", { sessionID }),
-            this.db.get("attendeeStatuses")
+            this.db.get("attendeeStatuses"),
+            this.db.get("attendees")
         ]);
 
         if (!sessionData) {
@@ -119,6 +186,7 @@ export class show_attendees {
         }
 
         this.attendeeStatuses = attendeeStatuses ?? {};
+        this.attendeeAddManager.setDirectory(attendeeDirectory);
         this.attendeeModalState = {
             activeSessionID: sessionID,
             showRIDColumn: this.shouldShowRIDColumn(sessionData),
@@ -128,7 +196,7 @@ export class show_attendees {
         this.modalRefs.sessionName.text(String(sessionData.SessionTitle ?? ""));
         this.attendeeFilterManager.reset();
         this.renderAttendeeRows();
-        this.getAttendeeRowSearchField().val("");
+        this.getAddAttendeeField().val("");
         this.updateSubmitButtonState();
         this.modalRefs.wrapper.prop("hidden", false);
         session_state.state = "showAttendees";
@@ -158,7 +226,7 @@ export class show_attendees {
         });
     }
 
-    async saveRIDChanges() {
+    async saveAttendeeChanges() {
         if (!this.modalRefs) {
             return;
         }
@@ -177,6 +245,7 @@ export class show_attendees {
             return;
         }
 
+        await this.mainPage?.loadTable();
         this.renderAttendeeRows();
     }
 
@@ -187,7 +256,8 @@ export class show_attendees {
 
         this.modalRefs.wrapper.prop("hidden", true);
         this.attendeeFilterManager.reset();
-        this.getAttendeeRowSearchField().val("");
+        this.attendeeAddManager.destroy();
+        this.getAddAttendeeField().val("");
         this.clearTableHead();
         this.clearAttendeeRows();
         this.attendeeRIDManager.reset();
@@ -224,8 +294,30 @@ export class show_attendees {
         this.updateSubmitButtonState();
     }
 
-    getAttendeeRowSearchField() {
-        return $("#pdt-shadow-attendees #search-attendee");
+    getAddAttendeeField() {
+        return $("#pdt-shadow-attendees #add-attendee");
+    }
+
+    async addAttendeeToDraft(attendeeDirectoryEntry) {
+        const sessionID = Number(this.attendeeModalState.activeSessionID);
+        const personID = Number(attendeeDirectoryEntry?.personID);
+        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+            return;
+        }
+
+        const attendeeCandidate = await this.db.get("attendee", { sessionID, personID });
+        if (!attendeeCandidate) {
+            alert("That attendee could not be loaded. Please refresh the page and try again.");
+            return;
+        }
+
+        const addedAttendee = this.attendeeRIDManager.addAttendee(attendeeCandidate);
+        if (!addedAttendee) {
+            return;
+        }
+
+        this.renderAttendeeRows();
+        this.updateSubmitButtonState();
     }
 
     renderAttendeeRows() {
@@ -236,11 +328,18 @@ export class show_attendees {
         this.tableRenderer.render(this.modalRefs.tableHead, this.modalRefs.tableBody, {
             attendees: this.attendeeRIDManager.getDraftAttendees(),
             attendeeStatuses: this.attendeeStatuses,
+            dateRangeRenderMode: "edit",
             showRIDColumn: this.attendeeModalState.showRIDColumn,
             showSelfPacedDateRangeColumn: this.attendeeModalState.showSelfPacedDateRangeColumn,
             buildAttendeeSearchText: (attendee) => this.attendeeFilterManager.buildAttendeeSearchText(attendee)
         });
         this.attendeeFilterManager.applyFilter();
+        this.attendeeAddManager.syncSearch(this.getAddAttendeeField(), {
+            excludedPersonIDs: this.attendeeRIDManager.getDraftPersonIDs(),
+            onAttendeeSelected: async (attendeeDirectoryEntry) => {
+                await this.addAttendeeToDraft(attendeeDirectoryEntry);
+            }
+        });
     }
 
     getVisibleColumnCount() {
@@ -248,6 +347,15 @@ export class show_attendees {
             showRIDColumn: this.attendeeModalState.showRIDColumn,
             showSelfPacedDateRangeColumn: this.attendeeModalState.showSelfPacedDateRangeColumn
         });
+    }
+
+    getAttendeeStatusLabel(statusID) {
+        const numericStatusID = Number(statusID);
+        if (Number.isFinite(numericStatusID) && this.attendeeStatuses[numericStatusID]) {
+            return this.attendeeStatuses[numericStatusID];
+        }
+
+        return this.attendeeStatuses[4] ?? "Not Assigned";
     }
 
     shouldShowRIDColumn(sessionData) {
