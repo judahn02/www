@@ -18,7 +18,7 @@ export class db_connection {
     "Lock" : (0 | 1),
     "Locker" : (null | "Jason Zinza"),
     "Attendees" : [
-        ["Name", "Email", (null | "MM/DD/YYYY to MM/DD/YYYY" | "MM/DD/YYYY to ongoing" | "not started"), "Cert", personID ],
+        ["Name", "Email", (null | "MM/DD/YYYY to MM/DD/YYYY" | "MM/DD/YYYY to ongoing" | "not started"), attendeeStatusID, personID ],
         ...
     ]
     }
@@ -44,11 +44,11 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Priya Singh",
                 "Attendees" : [
-                    ["Talia Morgan", "talia.morgan@example.com", null, "Master", 1],
-                    ["Evan Price", "evan.price@example.com", null, "Associate", 2],
-                    ["Sofia Kim", "sofia.kim@example.com", null, "None", 3],
-                    ["Daniel Ross", "daniel.ross@example.com", null, "Not Assigned", 4],
-                    ["Mina Ali", "mina.ali@example.com", null, "Master", 5],
+                    ["Talia Morgan", "talia.morgan@example.com", null, 2, 1],
+                    ["Evan Price", "evan.price@example.com", null, 1, 2],
+                    ["Sofia Kim", "sofia.kim@example.com", null, 3, 3],
+                    ["Daniel Ross", "daniel.ross@example.com", null, 4, 4],
+                    ["Mina Ali", "mina.ali@example.com", null, 2, 5],
                 ]
             },
             {
@@ -68,10 +68,10 @@ export class db_connection {
                 "Lock" : 0,
                 "Locker" : null,
                 "Attendees" : [
-                    ["Harper Nguyen", "harper.nguyen@example.com", null, "Associate", 6],
-                    ["Jonah Clark", "jonah.clark@example.com", null, "Not Assigned", 7],
-                    ["Layla Scott", "layla.scott@example.com", null, "None", 8],
-                    ["Isaac Bell", "isaac.bell@example.com", null, "Master", 9],
+                    ["Harper Nguyen", "harper.nguyen@example.com", null, 1, 6],
+                    ["Jonah Clark", "jonah.clark@example.com", null, 4, 7],
+                    ["Layla Scott", "layla.scott@example.com", null, 3, 8],
+                    ["Isaac Bell", "isaac.bell@example.com", null, 2, 9],
                 ]
             },
             {
@@ -91,12 +91,12 @@ export class db_connection {
                 "Lock" : 0,
                 "Locker" : null,
                 "Attendees" : [
-                    ["Nora Diaz", "nora.diaz@example.com", "not started", "Associate", 10],
-                    ["Caleb Foster", "caleb.foster@example.com", "03/01/2026 to ongoing", "Master", 11],
-                    ["Ivy Chen", "ivy.chen@example.com", "03/07/2026 to 03/10/2026", "None", 12],
-                    ["Peter Shah", "peter.shah@example.com", "not started", "Not Assigned", 13],
-                    ["Grace Hill", "grace.hill@example.com", "03/05/2026 to ongoing", "Associate", 14],
-                    ["Owen Reed", "owen.reed@example.com", "03/07/2026 to 03/10/2026", "Master", 15],
+                    ["Nora Diaz", "nora.diaz@example.com", "not started", 1, 10],
+                    ["Caleb Foster", "caleb.foster@example.com", "03/01/2026 to ongoing", 2, 11],
+                    ["Ivy Chen", "ivy.chen@example.com", "03/07/2026 to 03/10/2026", 3, 12],
+                    ["Peter Shah", "peter.shah@example.com", "not started", 4, 13],
+                    ["Grace Hill", "grace.hill@example.com", "03/05/2026 to ongoing", 1, 14],
+                    ["Owen Reed", "owen.reed@example.com", "03/07/2026 to 03/10/2026", 2, 15],
                 ]
             },
             {
@@ -116,11 +116,11 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Jason Zinza",
                 "Attendees" : [
-                    ["Amara Lewis", "amara.lewis@example.com", null, "Master", 16],
-                    ["Theo Grant", "theo.grant@example.com", null, "Associate", 17],
-                    ["Jade Rivera", "jade.rivera@example.com", null, "None", 18],
-                    ["Miles Cooper", "miles.cooper@example.com", null, "Not Assigned", 19],
-                    ["Zoe Brooks", "zoe.brooks@example.com", null, "Master", 20],
+                    ["Amara Lewis", "amara.lewis@example.com", null, 2, 16],
+                    ["Theo Grant", "theo.grant@example.com", null, 1, 17],
+                    ["Jade Rivera", "jade.rivera@example.com", null, 3, 18],
+                    ["Miles Cooper", "miles.cooper@example.com", null, 4, 19],
+                    ["Zoe Brooks", "zoe.brooks@example.com", null, 2, 20],
                 ]
             },
             {
@@ -140,10 +140,10 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Marta Silva",
                 "Attendees" : [
-                    ["Leo Bennett", "leo.bennett@example.com", null, "Master", 21],
-                    ["Aisha Coleman", "aisha.coleman@example.com", null, "Associate", 22],
-                    ["Riley Ward", "riley.ward@example.com", null, "None", 23],
-                    ["Emma Stone", "emma.stone@example.com", null, "Master", 24],
+                    ["Leo Bennett", "leo.bennett@example.com", null, 2, 21],
+                    ["Aisha Coleman", "aisha.coleman@example.com", null, 1, 22],
+                    ["Riley Ward", "riley.ward@example.com", null, 3, 23],
+                    ["Emma Stone", "emma.stone@example.com", null, 2, 24],
                 ]
             },
             {
@@ -163,14 +163,20 @@ export class db_connection {
                 "Lock" : 1,
                 "Locker" : "Jason Zinza",
                 "Attendees" : [
-                    ["Seth Howard", "seth.howard@example.com", null, "Associate", 25],
-                    ["Priya Desai", "priya.desai@example.com", null, "Master", 26],
-                    ["Naomi Turner", "naomi.turner@example.com", null, "Not Assigned", 27],
-                    ["Victor Hughes", "victor.hughes@example.com", null, "None", 28],
-                    ["Claire Adams", "claire.adams@example.com", null, "Associate", 29],
+                    ["Seth Howard", "seth.howard@example.com", null, 1, 25],
+                    ["Priya Desai", "priya.desai@example.com", null, 2, 26],
+                    ["Naomi Turner", "naomi.turner@example.com", null, 4, 27],
+                    ["Victor Hughes", "victor.hughes@example.com", null, 3, 28],
+                    ["Claire Adams", "claire.adams@example.com", null, 1, 29],
                 ]
             }
         ],
+        "attendeeStatuses" : {
+            1 : "Certified",
+            2 : "Master",
+            3 : "None",
+            4 : "Not Assigned",
+        },
         "flags" : {
             "top" : [1,2,3,4],
             1 : "General",
@@ -245,7 +251,9 @@ export class db_connection {
 
     async get(resource, query = null) {
         if (resource === "sessions")
-            return structuredClone(db_connection.data.sessions);
+            return structuredClone(
+                db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session))
+            );
         else if (resource === "session") {
             const sessionID = Number(query?.sessionID);
             if (!Number.isFinite(sessionID)) {
@@ -253,8 +261,23 @@ export class db_connection {
             }
 
             const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-            return structuredClone(session ?? null);
+            return structuredClone(session ? this.normalizeSessionForRead(session) : null);
         }
+        else if (resource === "attendees") {
+            const sessionID = Number(query?.sessionID);
+            if (!Number.isFinite(sessionID)) {
+                return [];
+            }
+
+            const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+            if (!session) {
+                return [];
+            }
+
+            return structuredClone(this.buildAttendeeRecords(session));
+        }
+        else if (resource === "attendeeStatuses")
+            return structuredClone(db_connection.data.attendeeStatuses);
         else if (resource === "flags")
             return structuredClone(db_connection.data.flags);
         else if (resource === "presenters")
@@ -438,6 +461,88 @@ export class db_connection {
                 ? value.presenters.filter((personId) => Number.isFinite(Number(personId))).map((personId) => Number(personId))
                 : structuredClone(existingSession?.PresenterIDs ?? [])
         };
+    }
+
+    buildAttendeeRecords(session) {
+        const sessionID = Number(session?.sessionID);
+        const attendeeEntries = Array.isArray(session?.Attendees) ? session.Attendees : [];
+
+        return attendeeEntries.map((attendeeEntry) => {
+            const [name, email, dateRange, certStatusID, personID] = attendeeEntry;
+            const attendeeComments = db_connection.data.comments.find((commentEntry) => {
+                return commentEntry.sessionID === sessionID && commentEntry.personID === Number(personID);
+            });
+            const normalizedStatusID = this.normalizeAttendeeStatusId(certStatusID);
+            const certStatusLabel = this.getAttendeeStatusLabel(normalizedStatusID);
+
+            return {
+                sessionID,
+                personID: Number(personID),
+                name: String(name ?? "").trim(),
+                email: String(email ?? "").trim(),
+                dateRange: dateRange === null ? null : String(dateRange),
+                certStatusID: normalizedStatusID,
+                certStatus: certStatusLabel,
+                certStatusLabel,
+                ridCertified: null,
+                adminComment: String(attendeeComments?.adminComment ?? ""),
+                memberComment: String(attendeeComments?.memberComment ?? "")
+            };
+        });
+    }
+
+    normalizeSessionForRead(session) {
+        return {
+            ...structuredClone(session),
+            Attendees: this.normalizeSessionAttendees(session?.Attendees)
+        };
+    }
+
+    normalizeSessionAttendees(attendeeEntries = []) {
+        if (!Array.isArray(attendeeEntries)) {
+            return [];
+        }
+
+        return attendeeEntries.map((attendeeEntry) => {
+            const [name, email, dateRange, certStatusID, personID] = attendeeEntry;
+
+            return [
+                String(name ?? "").trim(),
+                String(email ?? "").trim(),
+                dateRange === null ? null : String(dateRange),
+                this.getAttendeeStatusLabel(certStatusID),
+                Number(personID)
+            ];
+        });
+    }
+
+    getAttendeeStatusLabel(statusValue) {
+        const statusID = this.normalizeAttendeeStatusId(statusValue);
+        return db_connection.data.attendeeStatuses[statusID] ?? db_connection.data.attendeeStatuses[4];
+    }
+
+    normalizeAttendeeStatusId(statusValue) {
+        const numericStatusID = Number(statusValue);
+        if (Number.isFinite(numericStatusID) && db_connection.data.attendeeStatuses[numericStatusID]) {
+            return numericStatusID;
+        }
+
+        const normalizedStatusLabel = String(statusValue ?? "").trim().toLowerCase();
+        if (normalizedStatusLabel === "") {
+            return 4;
+        }
+
+        for (const [statusID, statusLabel] of Object.entries(db_connection.data.attendeeStatuses)) {
+            if (String(statusLabel).trim().toLowerCase() === normalizedStatusLabel) {
+                return Number(statusID);
+            }
+        }
+
+        if (normalizedStatusLabel === "associate") {
+            return 1;
+        }
+
+        return 4;
     }
 
     normalizeOptionId(value) {
