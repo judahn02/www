@@ -283,6 +283,29 @@ body {
             }
         }
 
+        .pdt-rid-cell {
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .pdt-rid-certification {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 190px;
+        }
+
+        .pdt-rid-certification__checkbox {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .pdt-rid-certified-at {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
         .delete-button {
             @include core.button-base;
             margin: 0px;

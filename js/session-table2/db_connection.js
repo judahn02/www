@@ -242,6 +242,7 @@ export class db_connection {
             ["Victor Hughes", "victor.hughes@example.com", 1, 1, 28],
             ["Claire Adams", "claire.adams@example.com", 1, 0, 29],
         ],
+        "ridCertificates" : [],
         "comments" : [],
     }
 
@@ -370,7 +371,10 @@ export class db_connection {
     }
 
     async put(resource, value) {
-        
+        if (resource === "attendeeRIDCertifications") {
+            return structuredClone(this.updateAttendeeRIDCertifications(value));
+        }
+
         if (resource !== "session") {
             return null;
         }
@@ -472,6 +476,7 @@ export class db_connection {
             const attendeeComments = db_connection.data.comments.find((commentEntry) => {
                 return commentEntry.sessionID === sessionID && commentEntry.personID === Number(personID);
             });
+            const ridCertification = this.getRIDCertificationRecord(sessionID, personID);
             const normalizedStatusID = this.normalizeAttendeeStatusId(certStatusID);
             const certStatusLabel = this.getAttendeeStatusLabel(normalizedStatusID);
 
@@ -484,11 +489,80 @@ export class db_connection {
                 certStatusID: normalizedStatusID,
                 certStatus: certStatusLabel,
                 certStatusLabel,
-                ridCertified: null,
+                ridCertified: ridCertification !== null,
+                ridCertifiedAt: ridCertification?.certifiedAt ?? null,
+                ridCertifiedByUserID: ridCertification?.certifiedByUserID ?? null,
                 adminComment: String(attendeeComments?.adminComment ?? ""),
                 memberComment: String(attendeeComments?.memberComment ?? "")
             };
         });
+    }
+
+    updateAttendeeRIDCertifications(value) {
+        const sessionID = Number(value?.sessionID);
+        if (!Number.isFinite(sessionID)) {
+            return [];
+        }
+
+        const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+        if (!session) {
+            return [];
+        }
+
+        const certifiedByUserID = this.normalizePositiveInteger(value?.certifiedByUserID);
+        const attendeePayload = Array.isArray(value?.attendees) ? value.attendees : [];
+        const attendeePayloadMap = new Map();
+
+        for (const attendeeEntry of attendeePayload) {
+            const normalizedAttendeeEntry = this.normalizeAttendeeRIDPayloadEntry(attendeeEntry);
+            if (normalizedAttendeeEntry === null) {
+                continue;
+            }
+
+            attendeePayloadMap.set(normalizedAttendeeEntry.personID, normalizedAttendeeEntry);
+        }
+
+        const sessionPersonIDs = (Array.isArray(session.Attendees) ? session.Attendees : [])
+            .map((attendeeEntry) => Number(attendeeEntry?.[4]))
+            .filter((personID) => Number.isFinite(personID));
+        const nextRIDCertificates = [];
+
+        for (const personID of sessionPersonIDs) {
+            const existingCertification = this.getRIDCertificationRecord(sessionID, personID);
+            const attendeeRIDEntry = attendeePayloadMap.get(personID);
+
+            if (!attendeeRIDEntry) {
+                if (existingCertification) {
+                    nextRIDCertificates.push(existingCertification);
+                }
+                continue;
+            }
+
+            if (attendeeRIDEntry.ridCertified !== true) {
+                continue;
+            }
+
+            const certifiedAt = attendeeRIDEntry.ridCertifiedAt
+                ?? existingCertification?.certifiedAt
+                ?? new Date().toISOString();
+            const certificationChanged = !existingCertification
+                || existingCertification.certifiedAt !== certifiedAt;
+
+            nextRIDCertificates.push({
+                sessionID,
+                personID,
+                certifiedAt,
+                certifiedByUserID: certificationChanged
+                    ? (certifiedByUserID ?? existingCertification?.certifiedByUserID ?? null)
+                    : (existingCertification?.certifiedByUserID ?? certifiedByUserID ?? null)
+            });
+        }
+
+        db_connection.data.ridCertificates = db_connection.data.ridCertificates
+            .filter((certificationEntry) => certificationEntry.sessionID !== sessionID)
+            .concat(nextRIDCertificates);
+
+        return this.buildAttendeeRecords(session);
     }
 
     normalizeSessionForRead(session) {
@@ -523,6 +597,29 @@ export class db_connection {
         return db_connection.data.attendeeStatuses[statusID] ?? db_connection.data.attendeeStatuses[4];
     }
 
+    getRIDCertificationRecord(sessionID, personID) {
+        const numericSessionID = Number(sessionID);
+        const numericPersonID = Number(personID);
+        if (!Number.isFinite(numericSessionID) || !Number.isFinite(numericPersonID)) {
+            return null;
+        }
+
+        const certificationEntry = db_connection.data.ridCertificates.find((entry) => {
+            return entry.sessionID === numericSessionID && entry.personID === numericPersonID;
+        });
+
+        if (!certificationEntry) {
+            return null;
+        }
+
+        return {
+            sessionID: numericSessionID,
+            personID: numericPersonID,
+            certifiedAt: this.normalizeRIDCertificationDateTime(certificationEntry.certifiedAt),
+            certifiedByUserID: this.normalizePositiveInteger(certificationEntry.certifiedByUserID)
+        };
+    }
+
     isRIDQualifiedSession(session) {
         return String(session?.RIDQualify ?? "").trim().toLowerCase() === "yes";
     }
@@ -553,6 +650,43 @@ export class db_connection {
         }
 
         return 4;
+    }
+
+    normalizeAttendeeRIDPayloadEntry(attendeeEntry) {
+        const personID = Number(attendeeEntry?.personID);
+        if (!Number.isFinite(personID)) {
+            return null;
+        }
+
+        const ridCertified = attendeeEntry?.ridCertified === true;
+        return {
+            personID,
+            ridCertified,
+            ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry?.ridCertifiedAt) : null
+        };
+    }
+
+    normalizeRIDCertificationDateTime(value) {
+        const normalizedValue = String(value ?? "").trim();
+        if (normalizedValue === "") {
+            return null;
+        }
+
+        const timestamp = Date.parse(normalizedValue);
+        if (Number.isNaN(timestamp)) {
+            return null;
+        }
+
+        return new Date(timestamp).toISOString();
+    }
+
+    normalizePositiveInteger(value) {
+        const numericValue = Number(value);
+        if (!Number.isInteger(numericValue) || numericValue <= 0) {
+            return null;
+        }
+
+        return numericValue;
     }
 
     normalizeOptionId(value) {

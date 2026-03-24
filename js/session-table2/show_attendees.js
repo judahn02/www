@@ -1,18 +1,21 @@
 import { session_state } from "./state.js";
+import { attendee_table_renderer } from "./attendee_table_renderer.js";
+import { attendee_rid_manager } from "./attendee_rid_manager.js";
+import { attendee_filter_manager } from "./attendee_filter_manager.js";
+
 export class show_attendees {
     constructor(db = null, host = null) {
         this.db = db;
         this.host = host;
+        this.tableRenderer = new attendee_table_renderer();
+        this.attendeeRIDManager = new attendee_rid_manager(db, host);
+        this.attendeeFilterManager = new attendee_filter_manager();
         this.mainPage = null;
         this.commentManager = null;
         this.commentFields = null;
         this.modalRefs = null;
         this.attendeeStatuses = {};
-        this.attendeeModalState = {
-            activeSessionID: null,
-            showRIDColumn: false,
-            showSelfPacedDateRangeColumn: false
-        };
+        this.attendeeModalState = this.getDefaultAttendeeModalState();
     }
 
     async init(mainPage, commentManager = null, commentFields = null) {
@@ -30,9 +33,25 @@ export class show_attendees {
             submit: $("#pdt-shadow-attendees #saveAttendeesModal")
         };
 
+        this.clearTableHead();
         this.clearAttendeeRows();
         this.bindModalEvents();
         this.bindCommentTriggers();
+        this.bindRIDFieldEvents();
+        this.attendeeFilterManager.init({
+            searchField: this.modalRefs.attendeeSearch,
+            tableBody: this.modalRefs.tableBody,
+            getVisibleColumnCount: () => this.getVisibleColumnCount()
+        });
+        this.updateSubmitButtonState();
+    }
+
+    getDefaultAttendeeModalState() {
+        return {
+            activeSessionID: null,
+            showRIDColumn: false,
+            showSelfPacedDateRangeColumn: false
+        };
     }
 
     bindModalEvents() {
@@ -51,6 +70,10 @@ export class show_attendees {
 
             await this.closeModal();
         });
+
+        this.modalRefs.submit.off("click.pdtShowAttendees").on("click.pdtShowAttendees", async () => {
+            await this.saveRIDChanges();
+        });
     }
 
     bindCommentTriggers() {
@@ -60,6 +83,22 @@ export class show_attendees {
 
         this.modalRefs.tableBody.off("click.pdtAttendeeComment", ".pdt-attendee-comment-button").on("click.pdtAttendeeComment", ".pdt-attendee-comment-button", async (event) => {
             await this.openCommentModal($(event.currentTarget));
+        });
+    }
+
+    bindRIDFieldEvents() {
+        if (!this.modalRefs) {
+            return;
+        }
+
+        this.modalRefs.tableBody.off("change.pdtRIDCertified", ".pdt-rid-certified-checkbox").on("change.pdtRIDCertified", ".pdt-rid-certified-checkbox", (event) => {
+            this.attendeeRIDManager.handleCheckboxChange($(event.currentTarget));
+            this.updateSubmitButtonState();
+        });
+
+        this.modalRefs.tableBody.off("change.pdtRIDTimestamp", ".pdt-rid-certified-at").on("change.pdtRIDTimestamp", ".pdt-rid-certified-at", (event) => {
+            this.attendeeRIDManager.handleDateTimeChange($(event.currentTarget));
+            this.updateSubmitButtonState();
         });
     }
 
@@ -85,10 +124,12 @@ export class show_attendees {
             showRIDColumn: this.shouldShowRIDColumn(sessionData),
             showSelfPacedDateRangeColumn: this.shouldShowSelfPacedDateRangeColumn(sessionData)
         };
+        this.attendeeRIDManager.load(attendees);
         this.modalRefs.sessionName.text(String(sessionData.SessionTitle ?? ""));
-        this.modalRefs.attendeeSearch.val("");
-        this.renderAttendeeRows(attendees);
+        this.attendeeFilterManager.reset();
+        this.renderAttendeeRows();
         this.getAttendeeRowSearchField().val("");
+        this.updateSubmitButtonState();
         this.modalRefs.wrapper.prop("hidden", false);
         session_state.state = "showAttendees";
     }
@@ -117,21 +158,41 @@ export class show_attendees {
         });
     }
 
+    async saveRIDChanges() {
+        if (!this.modalRefs) {
+            return;
+        }
+
+        const sessionID = Number(this.attendeeModalState.activeSessionID);
+        if (!Number.isFinite(sessionID)) {
+            return;
+        }
+
+        const savePromise = this.attendeeRIDManager.saveChanges(sessionID);
+        this.updateSubmitButtonState();
+        const attendees = await savePromise;
+        this.updateSubmitButtonState();
+
+        if (!Array.isArray(attendees)) {
+            return;
+        }
+
+        this.renderAttendeeRows();
+    }
+
     async closeModal() {
         if (!this.modalRefs) {
             return;
         }
 
         this.modalRefs.wrapper.prop("hidden", true);
-        this.modalRefs.attendeeSearch.val("");
+        this.attendeeFilterManager.reset();
         this.getAttendeeRowSearchField().val("");
         this.clearTableHead();
         this.clearAttendeeRows();
-        this.attendeeModalState = {
-            activeSessionID: null,
-            showRIDColumn: false,
-            showSelfPacedDateRangeColumn: false
-        };
+        this.attendeeRIDManager.reset();
+        this.attendeeModalState = this.getDefaultAttendeeModalState();
+        this.updateSubmitButtonState();
         session_state.state = "mainPage";
     }
 
@@ -158,129 +219,35 @@ export class show_attendees {
         }
 
         const attendees = await this.db.get("attendees", { sessionID });
-        this.renderAttendeeRows(attendees);
+        this.attendeeRIDManager.mergeIncomingAttendeeData(attendees);
+        this.renderAttendeeRows();
+        this.updateSubmitButtonState();
     }
 
     getAttendeeRowSearchField() {
         return $("#pdt-shadow-attendees #search-attendee");
     }
 
-    renderAttendeeRows(attendees = []) {
+    renderAttendeeRows() {
         if (!this.modalRefs || this.modalRefs.tableHead.length === 0 || this.modalRefs.tableBody.length === 0) {
             return;
         }
 
-        const visibleColumnLabels = this.getVisibleColumnLabels();
-        const visibleColumnCount = visibleColumnLabels.length;
-        this.renderTableHead(visibleColumnLabels);
-        this.clearAttendeeRows();
-        this.modalRefs.tableBody.append(this.buildSearchRow(visibleColumnCount));
-
-        if (!Array.isArray(attendees) || attendees.length === 0) {
-            this.modalRefs.tableBody.append(`
-                <tr class="pdt-attendees-placeholder-row">
-                    <td colspan="${visibleColumnCount}">No attendees are attached to this session yet.</td>
-                </tr>
-            `);
-            return;
-        }
-
-        for (const attendee of attendees) {
-            const attendeeRow = this.buildAttendeeRow(attendee);
-            this.modalRefs.tableBody.append(attendeeRow);
-        }
+        this.tableRenderer.render(this.modalRefs.tableHead, this.modalRefs.tableBody, {
+            attendees: this.attendeeRIDManager.getDraftAttendees(),
+            attendeeStatuses: this.attendeeStatuses,
+            showRIDColumn: this.attendeeModalState.showRIDColumn,
+            showSelfPacedDateRangeColumn: this.attendeeModalState.showSelfPacedDateRangeColumn,
+            buildAttendeeSearchText: (attendee) => this.attendeeFilterManager.buildAttendeeSearchText(attendee)
+        });
+        this.attendeeFilterManager.applyFilter();
     }
 
-    renderTableHead(columnLabels) {
-        const headerCells = columnLabels.map((columnLabel) => {
-            return `<th>${this.escapeHtml(columnLabel)}</th>`;
-        }).join("");
-
-        this.modalRefs.tableHead.html(`
-            <tr>
-                ${headerCells}
-            </tr>
-        `);
-    }
-
-    buildSearchRow(columnCount) {
-        return `
-            <tr class="search-row">
-                <td colspan="${columnCount}">
-                    <input type="text" name="search-attendee" id="search-attendee"
-                        placeholder="Add attendee: start searching members">
-                </td>
-            </tr>
-        `;
-    }
-
-    buildAttendeeRow(attendee) {
-        const attendeeName = this.escapeHtml(attendee?.name);
-        const attendeeEmail = this.escapeHtml(attendee?.email);
-        const certStatusID = this.getSafeAttendeeStatusID(attendee?.certStatusID);
-        const commentButtonTitle = this.getCommentButtonTitle(attendee);
-        const dateRangeMarkup = this.buildDateRangeMarkup(attendee?.dateRange);
-        const attendeeCells = [
-            `
-                <td>
-                    <p>${attendeeName}</p>
-                    <p>${attendeeEmail}</p>
-                </td>
-            `,
-            `
-                <td>
-                    <select disabled>
-                        ${this.buildCertStatusOptions(certStatusID)}
-                    </select>
-                </td>
-            `
-        ];
-
-        if (this.attendeeModalState.showRIDColumn) {
-            attendeeCells.push(`<td><input type="checkbox" disabled ${attendee?.ridCertified === true ? "checked" : ""}></td>`);
-        }
-
-        if (this.attendeeModalState.showSelfPacedDateRangeColumn) {
-            attendeeCells.push(`
-                <td class="date-range-cell">
-                    ${dateRangeMarkup}
-                </td>
-            `);
-        }
-
-        attendeeCells.push(`
-            <td>
-                <button type="button" class="pdt-attendee-comment-button" title="${commentButtonTitle}">
-                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
-                        aria-hidden="true">
-                </button>
-            </td>
-        `);
-        attendeeCells.push(`<td><button class="delete-button" type="button" disabled>X</button></td>`);
-
-        return `
-            <tr class="pdt-attendees-row" data-person-id="${this.getSafePersonID(attendee?.personID)}" data-attendee-email="${attendeeEmail}">
-                ${attendeeCells.join("")}
-            </tr>
-        `;
-    }
-
-    getVisibleColumnLabels() {
-        const columnLabels = [
-            "Attendee",
-            "Certification Status at time of Attending"
-        ];
-
-        if (this.attendeeModalState.showRIDColumn) {
-            columnLabels.push("RID certified?");
-        }
-
-        if (this.attendeeModalState.showSelfPacedDateRangeColumn) {
-            columnLabels.push("Self Paced Date Range");
-        }
-
-        columnLabels.push("Comments", "Delete?");
-        return columnLabels;
+    getVisibleColumnCount() {
+        return this.tableRenderer.getVisibleColumnCount({
+            showRIDColumn: this.attendeeModalState.showRIDColumn,
+            showSelfPacedDateRangeColumn: this.attendeeModalState.showSelfPacedDateRangeColumn
+        });
     }
 
     shouldShowRIDColumn(sessionData) {
@@ -299,105 +266,13 @@ export class show_attendees {
         return String(sessionData?.Date ?? "").trim() === "Self Paced";
     }
 
-    buildCertStatusOptions(selectedStatusID) {
-        const statusOptions = Object.entries(this.attendeeStatuses)
-            .map(([statusID, statusLabel]) => ({
-                id: Number(statusID),
-                label: String(statusLabel ?? "")
-            }))
-            .filter((statusOption) => Number.isFinite(statusOption.id) && statusOption.label !== "")
-            .sort((leftStatus, rightStatus) => leftStatus.id - rightStatus.id);
-
-        if (statusOptions.length === 0) {
-            return `<option value="4" selected>Not Assigned</option>`;
+    updateSubmitButtonState() {
+        if (!this.modalRefs || this.modalRefs.submit.length === 0) {
+            return;
         }
 
-        return statusOptions.map((statusOption) => {
-            const isSelected = statusOption.id === selectedStatusID ? " selected" : "";
-            return `<option value="${statusOption.id}"${isSelected}>${this.escapeHtml(statusOption.label)}</option>`;
-        }).join("");
-    }
-
-    buildDateRangeMarkup(dateRange) {
-        const normalizedDateRange = String(dateRange ?? "").trim();
-        if (normalizedDateRange === "") {
-            return `
-                <input type="date" disabled>
-                <p>to</p>
-                <input type="date" disabled>
-            `;
-        }
-
-        if (normalizedDateRange.toLowerCase() === "not started") {
-            return `<p>Not started</p>`;
-        }
-
-        const [startDate, endDate] = normalizedDateRange.split(" to ");
-        const startDateValue = this.displayDateToInputValue(startDate);
-        if (startDateValue === "") {
-            return `<p>${this.escapeHtml(normalizedDateRange)}</p>`;
-        }
-
-        if (String(endDate ?? "").trim().toLowerCase() === "ongoing") {
-            return `
-                <input type="date" value="${startDateValue}" disabled>
-                <p>to</p>
-                <p>Ongoing</p>
-            `;
-        }
-
-        const endDateValue = this.displayDateToInputValue(endDate);
-        if (endDateValue === "") {
-            return `<p>${this.escapeHtml(normalizedDateRange)}</p>`;
-        }
-
-        return `
-            <input type="date" value="${startDateValue}" disabled>
-            <p>to</p>
-            <input type="date" value="${endDateValue}" disabled>
-        `;
-    }
-
-    getCommentButtonTitle(attendee) {
-        const hasComments = String(attendee?.adminComment ?? "").trim() !== "" || String(attendee?.memberComment ?? "").trim() !== "";
-        return hasComments ? "Comments exist for this attendee." : "No comments yet.";
-    }
-
-    displayDateToInputValue(displayDate) {
-        const normalizedDate = String(displayDate ?? "").trim();
-        const dateParts = normalizedDate.split("/");
-        if (dateParts.length !== 3) {
-            return "";
-        }
-
-        const [month, day, year] = dateParts;
-        if (month === "" || day === "" || year === "") {
-            return "";
-        }
-
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-    }
-
-    getSafePersonID(personID) {
-        const numericPersonID = Number(personID);
-        return Number.isFinite(numericPersonID) ? numericPersonID : 0;
-    }
-
-    getSafeAttendeeStatusID(statusID) {
-        const numericStatusID = Number(statusID);
-        if (Number.isFinite(numericStatusID) && this.attendeeStatuses[numericStatusID]) {
-            return numericStatusID;
-        }
-
-        return 4;
-    }
-
-    escapeHtml(value) {
-        return String(value ?? "")
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll("\"", "&quot;")
-            .replaceAll("'", "&#39;");
+        const isSaving = this.attendeeRIDManager.isSaving();
+        this.modalRefs.submit.text(isSaving ? "Saving..." : "Save Attendees");
+        this.modalRefs.submit.prop("disabled", isSaving || !this.attendeeRIDManager.hasPendingChanges());
     }
 }

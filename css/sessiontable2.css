@@ -363,6 +363,25 @@ body {
   padding: 0px;
   text-align: center;
 }
+.pdt-session-attendees .table .pdt-rid-cell {
+  text-align: left;
+  vertical-align: top;
+}
+.pdt-session-attendees .table .pdt-rid-certification {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 190px;
+}
+.pdt-session-attendees .table .pdt-rid-certification__checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pdt-session-attendees .table .pdt-rid-certified-at {
+  width: 100%;
+  box-sizing: border-box;
+}
 .pdt-session-attendees .table .delete-button {
   background-color: #e11d48;
   border: 1px solid #e11d48;
