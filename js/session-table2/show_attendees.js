@@ -17,6 +17,7 @@ export class show_attendees {
         this.commentFields = null;
         this.modalRefs = null;
         this.attendeeStatuses = {};
+        this.commentIconURL = null;
         this.attendeeModalState = this.getDefaultAttendeeModalState();
     }
 
@@ -186,6 +187,7 @@ export class show_attendees {
         }
 
         this.attendeeStatuses = attendeeStatuses ?? {};
+        this.commentIconURL = await this.getCommentIconURL();
         this.attendeeAddManager.setDirectory(attendeeDirectory);
         this.attendeeModalState = {
             activeSessionID: sessionID,
@@ -328,6 +330,7 @@ export class show_attendees {
         this.tableRenderer.render(this.modalRefs.tableHead, this.modalRefs.tableBody, {
             attendees: this.attendeeRIDManager.getDraftAttendees(),
             attendeeStatuses: this.attendeeStatuses,
+            commentIconURL: this.commentIconURL,
             dateRangeRenderMode: "edit",
             showRIDColumn: this.attendeeModalState.showRIDColumn,
             showSelfPacedDateRangeColumn: this.attendeeModalState.showSelfPacedDateRangeColumn,
@@ -382,5 +385,17 @@ export class show_attendees {
         const isSaving = this.attendeeRIDManager.isSaving();
         this.modalRefs.submit.text(isSaving ? "Saving..." : "Save Attendees");
         this.modalRefs.submit.prop("disabled", isSaving || !this.attendeeRIDManager.hasPendingChanges());
+    }
+
+    async getCommentIconURL() {
+        if (typeof this.commentIconURL === "string" && this.commentIconURL.trim() !== "") {
+            return this.commentIconURL;
+        }
+
+        const hostCommentIconURL = typeof this.host?.getComment === "function"
+            ? await this.host.getComment()
+            : "../assets/speech-bubble-1130.svg";
+        this.commentIconURL = String(hostCommentIconURL ?? "").trim() || "../assets/speech-bubble-1130.svg";
+        return this.commentIconURL;
     }
 }

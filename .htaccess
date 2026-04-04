@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^wp-json/aslta/v1/jwtCreation$ index.php [QSA,L]

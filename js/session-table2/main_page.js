@@ -9,6 +9,7 @@ export class main_page {
         this.addEditSession = addEditSession;
         this.commentManager = new comment_manager(db);
         this.commentFields = null;
+        this.commentIconURL = null;
         this.attendeeSortModes = [
             { field: "first", direction: "asc", label: "Sort: First A-Z" },
             { field: "last", direction: "asc", label: "Sort: Last A-Z" },
@@ -85,7 +86,12 @@ export class main_page {
             return tableBody ;
         }
 
-        const sessions = await this.db.get("sessions");
+        const commentIconURL = await this.getCommentIconURL();
+        const sessionsResponse = await this.db.get("sessions");
+        const sessions = Array.isArray(sessionsResponse) ? sessionsResponse : [];
+        if (!Array.isArray(sessionsResponse)) {
+            console.error("PDT: Expected sessions array but received:", sessionsResponse);
+        }
         // This is an array of objects
         tableBody.empty() ;
 
@@ -116,7 +122,8 @@ export class main_page {
 
             let attendeeContacts = document.createElement("div");
             attendeeContacts.className = "pdt-details-people";
-            for (let attendee of session.Attendees) {
+            const attendees = Array.isArray(session?.Attendees) ? session.Attendees : [];
+            for (let attendee of attendees) {
                 let attendeeContact = document.createElement("div");
                 attendeeContact.className = "pdt-person-card";
                 attendeeContact.dataset.attendeeName = attendee[0];
@@ -130,7 +137,7 @@ export class main_page {
                 const attendeeDateMarkup = attendee[2] === null ? "" : `<p>${attendee[2]}</p>`;
 
                 attendeeContact.innerHTML = `
-                    <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" data-session-locked="${lockView.isLocked ? "1" : "0"}" class="${commentIconClassName}" src="../assets/speech-bubble-1130.svg" alt=""
+                    <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" data-session-locked="${lockView.isLocked ? "1" : "0"}" class="${commentIconClassName}" src="${commentIconURL}" alt=""
                     aria-hidden="true" title="${commentIconTitle}">
                     <p>${attendee[0]}</p>
                     <p>${attendee[1]}</p>
@@ -160,6 +167,18 @@ export class main_page {
         }
 
         return tableBody ;
+    }
+
+    async getCommentIconURL() {
+        if (typeof this.commentIconURL === "string" && this.commentIconURL.trim() !== "") {
+            return this.commentIconURL;
+        }
+
+        const hostCommentIconURL = typeof this.host?.getComment === "function"
+            ? await this.host.getComment()
+            : "../assets/speech-bubble-1130.svg";
+        this.commentIconURL = String(hostCommentIconURL ?? "").trim() || "../assets/speech-bubble-1130.svg";
+        return this.commentIconURL;
     }
 
     getSessionLockView(session) {

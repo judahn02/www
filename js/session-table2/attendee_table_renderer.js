@@ -9,6 +9,7 @@ export class attendee_table_renderer {
         const showSelfPacedDateRangeColumn = options?.showSelfPacedDateRangeColumn === true;
         const dateRangeRenderMode = options?.dateRangeRenderMode === "edit" ? "edit" : "display";
         const attendeeStatuses = options?.attendeeStatuses ?? {};
+        const commentIconURL = String(options?.commentIconURL ?? "../assets/speech-bubble-1130.svg");
         const buildAttendeeSearchText = typeof options?.buildAttendeeSearchText === "function"
             ? options.buildAttendeeSearchText
             : () => "";
@@ -30,6 +31,7 @@ export class attendee_table_renderer {
         for (const attendee of attendees) {
             tableBody.append(this.buildAttendeeRow(attendee, {
                 attendeeStatuses,
+                commentIconURL,
                 dateRangeRenderMode,
                 showRIDColumn,
                 showSelfPacedDateRangeColumn,
@@ -97,6 +99,7 @@ export class attendee_table_renderer {
         const attendeeSearchText = this.escapeHtml(options?.attendeeSearchText);
         const certStatusID = this.getSafeAttendeeStatusID(attendee?.certStatusID, options?.attendeeStatuses);
         const commentButtonTitle = this.getCommentButtonTitle(attendee);
+        const commentIconURL = this.escapeHtml(options?.commentIconURL);
         const dateRangeMarkup = this.buildDateRangeMarkup(attendee, options?.dateRangeRenderMode);
         const attendeeCells = [
             `
@@ -133,7 +136,7 @@ export class attendee_table_renderer {
         attendeeCells.push(`
             <td>
                 <button type="button" class="pdt-attendee-comment-button" title="${commentButtonTitle}">
-                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                    <img class="pdt-person-card__icon" src="${commentIconURL}" alt=""
                         aria-hidden="true">
                 </button>
             </td>

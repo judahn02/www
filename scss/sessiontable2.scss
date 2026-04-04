@@ -1,10 +1,11 @@
 @use 'core-elements' as core;
 
-body {
-    padding: 8px 16px;
-}
+// body {
+//     padding: 8px 16px;
+// }
 
 .pdt-main {
+    padding: 8px 16px;
 
     .button {
         @include core.button-base;

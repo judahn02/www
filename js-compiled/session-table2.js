@@ -1,123 +1,3758 @@
-(()=>{var oe=Object.defineProperty;var le=(D,e,t)=>e in D?oe(D,e,{enumerable:!0,configurable:!0,writable:!0,value:t}):D[e]=t;var Z=(D,e,t)=>le(D,typeof e!="symbol"?e+"":e,t);var y={state:"mainPage"};var c=class c{constructor(){this.ensureNormalizedAttendeeDateRanges()}ensureNormalizedAttendeeDateRanges(){if(!c.attendeeDateRangesNormalized){for(let e of c.data.sessions){let t=this.normalizeStoredAttendeeEntries(e==null?void 0:e.Attendees,e);e.Attendees=t.map(s=>this.buildStoredAttendeeEntry(s)),e.AttendeesCt=e.Attendees.length}c.attendeeDateRangesNormalized=!0}}async get(e,t=null){if(e==="sessions")return structuredClone(c.data.sessions.map(s=>this.normalizeSessionForRead(s)));if(e==="session"){let s=Number(t==null?void 0:t.sessionID);if(!Number.isFinite(s))return null;let i=c.data.sessions.find(r=>r.sessionID===s);return structuredClone(i?this.normalizeSessionForRead(i):null)}else if(e==="attendee"){let s=Number(t==null?void 0:t.sessionID),i=Number(t==null?void 0:t.personID);if(!Number.isFinite(s)||!Number.isFinite(i))return null;let r=c.data.sessions.find(n=>n.sessionID===s);return r?structuredClone(this.buildSessionAttendeeCandidate(r,i)):null}else if(e==="attendees"){let s=Number(t==null?void 0:t.sessionID);if(!Number.isFinite(s))return structuredClone(this.buildAttendeeDirectoryRecords());let i=c.data.sessions.find(r=>r.sessionID===s);return i?structuredClone(this.buildAttendeeRecords(i)):[]}else{if(e==="attendeeStatuses")return structuredClone(c.data.attendeeStatuses);if(e==="flags")return structuredClone(c.data.flags);if(e==="presenters")return structuredClone(c.data.members.filter(s=>s[3]===1));if(e==="comments"){let s=Number(t==null?void 0:t.sessionID),i=Number(t==null?void 0:t.personID);if(!Number.isFinite(s)||!Number.isFinite(i))return{sessionID:null,personID:null,adminComment:"",memberComment:""};let r=c.data.comments.find(n=>n.sessionID===s&&n.personID===i);return structuredClone(r!=null?r:{sessionID:s,personID:i,adminComment:"",memberComment:""})}else{if(e==="sessionTypes")return structuredClone(c.data.sessionTypes);if(e==="EventTypes")return structuredClone(c.data.EventTypes);if(e==="CEUTypes")return structuredClone(c.data.CEUTypes)}}return null}async set(e,t){var n,a;if(e==="sessionLock")return structuredClone(this.updateSessionLock(t));if(e==="comments"){let o=Number(t==null?void 0:t.sessionID),l=Number(t==null?void 0:t.personID);if(!Number.isFinite(o)||!Number.isFinite(l))return null;let d={sessionID:o,personID:l,adminComment:String((n=t==null?void 0:t.adminComment)!=null?n:""),memberComment:String((a=t==null?void 0:t.memberComment)!=null?a:"")},m=c.data.comments.findIndex(p=>p.sessionID===o&&p.personID===l);return m>=0?c.data.comments[m]=d:c.data.comments.push(d),d}if(!["sessionTypes","EventTypes","CEUTypes"].includes(e))return-1;let s=String(t!=null?t:"").trim();if(s==="")return-1;let i=c.data[e];for(let o of Object.values(i))if(String(o).trim().toLowerCase()===s.toLowerCase())return-1;let r=Object.keys(i).map(o=>Number(o)).filter(o=>Number.isFinite(o)).reduce((o,l)=>Math.max(o,l),0)+1;return i[r]=s,r}updateSessionLock(e){var r;let t=Number(e==null?void 0:e.sessionID);if(!Number.isFinite(t))return null;let s=c.data.sessions.find(n=>n.sessionID===t);if(!s)return null;s.Lock=Number(e==null?void 0:e.lock)===1?1:0;let i=String((r=e==null?void 0:e.locker)!=null?r:"").trim();return s.Locker=i===""?null:i,this.normalizeSessionForRead(s)}async put(e,t){if(e==="sessionAttendees")return structuredClone(this.updateSessionAttendees(t));if(e==="attendeeRIDCertifications")return structuredClone(this.updateAttendeeRIDCertifications(t));if(e!=="session")return null;let s=t==null?void 0:t.sessionID;if(s===null){let a=this.getNextSessionID(),o=this.buildSessionRecord(t,a);return c.data.sessions.push(o),structuredClone(o)}let i=Number(s);if(!Number.isFinite(i))return null;let r=c.data.sessions.find(a=>a.sessionID===i);if(!r)return null;let n=this.buildSessionRecord(t,i,r);return Object.assign(r,n),structuredClone(r)}getNextSessionID(){return c.data.sessions.map(e=>Number(e.sessionID)).filter(e=>Number.isFinite(e)).reduce((e,t)=>Math.max(e,t),0)+1}buildSessionRecord(e,t,s=null){var p,g,h,u,f,S,b,M,I,R,P,N,F,w,z,k,L,T,A,_,G,K,X,q,ee,te,se,ie,re,ne,ae;let i=(g=(p=this.normalizeOptionId(e==null?void 0:e.sessionType))!=null?p:s==null?void 0:s.SessionTypeID)!=null?g:null,r=(u=(h=this.normalizeOptionId(e==null?void 0:e.eventType))!=null?h:s==null?void 0:s.EventTypeID)!=null?u:null,n=(S=(f=this.normalizeOptionId(e==null?void 0:e.ceuType))!=null?f:s==null?void 0:s.CEUTypeID)!=null?S:null,a=(M=(b=this.getOptionLabel("sessionTypes",i))!=null?b:s==null?void 0:s.SessionType)!=null?M:"",o=(R=(I=this.getOptionLabel("EventTypes",r))!=null?I:s==null?void 0:s.EventType)!=null?R:"",l=this.getOptionLabel("CEUTypes",n),d=String((N=(P=e==null?void 0:e.ceuQualify)!=null?P:s==null?void 0:s.CEUQualify)!=null?N:"No"),m=d==="Yes"?Number(e==null?void 0:e.ceuWeight)>0?Number(e.ceuWeight):(F=s==null?void 0:s.CEUWeight)!=null?F:0:0;return{sessionID:t,Date:(z=(w=this.formatDateOption(e==null?void 0:e.dateOption))!=null?w:s==null?void 0:s.Date)!=null?z:"",SessionTitle:String((L=(k=e==null?void 0:e.sessionTitle)!=null?k:s==null?void 0:s.SessionTitle)!=null?L:"").trim(),Length:Number(e==null?void 0:e.length)>0?Number(e.length):(T=s==null?void 0:s.Length)!=null?T:0,SessionType:a,SessionTypeID:i,CEUWeight:m,CEUConsideration:(A=l!=null?l:s==null?void 0:s.CEUConsideration)!=null?A:d==="No"?"None":"",CEUTypeID:n,CEUQualify:d,RIDQualify:this.formatYesNoLabel((G=(_=e==null?void 0:e.ridQualified)!=null?_:s==null?void 0:s.RIDQualify)!=null?G:"No"),EventType:o,EventTypeID:r,ParentType:String((X=(K=e==null?void 0:e.parentEvent)!=null?K:s==null?void 0:s.ParentType)!=null?X:"").trim(),Organizer:String((ee=(q=e==null?void 0:e.organizer)!=null?q:s==null?void 0:s.Organizer)!=null?ee:"").trim(),AttendeesCt:(te=s==null?void 0:s.AttendeesCt)!=null?te:0,Lock:(se=s==null?void 0:s.Lock)!=null?se:0,Locker:(ie=s==null?void 0:s.Locker)!=null?ie:null,Attendees:structuredClone((re=s==null?void 0:s.Attendees)!=null?re:[]),FlagIDs:Array.isArray(e==null?void 0:e.flags)?e.flags.filter(C=>Number.isFinite(Number(C))).map(C=>Number(C)):structuredClone((ne=s==null?void 0:s.FlagIDs)!=null?ne:[]),PresenterIDs:Array.isArray(e==null?void 0:e.presenters)?e.presenters.filter(C=>Number.isFinite(Number(C))).map(C=>Number(C)):structuredClone((ae=s==null?void 0:s.PresenterIDs)!=null?ae:[])}}buildAttendeeRecords(e){let t=Number(e==null?void 0:e.sessionID);return this.normalizeStoredAttendeeEntries(e==null?void 0:e.Attendees,e).map(i=>{var d,m,p,g,h,u;let r=c.data.comments.find(f=>f.sessionID===t&&f.personID===Number(i.personID)),n=this.getRIDCertificationRecord(t,i.personID),a=this.normalizeAttendeeStatusId(i.certStatusID),o=this.getAttendeeStatusLabel(a),l=this.buildAttendeeDateRangeDisplay(i.dateRangeStart,i.dateRangeEnd,e);return{sessionID:t,personID:Number(i.personID),name:String((d=i.name)!=null?d:"").trim(),email:String((m=i.email)!=null?m:"").trim(),dateRangeStart:i.dateRangeStart,dateRangeEnd:i.dateRangeEnd,dateRangeDisplay:l,dateRange:l,certStatusID:a,certStatus:o,certStatusLabel:o,ridCertified:n!==null,ridCertifiedAt:(p=n==null?void 0:n.certifiedAt)!=null?p:null,ridCertifiedByUserID:(g=n==null?void 0:n.certifiedByUserID)!=null?g:null,adminComment:String((h=r==null?void 0:r.adminComment)!=null?h:""),memberComment:String((u=r==null?void 0:r.memberComment)!=null?u:"")}})}buildAttendeeDirectoryRecords(){let e=new Map;for(let t of c.data.members){if(Number(t==null?void 0:t[2])!==1)continue;let s=this.buildAttendeeDirectoryRecord(t==null?void 0:t[4],t==null?void 0:t[0],t==null?void 0:t[1]);s&&e.set(s.personID,s)}for(let t of c.data.sessions){let s=this.normalizeStoredAttendeeEntries(t==null?void 0:t.Attendees,t);for(let i of s){let r=this.buildAttendeeDirectoryRecord(i==null?void 0:i.personID,i==null?void 0:i.name,i==null?void 0:i.email);!r||e.has(r.personID)||e.set(r.personID,r)}}return Array.from(e.values()).sort((t,s)=>t.name.localeCompare(s.name)||t.email.localeCompare(s.email)||t.personID-s.personID)}buildAttendeeDirectoryRecord(e,t,s){let i=Number(e),r=String(t!=null?t:"").trim(),n=String(s!=null?s:"").trim();return!Number.isFinite(i)||r===""||n===""?null:{personID:i,name:r,email:n,label:`${r} (${n})`}}getAttendeeDirectoryRecord(e){let t=Number(e);if(!Number.isFinite(t))return null;let s=c.data.members.find(i=>Number(i==null?void 0:i[4])===t&&Number(i==null?void 0:i[2])===1);if(s)return this.buildAttendeeDirectoryRecord(s[4],s[0],s[1]);for(let i of c.data.sessions){let n=this.normalizeStoredAttendeeEntries(i==null?void 0:i.Attendees,i).find(a=>Number(a==null?void 0:a.personID)===t);if(n)return this.buildAttendeeDirectoryRecord(n.personID,n.name,n.email)}return null}buildSessionAttendeeCandidate(e,t){var l,d;let s=this.buildAttendeeRecords(e).find(m=>m.personID===Number(t));if(s)return s;let i=this.getAttendeeDirectoryRecord(t);if(!i)return null;let r=Number(e==null?void 0:e.sessionID),n=c.data.comments.find(m=>m.sessionID===r&&m.personID===Number(t)),a=4,o=this.getAttendeeStatusLabel(a);return{sessionID:r,personID:i.personID,name:i.name,email:i.email,dateRangeStart:null,dateRangeEnd:null,dateRangeDisplay:this.buildAttendeeDateRangeDisplay(null,null,e),dateRange:this.buildAttendeeDateRangeDisplay(null,null,e),certStatusID:a,certStatus:o,certStatusLabel:o,ridCertified:!1,ridCertifiedAt:null,ridCertifiedByUserID:null,adminComment:String((l=n==null?void 0:n.adminComment)!=null?l:""),memberComment:String((d=n==null?void 0:n.memberComment)!=null?d:"")}}updateAttendeeRIDCertifications(e){var l,d,m,p,g;let t=Number(e==null?void 0:e.sessionID);if(!Number.isFinite(t))return[];let s=c.data.sessions.find(h=>h.sessionID===t);if(!s)return[];let i=this.normalizePositiveInteger(e==null?void 0:e.certifiedByUserID),r=Array.isArray(e==null?void 0:e.attendees)?e.attendees:[],n=new Map;for(let h of r){let u=this.normalizeAttendeeRIDPayloadEntry(h);u!==null&&n.set(u.personID,u)}let a=this.normalizeStoredAttendeeEntries(s.Attendees,s).map(h=>Number(h==null?void 0:h.personID)).filter(h=>Number.isFinite(h)),o=[];for(let h of a){let u=this.getRIDCertificationRecord(t,h),f=n.get(h);if(!f){u&&o.push(u);continue}if(f.ridCertified!==!0)continue;let S=(d=(l=f.ridCertifiedAt)!=null?l:u==null?void 0:u.certifiedAt)!=null?d:new Date().toISOString(),b=!u||u.certifiedAt!==S;o.push({sessionID:t,personID:h,certifiedAt:S,certifiedByUserID:b?(m=i!=null?i:u==null?void 0:u.certifiedByUserID)!=null?m:null:(g=(p=u==null?void 0:u.certifiedByUserID)!=null?p:i)!=null?g:null})}return c.data.ridCertificates=c.data.ridCertificates.filter(h=>h.sessionID!==t).concat(o),this.buildAttendeeRecords(s)}updateSessionAttendees(e){var l,d,m,p,g;let t=Number(e==null?void 0:e.sessionID);if(!Number.isFinite(t))return[];let s=c.data.sessions.find(h=>h.sessionID===t);if(!s)return[];let i=this.normalizePositiveInteger(e==null?void 0:e.certifiedByUserID),r=Array.isArray(e==null?void 0:e.attendees)?e.attendees:[],n=[],a=[],o=new Set;for(let h of r){let u=this.normalizeSessionAttendeePayloadEntry(h,s);if(!u||o.has(u.personID)||(o.add(u.personID),n.push(this.buildStoredAttendeeEntry(u)),!u.ridCertified))continue;let f=this.getRIDCertificationRecord(t,u.personID),S=(d=(l=u.ridCertifiedAt)!=null?l:f==null?void 0:f.certifiedAt)!=null?d:new Date().toISOString(),b=!f||f.certifiedAt!==S;a.push({sessionID:t,personID:u.personID,certifiedAt:S,certifiedByUserID:b?(m=i!=null?i:f==null?void 0:f.certifiedByUserID)!=null?m:null:(g=(p=f==null?void 0:f.certifiedByUserID)!=null?p:i)!=null?g:null})}return s.Attendees=n,s.AttendeesCt=n.length,c.data.ridCertificates=c.data.ridCertificates.filter(h=>h.sessionID!==t).concat(a),this.buildAttendeeRecords(s)}normalizeSessionForRead(e){return{...structuredClone(e),IsRIDQualifiedSession:this.isRIDQualifiedSession(e),IsSelfPacedSession:this.isSelfPacedSession(e),Attendees:this.normalizeSessionAttendees(e==null?void 0:e.Attendees,e)}}normalizeSessionAttendees(e=[],t=null){return this.normalizeStoredAttendeeEntries(e,t).map(s=>{var i,r;return[String((i=s.name)!=null?i:"").trim(),String((r=s.email)!=null?r:"").trim(),this.buildAttendeeDateRangeDisplay(s.dateRangeStart,s.dateRangeEnd,t),this.getAttendeeStatusLabel(s.certStatusID),Number(s.personID)]})}getAttendeeStatusLabel(e){var s;let t=this.normalizeAttendeeStatusId(e);return(s=c.data.attendeeStatuses[t])!=null?s:c.data.attendeeStatuses[4]}getRIDCertificationRecord(e,t){let s=Number(e),i=Number(t);if(!Number.isFinite(s)||!Number.isFinite(i))return null;let r=c.data.ridCertificates.find(n=>n.sessionID===s&&n.personID===i);return r?{sessionID:s,personID:i,certifiedAt:this.normalizeRIDCertificationDateTime(r.certifiedAt),certifiedByUserID:this.normalizePositiveInteger(r.certifiedByUserID)}:null}isRIDQualifiedSession(e){var t;return String((t=e==null?void 0:e.RIDQualify)!=null?t:"").trim().toLowerCase()==="yes"}isSelfPacedSession(e){var t;return String((t=e==null?void 0:e.Date)!=null?t:"").trim()==="Self Paced"}normalizeAttendeeStatusId(e){let t=Number(e);if(Number.isFinite(t)&&c.data.attendeeStatuses[t])return t;let s=String(e!=null?e:"").trim().toLowerCase();if(s==="")return 4;for(let[i,r]of Object.entries(c.data.attendeeStatuses))if(String(r).trim().toLowerCase()===s)return Number(i);return s==="associate"?1:4}normalizeAttendeeRIDPayloadEntry(e){let t=Number(e==null?void 0:e.personID);if(!Number.isFinite(t))return null;let s=(e==null?void 0:e.ridCertified)===!0;return{personID:t,ridCertified:s,ridCertifiedAt:s?this.normalizeRIDCertificationDateTime(e==null?void 0:e.ridCertifiedAt):null}}normalizeSessionAttendeePayloadEntry(e,t){let s=Number(e==null?void 0:e.personID);if(!Number.isFinite(s))return null;let i=this.getAttendeeDirectoryRecord(s);if(!i)return null;let r=this.normalizeAttendeeStatusId(e==null?void 0:e.certStatusID),a=this.isRIDQualifiedSession(t)&&(e==null?void 0:e.ridCertified)===!0,o=this.normalizeSessionAttendeeDateRange(e,t);return{personID:s,name:i.name,email:i.email,dateRangeStart:o.dateRangeStart,dateRangeEnd:o.dateRangeEnd,certStatusID:r,ridCertified:a,ridCertifiedAt:a?this.normalizeRIDCertificationDateTime(e==null?void 0:e.ridCertifiedAt):null}}normalizeSessionAttendeeDateRange(e,t){if(!this.isSelfPacedSession(t))return{dateRangeStart:null,dateRangeEnd:null};let s=this.normalizeAttendeeDateRangeValues(e==null?void 0:e.dateRangeStart,e==null?void 0:e.dateRangeEnd,t);return s.dateRangeStart!==null||s.dateRangeEnd!==null?s:this.parseLegacyAttendeeDateRange(e==null?void 0:e.dateRange,t)}normalizeStoredAttendeeEntries(e=[],t=null){return Array.isArray(e)?e.map(s=>this.normalizeStoredAttendeeEntry(s,t)).filter(s=>s!==null):[]}normalizeStoredAttendeeEntry(e,t=null){var l,d;if(!Array.isArray(e))return null;let s=String((l=e==null?void 0:e[0])!=null?l:"").trim(),i=String((d=e==null?void 0:e[1])!=null?d:"").trim();if(s===""||i==="")return null;let r=e.length>=6,n=r?this.normalizeAttendeeDateRangeValues(e==null?void 0:e[2],e==null?void 0:e[3],t):this.parseLegacyAttendeeDateRange(e==null?void 0:e[2],t),a=r?e==null?void 0:e[4]:e==null?void 0:e[3],o=Number(r?e==null?void 0:e[5]:e==null?void 0:e[4]);return Number.isFinite(o)?{name:s,email:i,dateRangeStart:n.dateRangeStart,dateRangeEnd:n.dateRangeEnd,certStatusID:this.normalizeAttendeeStatusId(a),personID:o}:null}buildStoredAttendeeEntry(e){var t,s,i,r;return[String((t=e==null?void 0:e.name)!=null?t:"").trim(),String((s=e==null?void 0:e.email)!=null?s:"").trim(),(i=e==null?void 0:e.dateRangeStart)!=null?i:null,(r=e==null?void 0:e.dateRangeEnd)!=null?r:null,this.normalizeAttendeeStatusId(e==null?void 0:e.certStatusID),Number(e==null?void 0:e.personID)]}normalizeAttendeeDateRangeValues(e,t,s=null){if(!this.isSelfPacedSession(s))return{dateRangeStart:null,dateRangeEnd:null};let i=this.normalizeFlexibleDateValue(e),r=this.normalizeFlexibleDateValue(t);return i===null?{dateRangeStart:null,dateRangeEnd:null}:r!==null&&r<i?{dateRangeStart:i,dateRangeEnd:null}:{dateRangeStart:i,dateRangeEnd:r}}parseLegacyAttendeeDateRange(e,t=null){if(!this.isSelfPacedSession(t))return{dateRangeStart:null,dateRangeEnd:null};let s=String(e!=null?e:"").trim();if(s===""||s.toLowerCase()==="not started")return{dateRangeStart:null,dateRangeEnd:null};let[i,r]=s.split(/\s+to\s+/i),n=this.normalizeFlexibleDateValue(i);if(n===null)return{dateRangeStart:null,dateRangeEnd:null};let a=String(r!=null?r:"").trim().toLowerCase();if(a===""||a==="ongoing")return{dateRangeStart:n,dateRangeEnd:null};let o=this.normalizeFlexibleDateValue(r);return o!==null&&o<n?{dateRangeStart:n,dateRangeEnd:null}:{dateRangeStart:n,dateRangeEnd:o}}buildAttendeeDateRangeDisplay(e,t,s=null){if(!this.isSelfPacedSession(s))return null;let i=this.normalizeFlexibleDateValue(e),r=this.normalizeFlexibleDateValue(t);if(i===null)return"Not started";let n=this.formatInputDate(i);if(n===null)return"Not started";if(r===null)return`${n} to Ongoing`;let a=this.formatInputDate(r);return a===null?`${n} to Ongoing`:`${n} to ${a}`}normalizeFlexibleDateValue(e){let t=String(e!=null?e:"").trim();if(t==="")return null;if(/^\d{4}-\d{2}-\d{2}$/.test(t))return t;let s=t.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(!s)return null;let[,i,r,n]=s;return`${n}-${i.padStart(2,"0")}-${r.padStart(2,"0")}`}normalizeRIDCertificationDateTime(e){let t=String(e!=null?e:"").trim();if(t==="")return null;let s=Date.parse(t);return Number.isNaN(s)?null:new Date(s).toISOString()}normalizePositiveInteger(e){let t=Number(e);return!Number.isInteger(t)||t<=0?null:t}normalizeOptionId(e){let t=Number(e);return Number.isFinite(t)?t:null}getOptionLabel(e,t){var i,r;return t==null?null:(r=((i=c.data[e])!=null?i:{})[t])!=null?r:null}formatYesNoLabel(e){return String(e).toLowerCase()==="yes"?"Yes":"No"}formatDateOption(e){if(!Array.isArray(e)||e.length<3)return null;let[t,s,i]=e;if(t===3)return"Self Paced";if(t===2){let n=this.formatInputDate(s),a=this.formatInputDate(i);return!n||!a?null:`${n} to ${a}`}let r=this.formatInputDate(s);return r!=null?r:null}formatInputDate(e){let s=String(e!=null?e:"").trim().split("-");if(s.length!==3)return null;let[i,r,n]=s;return i===""||r===""||n===""?null:`${r}/${n}/${i}`}async addFlag(e){let t=String(e!=null?e:"").trim();if(t==="")return null;for(let[i,r]of Object.entries(c.data.flags))if(i!=="top"&&String(r).trim().toLowerCase()===t.toLowerCase())return Number(i);let s=Object.keys(c.data.flags).filter(i=>i!=="top").map(i=>Number(i)).filter(i=>Number.isFinite(i)).reduce((i,r)=>Math.max(i,r),0)+1;return c.data.flags[s]=t,s}};Z(c,"attendeeDateRangesNormalized",!1),Z(c,"data",{sessions:[{sessionID:1,Date:"03/11/2026",SessionTitle:"Interpreter Ethics in Hybrid Teams",Length:75,SessionType:"Lecture",CEUWeight:1.25,CEUConsideration:"Ethics focus",CEUQualify:"Yes",RIDQualify:"Yes",EventType:"Webinar",ParentType:"March Learning Lab",Organizer:"Carmen Wu",AttendeesCt:5,Lock:1,Locker:"Priya Singh",Attendees:[["Talia Morgan","talia.morgan@example.com",null,null,2,1],["Evan Price","evan.price@example.com",null,null,1,2],["Sofia Kim","sofia.kim@example.com",null,null,3,3],["Daniel Ross","daniel.ross@example.com",null,null,4,4],["Mina Ali","mina.ali@example.com",null,null,2,5]]},{sessionID:2,Date:"03/18/2026",SessionTitle:"Medical Terminology Drill",Length:90,SessionType:"Workshop",CEUWeight:1.5,CEUConsideration:"Specialty vocabulary",CEUQualify:"No",RIDQualify:"No",EventType:"Breakout",ParentType:"Skill Builder Week",Organizer:"Noah Patel",AttendeesCt:4,Lock:0,Locker:null,Attendees:[["Harper Nguyen","harper.nguyen@example.com",null,null,1,6],["Jonah Clark","jonah.clark@example.com",null,null,4,7],["Layla Scott","layla.scott@example.com",null,null,3,8],["Isaac Bell","isaac.bell@example.com",null,null,2,9]]},{sessionID:3,Date:"Self Paced",SessionTitle:"Boundary Setting for Freelance Interpreters",Length:45,SessionType:"Module",CEUWeight:.75,CEUConsideration:"Professional practice",CEUQualify:"Yes",RIDQualify:"Yes",EventType:"Online Course",ParentType:"Resource Library",Organizer:"Rina Flores",AttendeesCt:6,Lock:0,Locker:null,Attendees:[["Nora Diaz","nora.diaz@example.com",null,null,1,10],["Caleb Foster","caleb.foster@example.com","2026-03-01",null,2,11],["Ivy Chen","ivy.chen@example.com","2026-03-07","2026-03-10",3,12],["Peter Shah","peter.shah@example.com",null,null,4,13],["Grace Hill","grace.hill@example.com","2026-03-05",null,1,14],["Owen Reed","owen.reed@example.com","2026-03-07","2026-03-10",2,15]]},{sessionID:4,Date:"04/02/2026 to 04/04/2026",SessionTitle:"Leadership Intensive",Length:180,SessionType:"Roundtable",CEUWeight:3,CEUConsideration:"Advanced practice",CEUQualify:"Yes",RIDQualify:"Yes",EventType:"Retreat",ParentType:"Leadership Series",Organizer:"Marcos Lee",AttendeesCt:5,Lock:1,Locker:"Jason Zinza",Attendees:[["Amara Lewis","amara.lewis@example.com",null,null,2,16],["Theo Grant","theo.grant@example.com",null,null,1,17],["Jade Rivera","jade.rivera@example.com",null,null,3,18],["Miles Cooper","miles.cooper@example.com",null,null,4,19],["Zoe Brooks","zoe.brooks@example.com",null,null,2,20]]},{sessionID:5,Date:"04/09/2026",SessionTitle:"Legal Prep: Depositions and Hearings",Length:120,SessionType:"Seminar",CEUWeight:2,CEUConsideration:"Domain-specific scenarios",CEUQualify:"Yes",RIDQualify:"Yes",EventType:"Conference",ParentType:"Justice Access Forum",Organizer:"Elena Brooks",AttendeesCt:4,Lock:1,Locker:"Marta Silva",Attendees:[["Leo Bennett","leo.bennett@example.com",null,null,2,21],["Aisha Coleman","aisha.coleman@example.com",null,null,1,22],["Riley Ward","riley.ward@example.com",null,null,3,23],["Emma Stone","emma.stone@example.com",null,null,2,24]]},{sessionID:6,Date:"04/21/2026 to 04/22/2026",SessionTitle:"Mentor Circle Facilitation Lab",Length:150,SessionType:"Workshop",CEUWeight:0,CEUConsideration:"None",CEUQualify:"No",RIDQualify:"Yes",EventType:"Cohort",ParentType:"Spring Mentor Program",Organizer:"Community Ops",AttendeesCt:5,Lock:1,Locker:"Jason Zinza",Attendees:[["Seth Howard","seth.howard@example.com",null,null,1,25],["Priya Desai","priya.desai@example.com",null,null,2,26],["Naomi Turner","naomi.turner@example.com",null,null,4,27],["Victor Hughes","victor.hughes@example.com",null,null,3,28],["Claire Adams","claire.adams@example.com",null,null,1,29]]}],attendeeStatuses:{1:"Certified",2:"Master",3:"None",4:"Not Assigned"},flags:{top:[1,2,3,4],1:"General",2:"PPO",3:"Advanced",4:"Ethics",5:"Medical",6:"Legal",7:"Educational",8:"Technology",9:"Leadership"},sessionTypes:{1:"lecture",2:"workshop",3:"panel",4:"breakout",5:"roundtable"},EventTypes:{1:"conference",2:"webinar",3:"retreat",4:"training",5:"series"},CEUTypes:{1:"conference",2:"webinar",3:"retreat",4:"training",5:"series"},members:[["Talia Morgan","talia.morgan@example.com",1,1,1],["Evan Price","evan.price@example.com",1,0,2],["Sofia Kim","sofia.kim@example.com",1,0,3],["Daniel Ross","daniel.ross@example.com",1,1,4],["Mina Ali","mina.ali@example.com",1,0,5],["Harper Nguyen","harper.nguyen@example.com",1,1,6],["Jonah Clark","jonah.clark@example.com",1,0,7],["Layla Scott","layla.scott@example.com",1,0,8],["Isaac Bell","isaac.bell@example.com",1,1,9],["Nora Diaz","nora.diaz@example.com",1,0,10],["Caleb Foster","caleb.foster@example.com",1,1,11],["Ivy Chen","ivy.chen@example.com",1,0,12],["Peter Shah","peter.shah@example.com",1,0,13],["Grace Hill","grace.hill@example.com",1,1,14],["Owen Reed","owen.reed@example.com",1,1,15],["Amara Lewis","amara.lewis@example.com",1,0,16],["Theo Grant","theo.grant@example.com",1,1,17],["Jade Rivera","jade.rivera@example.com",1,0,18],["Miles Cooper","miles.cooper@example.com",1,0,19],["Zoe Brooks","zoe.brooks@example.com",1,1,20],["Leo Bennett","leo.bennett@example.com",1,1,21],["Aisha Coleman","aisha.coleman@example.com",1,0,22],["Riley Ward","riley.ward@example.com",1,0,23],["Emma Stone","emma.stone@example.com",1,1,24],["Seth Howard","seth.howard@example.com",1,0,25],["Priya Desai","priya.desai@example.com",1,1,26],["Naomi Turner","naomi.turner@example.com",1,0,27],["Victor Hughes","victor.hughes@example.com",1,1,28],["Claire Adams","claire.adams@example.com",1,0,29]],ridCertificates:[],comments:[]});var O=c;var v=class{constructor(e={}){this.config=e}async get(e){return e==="userID"?this.resolveUserID():e==="userName"?this.resolveUserName():null}resolveUserID(){var i,r,n;let e=this.normalizeUserID((i=this.config)==null?void 0:i.userID);if(e!==null)return e;let t=this.getWordPressUserID();if(t!==null)return t;let s=[globalThis==null?void 0:globalThis.PDTSessionTable2UserID,(r=globalThis==null?void 0:globalThis.PDTSessionTable2)==null?void 0:r.userID,(n=globalThis==null?void 0:globalThis.PDTAttendeeModalData)==null?void 0:n.userID];for(let a of s){let o=this.normalizeUserID(a);if(o!==null)return o}return 1}resolveUserName(){var i,r,n,a,o,l,d;let e=this.normalizeUserName((n=(i=this.config)==null?void 0:i.userName)!=null?n:(r=this.config)==null?void 0:r.displayName);if(e!==null)return e;let t=this.getWordPressUserName();if(t!==null)return t;let s=[globalThis==null?void 0:globalThis.PDTSessionTable2UserName,(a=globalThis==null?void 0:globalThis.PDTSessionTable2)==null?void 0:a.userName,(o=globalThis==null?void 0:globalThis.PDTSessionTable2)==null?void 0:o.displayName,(l=globalThis==null?void 0:globalThis.PDTAttendeeModalData)==null?void 0:l.userName,(d=globalThis==null?void 0:globalThis.PDTAttendeeModalData)==null?void 0:d.displayName];for(let m of s){let p=this.normalizeUserName(m);if(p!==null)return p}return`User ${this.resolveUserID()}`}getWordPressUserID(){var e,t,s,i,r;try{let n=(r=(i=(s=(t=(e=globalThis==null?void 0:globalThis.wp)==null?void 0:e.data)==null?void 0:t.select)==null?void 0:s.call(t,"core"))==null?void 0:i.getCurrentUser)==null?void 0:r.call(i);return this.normalizeUserID(n==null?void 0:n.id)}catch(n){return null}}getWordPressUserName(){var e,t,s,i,r,n,a,o;try{let l=(r=(i=(s=(t=(e=globalThis==null?void 0:globalThis.wp)==null?void 0:e.data)==null?void 0:t.select)==null?void 0:s.call(t,"core"))==null?void 0:i.getCurrentUser)==null?void 0:r.call(i);return this.normalizeUserName((o=(a=(n=l==null?void 0:l.name)!=null?n:l==null?void 0:l.display_name)!=null?a:l==null?void 0:l.nickname)!=null?o:l==null?void 0:l.username)}catch(l){return null}}normalizeUserID(e){let t=Number(e);return!Number.isInteger(t)||t<=0?null:t}normalizeUserName(e){let t=String(e!=null?e:"").trim();return t===""?null:t}};var U=class{constructor(e=null){this.db=e,this.activeCommentContext=null}init(e,t){this.bindModalEvents(e),this.bindOpenTriggers(e,t)}bindModalEvents(e){e.close.off("click.pdtComment").on("click.pdtComment",()=>{this.close(e)}),e.wrapper.off("click.pdtComment").on("click.pdtComment",t=>{t.target===e.wrapper[0]&&this.close(e)}),e.submit.off("click.pdtComment").on("click.pdtComment",async()=>{await this.saveComments(e)})}bindOpenTriggers(e,t){t.off("click.pdtComment",".pdt-person-card__icon").on("click.pdtComment",".pdt-person-card__icon",async s=>{var l;let i=$(s.currentTarget);if(i.attr("data-session-locked")==="1")return;let r=i.closest(".pdt-person-card"),n=String((l=r.find("p").first().text())!=null?l:"").trim(),a=Number(i.attr("data-session-id")),o=Number(i.attr("data-person-id"));!Number.isFinite(a)||!Number.isFinite(o)||await this.open(e,{sessionID:a,personID:o,personName:n})})}async open(e,t){this.activeCommentContext=t,e.titleName.text(t.personName),await this.loadComments(e,t),e.wrapper.prop("hidden",!1),e.admin.trigger("focus")}async loadComments(e,t){var i,r;let s=await this.db.get("comments",{sessionID:t.sessionID,personID:t.personID});e.admin.val(String((i=s==null?void 0:s.adminComment)!=null?i:"")),e.member.val(String((r=s==null?void 0:s.memberComment)!=null?r:""))}async saveComments(e){var s,i,r;if(this.activeCommentContext===null)return;let t=(s=this.activeCommentContext)==null?void 0:s.onSave;await this.db.set("comments",{sessionID:this.activeCommentContext.sessionID,personID:this.activeCommentContext.personID,adminComment:String((i=e.admin.val())!=null?i:""),memberComment:String((r=e.member.val())!=null?r:"")}),this.close(e),typeof t=="function"&&await t()}close(e){e.wrapper.prop("hidden",!0),this.reset(e)}reset(e){e.titleName.text(""),e.admin.val(""),e.member.val(""),this.activeCommentContext=null}};var V=class{constructor(e,t,s,i){this.db=e,this.host=t,this.showAttendees=s,this.addEditSession=i,this.commentManager=new U(e),this.commentFields=null,this.attendeeSortModes=[{field:"first",direction:"asc",label:"Sort: First A-Z"},{field:"last",direction:"asc",label:"Sort: Last A-Z"},{field:"first",direction:"desc",label:"Sort: First Z-A"},{field:"last",direction:"desc",label:"Sort: Last Z-A"}]}async init(){let e=await this.loadTable();if(e.length===0)return;let t={wrapper:$("#pdt-shadow-comments"),modal:$("#pdt-shadow-comments .pdt-comment-box"),titleName:$("#pdt-shadow-comments h2 span"),admin:$("#comment_box_admin"),member:$("#comment_box"),close:$("#closeCommentModal"),submit:$("#submitCommentModal")};this.commentFields=t,this.bumpTableScrollHint(),this.commentManager.init(t,e),await this.showAttendees.init(this,this.commentManager,t),e.off("click.pdtDetails",".pdt-details-button").on("click.pdtDetails",".pdt-details-button",function(){let i=$(this).closest("tr").next("tr");i.hasClass("details-row")&&i.prop("hidden",!i.prop("hidden"))}),e.off("click.pdtSortAttendees",".pdt-sort-attendees-button").on("click.pdtSortAttendees",".pdt-sort-attendees-button",s=>{this.sortAttendees($(s.currentTarget))}),e.off("click.pdtToggleSessionLock",".pdt-lock-toggle-button").on("click.pdtToggleSessionLock",".pdt-lock-toggle-button",async s=>{await this.toggleSessionLock($(s.currentTarget))}),e.off("click.pdtOpenAttendeesModal",".pdt-edit-attendees-button").on("click.pdtOpenAttendeesModal",".pdt-edit-attendees-button",async s=>{let i=Number($(s.currentTarget).attr("data-session-id"));Number.isFinite(i)&&await this.showAttendees.openForSession(i)}),await this.addEditSession.init(this),e.off("click.pdtEditSession",".pdt-edit-session-button").on("click.pdtEditSession",".pdt-edit-session-button",async s=>{let i=Number($(s.currentTarget).attr("data-session-id"));Number.isFinite(i)&&await this.addEditSession.openForEdit(i)})}async loadTable(){let e=$(".pdt-main .table-wrapper table tbody");if(e.length===0)return e;let t=await this.db.get("sessions");e.empty();for(let s of t){let i=this.getSessionLockView(s),r=`
-                <tr data-session-id="${s.sessionID}">
-                    <td>${s.Date}</td>
-                    <td>${s.SessionTitle}</td>
-                    <td>${s.Length} min</td>
-                    <td>${s.SessionType}</td>
-                    <td>${s.CEUWeight}</td>
-                    <td>${s.CEUConsideration}</td>
-                    <td>${s.CEUQualify}</td>
-                    <td>${s.RIDQualify}</td>
-                    <td>${s.EventType}</td>
-                    <td>${s.ParentType}</td>
-                    <td>${s.Organizer}</td>
-                    <td>${s.AttendeesCt}</td>
+(() => {
+  var __defProp = Object.defineProperty;
+  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+  var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+
+  // js/shims/jquery-global.js
+  var jq = window.jQuery || window.$ || window.jquery;
+  if (typeof jq !== "function") {
+    throw new Error("PDT: jQuery is required before this bundle loads.");
+  }
+
+  // js/session-table2/state.js
+  var session_state = {
+    // "state" is the acknoledgement if on main page or if on a specifc modal.
+    "state": "mainPage"
+  };
+
+  // js/core/security.js
+  var JwtApiClient = class {
+    constructor(baseUrl, jwt) {
+      this.baseUrl = baseUrl.replace(/\/+$/, "");
+      this.jwt = jwt;
+    }
+    async get(path, extraHeaders = {}) {
+      const url = `${this.baseUrl}/${path.replace(/^\/+/, "")}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "ASLTA-PDT-JWT": `Bearer ${this.jwt}`,
+          Accept: "application/json",
+          ...extraHeaders
+        }
+      });
+      const contentType = response.headers.get("content-type") || "";
+      const body = contentType.includes("application/json") ? await response.json() : await response.text();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${typeof body === "string" ? body : JSON.stringify(body)}`);
+      }
+      return body;
+    }
+  };
+
+  // js/session-table2/db_connection.js
+  var _db_connection = class _db_connection {
+    constructor(apiBaseUrl = null, jwt = null) {
+      var _a, _b;
+      this.apiBaseUrl = (_b = (_a = this.normalizeConfiguredValue(apiBaseUrl)) == null ? void 0 : _a.replace(/\/+$/, "")) != null ? _b : null;
+      this.jwt = this.normalizeConfiguredValue(jwt);
+      this.apiClient = this.apiBaseUrl && this.jwt ? new JwtApiClient(this.apiBaseUrl, this.jwt) : null;
+      this.ensureNormalizedAttendeeDateRanges();
+    }
+    normalizeConfiguredValue(value) {
+      const normalizedValue = String(value != null ? value : "").trim();
+      return normalizedValue === "" ? null : normalizedValue;
+    }
+    async getApiClient() {
+      return this.apiClient;
+    }
+    ensureNormalizedAttendeeDateRanges() {
+      if (_db_connection.attendeeDateRangesNormalized) {
+        return;
+      }
+      for (const session of _db_connection.data.sessions) {
+        const normalizedAttendees = this.normalizeStoredAttendeeEntries(session == null ? void 0 : session.Attendees, session);
+        session.Attendees = normalizedAttendees.map((attendeeEntry) => this.buildStoredAttendeeEntry(attendeeEntry));
+        session.AttendeesCt = session.Attendees.length;
+      }
+      _db_connection.attendeeDateRangesNormalized = true;
+    }
+    async get(resource, query = null) {
+      if (resource === "sessions") {
+        try {
+          const apiClient = await this.getApiClient();
+          if (apiClient) {
+            const sessionsPayload = await apiClient.get("api/sessions");
+            return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
+          }
+          if (this.apiBaseUrl) {
+            const response = await fetch(`${this.apiBaseUrl}/api/sessions`);
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            const sessionsPayload = await response.json();
+            return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
+          }
+        } catch (error) {
+          console.warn('Falling back to local session data for get("sessions").', error);
+          return structuredClone(this.getLocalSessions());
+        }
+      } else if (resource === "session") {
+        const sessionID = Number(query == null ? void 0 : query.sessionID);
+        if (!Number.isFinite(sessionID)) {
+          return null;
+        }
+        try {
+          const apiClient = await this.getApiClient();
+          if (apiClient) {
+            const sessionPayload = await apiClient.get(`api/sessions/${sessionID}`);
+            return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
+          }
+          if (this.apiBaseUrl) {
+            const response = await fetch(`${this.apiBaseUrl}/api/sessions/${sessionID}`);
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            const sessionPayload = await response.json();
+            return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
+          }
+        } catch (error) {
+          console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
+        }
+        const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+        return structuredClone(session ? this.normalizeSessionForRead(session) : null);
+      } else if (resource === "attendee") {
+        const sessionID = Number(query == null ? void 0 : query.sessionID);
+        const personID = Number(query == null ? void 0 : query.personID);
+        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+          return null;
+        }
+        const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+        if (!session) {
+          return null;
+        }
+        return structuredClone(this.buildSessionAttendeeCandidate(session, personID));
+      } else if (resource === "attendees") {
+        const sessionID = Number(query == null ? void 0 : query.sessionID);
+        if (!Number.isFinite(sessionID)) {
+          return structuredClone(this.buildAttendeeDirectoryRecords());
+        }
+        const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+        if (!session) {
+          return [];
+        }
+        return structuredClone(this.buildAttendeeRecords(session));
+      } else if (resource === "attendeeStatuses")
+        return structuredClone(_db_connection.data.attendeeStatuses);
+      else if (resource === "flags")
+        return structuredClone(_db_connection.data.flags);
+      else if (resource === "presenters")
+        return structuredClone(
+          _db_connection.data.members.filter((member) => member[3] === 1)
+        );
+      else if (resource === "comments") {
+        const sessionID = Number(query == null ? void 0 : query.sessionID);
+        const personID = Number(query == null ? void 0 : query.personID);
+        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+          return {
+            sessionID: null,
+            personID: null,
+            adminComment: "",
+            memberComment: ""
+          };
+        }
+        const comment = _db_connection.data.comments.find((entry) => {
+          return entry.sessionID === sessionID && entry.personID === personID;
+        });
+        return structuredClone(comment != null ? comment : {
+          sessionID,
+          personID,
+          adminComment: "",
+          memberComment: ""
+        });
+      } else if (resource === "sessionTypes")
+        return structuredClone(_db_connection.data.sessionTypes);
+      else if (resource === "EventTypes")
+        return structuredClone(_db_connection.data.EventTypes);
+      else if (resource === "CEUTypes")
+        return structuredClone(_db_connection.data.CEUTypes);
+      return null;
+    }
+    getLocalSessions() {
+      return _db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session));
+    }
+    normalizeSessionsResponse(sessionsPayload) {
+      const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
+      const sessions = this.extractSessionsArray(normalizedPayload);
+      if (!Array.isArray(sessions)) {
+        const payloadDescription = this.describePayloadShape(normalizedPayload);
+        throw new Error(`Unsupported sessions response shape (${payloadDescription})`);
+      }
+      return sessions.map((session) => this.normalizeSessionRecordForRead(session)).filter((session) => session !== null);
+    }
+    normalizeSingleSessionResponse(sessionPayload) {
+      const normalizedPayload = this.parseStructuredPayload(sessionPayload);
+      const session = this.extractSessionRecord(normalizedPayload);
+      if (session === null) {
+        const payloadDescription = this.describePayloadShape(normalizedPayload);
+        throw new Error(`Unsupported session response shape (${payloadDescription})`);
+      }
+      const normalizedSession = this.normalizeSessionRecordForRead(session);
+      if (normalizedSession === null) {
+        throw new Error("Unsupported session response record");
+      }
+      return normalizedSession;
+    }
+    extractSessionsArray(sessionsPayload) {
+      const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
+      if (normalizedPayload !== sessionsPayload) {
+        return this.extractSessionsArray(normalizedPayload);
+      }
+      if (Array.isArray(normalizedPayload)) {
+        return normalizedPayload;
+      }
+      if (!normalizedPayload || typeof normalizedPayload !== "object") {
+        return null;
+      }
+      for (const key of ["sessions", "data", "results", "items", "records", "rows", "payload"]) {
+        const candidate = normalizedPayload[key];
+        if (Array.isArray(candidate)) {
+          return candidate;
+        }
+        if (candidate && typeof candidate === "object") {
+          const nestedSessions = this.extractSessionsArray(candidate);
+          if (Array.isArray(nestedSessions)) {
+            return nestedSessions;
+          }
+        }
+      }
+      const objectValues = Object.values(normalizedPayload);
+      if (objectValues.length > 0 && objectValues.every((value) => value && typeof value === "object" && !Array.isArray(value))) {
+        const sessionRecords = objectValues.filter((value) => this.isSessionRecord(value));
+        if (sessionRecords.length > 0) {
+          return sessionRecords;
+        }
+      }
+      return null;
+    }
+    extractSessionRecord(sessionPayload) {
+      const normalizedPayload = this.parseStructuredPayload(sessionPayload);
+      if (normalizedPayload !== sessionPayload) {
+        return this.extractSessionRecord(normalizedPayload);
+      }
+      if (this.isSessionRecord(normalizedPayload)) {
+        return normalizedPayload;
+      }
+      if (Array.isArray(normalizedPayload)) {
+        const sessionRecord2 = normalizedPayload.find((candidate) => this.isSessionRecord(candidate));
+        return sessionRecord2 != null ? sessionRecord2 : null;
+      }
+      if (!normalizedPayload || typeof normalizedPayload !== "object") {
+        return null;
+      }
+      for (const key of ["session", "data", "result", "item", "record", "row", "payload"]) {
+        const candidate = normalizedPayload[key];
+        if (this.isSessionRecord(candidate)) {
+          return candidate;
+        }
+        if (candidate && typeof candidate === "object") {
+          const nestedRecord = this.extractSessionRecord(candidate);
+          if (nestedRecord !== null) {
+            return nestedRecord;
+          }
+        }
+      }
+      const objectValues = Object.values(normalizedPayload);
+      const sessionRecord = objectValues.find((candidate) => this.isSessionRecord(candidate));
+      return sessionRecord != null ? sessionRecord : null;
+    }
+    parseStructuredPayload(payload) {
+      if (typeof payload !== "string") {
+        return payload;
+      }
+      const trimmedPayload = payload.trim();
+      if (trimmedPayload === "") {
+        return payload;
+      }
+      const looksLikeJson = trimmedPayload.startsWith("{") && trimmedPayload.endsWith("}") || trimmedPayload.startsWith("[") && trimmedPayload.endsWith("]");
+      if (!looksLikeJson) {
+        return payload;
+      }
+      try {
+        return JSON.parse(trimmedPayload);
+      } catch (_error) {
+        return payload;
+      }
+    }
+    describePayloadShape(payload) {
+      if (payload && typeof payload === "object") {
+        return `keys: ${Object.keys(payload).join(", ")}`;
+      }
+      if (typeof payload === "string") {
+        const preview = payload.trim().slice(0, 80).replace(/\s+/g, " ");
+        return preview === "" ? "type: string (empty)" : `type: string, preview: ${preview}`;
+      }
+      return `type: ${typeof payload}`;
+    }
+    normalizeSessionRecordForRead(session) {
+      if (!this.isSessionRecord(session)) {
+        return null;
+      }
+      const normalizedSession = structuredClone(session);
+      if (!Array.isArray(normalizedSession.Attendees) && Array.isArray(normalizedSession.attendees)) {
+        normalizedSession.Attendees = normalizedSession.attendees;
+      }
+      const attendeeCount = Number(normalizedSession.AttendeesCt);
+      normalizedSession.AttendeesCt = Number.isFinite(attendeeCount) ? attendeeCount : Array.isArray(normalizedSession.Attendees) ? normalizedSession.Attendees.length : 0;
+      return this.normalizeSessionForRead(normalizedSession);
+    }
+    isSessionRecord(value) {
+      if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return false;
+      }
+      return Number.isFinite(Number(value.sessionID)) || typeof value.SessionTitle === "string" || typeof value.Date === "string" || Array.isArray(value.Attendees) || Array.isArray(value.attendees);
+    }
+    async set(resource, value) {
+      var _a, _b;
+      if (resource === "sessionLock") {
+        return structuredClone(this.updateSessionLock(value));
+      }
+      if (resource === "comments") {
+        const sessionID = Number(value == null ? void 0 : value.sessionID);
+        const personID = Number(value == null ? void 0 : value.personID);
+        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+          return null;
+        }
+        const commentData = {
+          sessionID,
+          personID,
+          adminComment: String((_a = value == null ? void 0 : value.adminComment) != null ? _a : ""),
+          memberComment: String((_b = value == null ? void 0 : value.memberComment) != null ? _b : "")
+        };
+        const existingCommentIndex = _db_connection.data.comments.findIndex((entry) => {
+          return entry.sessionID === sessionID && entry.personID === personID;
+        });
+        if (existingCommentIndex >= 0) {
+          _db_connection.data.comments[existingCommentIndex] = commentData;
+        } else {
+          _db_connection.data.comments.push(commentData);
+        }
+        return commentData;
+      }
+      if (!["sessionTypes", "EventTypes", "CEUTypes"].includes(resource)) {
+        return -1;
+      }
+      const label = String(value != null ? value : "").trim();
+      if (label === "") {
+        return -1;
+      }
+      const resourceData = _db_connection.data[resource];
+      for (const existingLabel of Object.values(resourceData)) {
+        if (String(existingLabel).trim().toLowerCase() === label.toLowerCase()) {
+          return -1;
+        }
+      }
+      const nextId = Object.keys(resourceData).map((optionId) => Number(optionId)).filter((optionId) => Number.isFinite(optionId)).reduce((maxId, optionId) => Math.max(maxId, optionId), 0) + 1;
+      resourceData[nextId] = label;
+      return nextId;
+    }
+    updateSessionLock(value) {
+      var _a;
+      const sessionID = Number(value == null ? void 0 : value.sessionID);
+      if (!Number.isFinite(sessionID)) {
+        return null;
+      }
+      const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+      if (!session) {
+        return null;
+      }
+      session.Lock = Number(value == null ? void 0 : value.lock) === 1 ? 1 : 0;
+      const lockerName = String((_a = value == null ? void 0 : value.locker) != null ? _a : "").trim();
+      session.Locker = lockerName === "" ? null : lockerName;
+      return this.normalizeSessionForRead(session);
+    }
+    async put(resource, value) {
+      if (resource === "sessionAttendees") {
+        return structuredClone(this.updateSessionAttendees(value));
+      }
+      if (resource === "attendeeRIDCertifications") {
+        return structuredClone(this.updateAttendeeRIDCertifications(value));
+      }
+      if (resource !== "session") {
+        return null;
+      }
+      const sessionID = value == null ? void 0 : value.sessionID;
+      if (sessionID === null) {
+        const nextSessionID = this.getNextSessionID();
+        const newSession = this.buildSessionRecord(value, nextSessionID);
+        _db_connection.data.sessions.push(newSession);
+        return structuredClone(newSession);
+      }
+      const numericSessionID = Number(sessionID);
+      if (!Number.isFinite(numericSessionID)) {
+        return null;
+      }
+      const existingSession = _db_connection.data.sessions.find((session) => session.sessionID === numericSessionID);
+      if (!existingSession) {
+        return null;
+      }
+      const updatedSession = this.buildSessionRecord(value, numericSessionID, existingSession);
+      Object.assign(existingSession, updatedSession);
+      return structuredClone(existingSession);
+    }
+    getNextSessionID() {
+      return _db_connection.data.sessions.map((session) => Number(session.sessionID)).filter((sessionID) => Number.isFinite(sessionID)).reduce((maxSessionID, sessionID) => Math.max(maxSessionID, sessionID), 0) + 1;
+    }
+    buildSessionRecord(value, sessionID, existingSession = null) {
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E;
+      const sessionTypeID = (_b = (_a = this.normalizeOptionId(value == null ? void 0 : value.sessionType)) != null ? _a : existingSession == null ? void 0 : existingSession.SessionTypeID) != null ? _b : null;
+      const eventTypeID = (_d = (_c = this.normalizeOptionId(value == null ? void 0 : value.eventType)) != null ? _c : existingSession == null ? void 0 : existingSession.EventTypeID) != null ? _d : null;
+      const ceuTypeID = (_f = (_e = this.normalizeOptionId(value == null ? void 0 : value.ceuType)) != null ? _e : existingSession == null ? void 0 : existingSession.CEUTypeID) != null ? _f : null;
+      const sessionTypeLabel = (_h = (_g = this.getOptionLabel("sessionTypes", sessionTypeID)) != null ? _g : existingSession == null ? void 0 : existingSession.SessionType) != null ? _h : "";
+      const eventTypeLabel = (_j = (_i = this.getOptionLabel("EventTypes", eventTypeID)) != null ? _i : existingSession == null ? void 0 : existingSession.EventType) != null ? _j : "";
+      const ceuTypeLabel = this.getOptionLabel("CEUTypes", ceuTypeID);
+      const ceuQualify = String((_l = (_k = value == null ? void 0 : value.ceuQualify) != null ? _k : existingSession == null ? void 0 : existingSession.CEUQualify) != null ? _l : "No");
+      const ceuWeight = ceuQualify === "Yes" ? Number(value == null ? void 0 : value.ceuWeight) > 0 ? Number(value.ceuWeight) : (_m = existingSession == null ? void 0 : existingSession.CEUWeight) != null ? _m : 0 : 0;
+      return {
+        sessionID,
+        Date: (_o = (_n = this.formatDateOption(value == null ? void 0 : value.dateOption)) != null ? _n : existingSession == null ? void 0 : existingSession.Date) != null ? _o : "",
+        SessionTitle: String((_q = (_p = value == null ? void 0 : value.sessionTitle) != null ? _p : existingSession == null ? void 0 : existingSession.SessionTitle) != null ? _q : "").trim(),
+        Length: Number(value == null ? void 0 : value.length) > 0 ? Number(value.length) : (_r = existingSession == null ? void 0 : existingSession.Length) != null ? _r : 0,
+        SessionType: sessionTypeLabel,
+        SessionTypeID: sessionTypeID,
+        CEUWeight: ceuWeight,
+        CEUConsideration: (_s = ceuTypeLabel != null ? ceuTypeLabel : existingSession == null ? void 0 : existingSession.CEUConsideration) != null ? _s : ceuQualify === "No" ? "None" : "",
+        CEUTypeID: ceuTypeID,
+        CEUQualify: ceuQualify,
+        RIDQualify: this.formatYesNoLabel((_u = (_t = value == null ? void 0 : value.ridQualified) != null ? _t : existingSession == null ? void 0 : existingSession.RIDQualify) != null ? _u : "No"),
+        EventType: eventTypeLabel,
+        EventTypeID: eventTypeID,
+        ParentType: String((_w = (_v = value == null ? void 0 : value.parentEvent) != null ? _v : existingSession == null ? void 0 : existingSession.ParentType) != null ? _w : "").trim(),
+        Organizer: String((_y = (_x = value == null ? void 0 : value.organizer) != null ? _x : existingSession == null ? void 0 : existingSession.Organizer) != null ? _y : "").trim(),
+        AttendeesCt: (_z = existingSession == null ? void 0 : existingSession.AttendeesCt) != null ? _z : 0,
+        Lock: (_A = existingSession == null ? void 0 : existingSession.Lock) != null ? _A : 0,
+        Locker: (_B = existingSession == null ? void 0 : existingSession.Locker) != null ? _B : null,
+        Attendees: structuredClone((_C = existingSession == null ? void 0 : existingSession.Attendees) != null ? _C : []),
+        FlagIDs: Array.isArray(value == null ? void 0 : value.flags) ? value.flags.filter((flagId) => Number.isFinite(Number(flagId))).map((flagId) => Number(flagId)) : structuredClone((_D = existingSession == null ? void 0 : existingSession.FlagIDs) != null ? _D : []),
+        PresenterIDs: Array.isArray(value == null ? void 0 : value.presenters) ? value.presenters.filter((personId) => Number.isFinite(Number(personId))).map((personId) => Number(personId)) : structuredClone((_E = existingSession == null ? void 0 : existingSession.PresenterIDs) != null ? _E : [])
+      };
+    }
+    buildAttendeeRecords(session) {
+      const sessionID = Number(session == null ? void 0 : session.sessionID);
+      const attendeeEntries = this.normalizeStoredAttendeeEntries(session == null ? void 0 : session.Attendees, session);
+      return attendeeEntries.map((attendeeEntry) => {
+        var _a, _b, _c, _d, _e, _f;
+        const attendeeComments = _db_connection.data.comments.find((commentEntry) => {
+          return commentEntry.sessionID === sessionID && commentEntry.personID === Number(attendeeEntry.personID);
+        });
+        const ridCertification = this.getRIDCertificationRecord(sessionID, attendeeEntry.personID);
+        const normalizedStatusID = this.normalizeAttendeeStatusId(attendeeEntry.certStatusID);
+        const certStatusLabel = this.getAttendeeStatusLabel(normalizedStatusID);
+        const dateRangeDisplay = this.buildAttendeeDateRangeDisplay(
+          attendeeEntry.dateRangeStart,
+          attendeeEntry.dateRangeEnd,
+          session
+        );
+        return {
+          sessionID,
+          personID: Number(attendeeEntry.personID),
+          name: String((_a = attendeeEntry.name) != null ? _a : "").trim(),
+          email: String((_b = attendeeEntry.email) != null ? _b : "").trim(),
+          dateRangeStart: attendeeEntry.dateRangeStart,
+          dateRangeEnd: attendeeEntry.dateRangeEnd,
+          dateRangeDisplay,
+          dateRange: dateRangeDisplay,
+          certStatusID: normalizedStatusID,
+          certStatus: certStatusLabel,
+          certStatusLabel,
+          ridCertified: ridCertification !== null,
+          ridCertifiedAt: (_c = ridCertification == null ? void 0 : ridCertification.certifiedAt) != null ? _c : null,
+          ridCertifiedByUserID: (_d = ridCertification == null ? void 0 : ridCertification.certifiedByUserID) != null ? _d : null,
+          adminComment: String((_e = attendeeComments == null ? void 0 : attendeeComments.adminComment) != null ? _e : ""),
+          memberComment: String((_f = attendeeComments == null ? void 0 : attendeeComments.memberComment) != null ? _f : "")
+        };
+      });
+    }
+    buildAttendeeDirectoryRecords() {
+      const attendeeDirectory = /* @__PURE__ */ new Map();
+      for (const memberEntry of _db_connection.data.members) {
+        if (Number(memberEntry == null ? void 0 : memberEntry[2]) !== 1) {
+          continue;
+        }
+        const attendeeRecord = this.buildAttendeeDirectoryRecord(memberEntry == null ? void 0 : memberEntry[4], memberEntry == null ? void 0 : memberEntry[0], memberEntry == null ? void 0 : memberEntry[1]);
+        if (!attendeeRecord) {
+          continue;
+        }
+        attendeeDirectory.set(attendeeRecord.personID, attendeeRecord);
+      }
+      for (const session of _db_connection.data.sessions) {
+        const attendeeEntries = this.normalizeStoredAttendeeEntries(session == null ? void 0 : session.Attendees, session);
+        for (const attendeeEntry of attendeeEntries) {
+          const attendeeRecord = this.buildAttendeeDirectoryRecord(attendeeEntry == null ? void 0 : attendeeEntry.personID, attendeeEntry == null ? void 0 : attendeeEntry.name, attendeeEntry == null ? void 0 : attendeeEntry.email);
+          if (!attendeeRecord || attendeeDirectory.has(attendeeRecord.personID)) {
+            continue;
+          }
+          attendeeDirectory.set(attendeeRecord.personID, attendeeRecord);
+        }
+      }
+      return Array.from(attendeeDirectory.values()).sort((leftAttendee, rightAttendee) => {
+        return leftAttendee.name.localeCompare(rightAttendee.name) || leftAttendee.email.localeCompare(rightAttendee.email) || leftAttendee.personID - rightAttendee.personID;
+      });
+    }
+    buildAttendeeDirectoryRecord(personID, name, email) {
+      const numericPersonID = Number(personID);
+      const normalizedName = String(name != null ? name : "").trim();
+      const normalizedEmail = String(email != null ? email : "").trim();
+      if (!Number.isFinite(numericPersonID) || normalizedName === "" || normalizedEmail === "") {
+        return null;
+      }
+      return {
+        personID: numericPersonID,
+        name: normalizedName,
+        email: normalizedEmail,
+        label: `${normalizedName} (${normalizedEmail})`
+      };
+    }
+    getAttendeeDirectoryRecord(personID) {
+      const numericPersonID = Number(personID);
+      if (!Number.isFinite(numericPersonID)) {
+        return null;
+      }
+      const attendeeMemberEntry = _db_connection.data.members.find((memberEntry) => {
+        return Number(memberEntry == null ? void 0 : memberEntry[4]) === numericPersonID && Number(memberEntry == null ? void 0 : memberEntry[2]) === 1;
+      });
+      if (attendeeMemberEntry) {
+        return this.buildAttendeeDirectoryRecord(attendeeMemberEntry[4], attendeeMemberEntry[0], attendeeMemberEntry[1]);
+      }
+      for (const session of _db_connection.data.sessions) {
+        const attendeeEntries = this.normalizeStoredAttendeeEntries(session == null ? void 0 : session.Attendees, session);
+        const attendeeEntry = attendeeEntries.find((sessionAttendeeEntry) => {
+          return Number(sessionAttendeeEntry == null ? void 0 : sessionAttendeeEntry.personID) === numericPersonID;
+        });
+        if (attendeeEntry) {
+          return this.buildAttendeeDirectoryRecord(attendeeEntry.personID, attendeeEntry.name, attendeeEntry.email);
+        }
+      }
+      return null;
+    }
+    buildSessionAttendeeCandidate(session, personID) {
+      var _a, _b;
+      const existingAttendeeRecord = this.buildAttendeeRecords(session).find((attendee) => {
+        return attendee.personID === Number(personID);
+      });
+      if (existingAttendeeRecord) {
+        return existingAttendeeRecord;
+      }
+      const attendeeDirectoryRecord = this.getAttendeeDirectoryRecord(personID);
+      if (!attendeeDirectoryRecord) {
+        return null;
+      }
+      const sessionID = Number(session == null ? void 0 : session.sessionID);
+      const attendeeComments = _db_connection.data.comments.find((commentEntry) => {
+        return commentEntry.sessionID === sessionID && commentEntry.personID === Number(personID);
+      });
+      const defaultStatusID = 4;
+      const defaultStatusLabel = this.getAttendeeStatusLabel(defaultStatusID);
+      return {
+        sessionID,
+        personID: attendeeDirectoryRecord.personID,
+        name: attendeeDirectoryRecord.name,
+        email: attendeeDirectoryRecord.email,
+        dateRangeStart: null,
+        dateRangeEnd: null,
+        dateRangeDisplay: this.buildAttendeeDateRangeDisplay(null, null, session),
+        dateRange: this.buildAttendeeDateRangeDisplay(null, null, session),
+        certStatusID: defaultStatusID,
+        certStatus: defaultStatusLabel,
+        certStatusLabel: defaultStatusLabel,
+        ridCertified: false,
+        ridCertifiedAt: null,
+        ridCertifiedByUserID: null,
+        adminComment: String((_a = attendeeComments == null ? void 0 : attendeeComments.adminComment) != null ? _a : ""),
+        memberComment: String((_b = attendeeComments == null ? void 0 : attendeeComments.memberComment) != null ? _b : "")
+      };
+    }
+    updateAttendeeRIDCertifications(value) {
+      var _a, _b, _c, _d, _e;
+      const sessionID = Number(value == null ? void 0 : value.sessionID);
+      if (!Number.isFinite(sessionID)) {
+        return [];
+      }
+      const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+      if (!session) {
+        return [];
+      }
+      const certifiedByUserID = this.normalizePositiveInteger(value == null ? void 0 : value.certifiedByUserID);
+      const attendeePayload = Array.isArray(value == null ? void 0 : value.attendees) ? value.attendees : [];
+      const attendeePayloadMap = /* @__PURE__ */ new Map();
+      for (const attendeeEntry of attendeePayload) {
+        const normalizedAttendeeEntry = this.normalizeAttendeeRIDPayloadEntry(attendeeEntry);
+        if (normalizedAttendeeEntry === null) {
+          continue;
+        }
+        attendeePayloadMap.set(normalizedAttendeeEntry.personID, normalizedAttendeeEntry);
+      }
+      const sessionPersonIDs = this.normalizeStoredAttendeeEntries(session.Attendees, session).map((attendeeEntry) => Number(attendeeEntry == null ? void 0 : attendeeEntry.personID)).filter((personID) => Number.isFinite(personID));
+      const nextRIDCertificates = [];
+      for (const personID of sessionPersonIDs) {
+        const existingCertification = this.getRIDCertificationRecord(sessionID, personID);
+        const attendeeRIDEntry = attendeePayloadMap.get(personID);
+        if (!attendeeRIDEntry) {
+          if (existingCertification) {
+            nextRIDCertificates.push(existingCertification);
+          }
+          continue;
+        }
+        if (attendeeRIDEntry.ridCertified !== true) {
+          continue;
+        }
+        const certifiedAt = (_b = (_a = attendeeRIDEntry.ridCertifiedAt) != null ? _a : existingCertification == null ? void 0 : existingCertification.certifiedAt) != null ? _b : (/* @__PURE__ */ new Date()).toISOString();
+        const certificationChanged = !existingCertification || existingCertification.certifiedAt !== certifiedAt;
+        nextRIDCertificates.push({
+          sessionID,
+          personID,
+          certifiedAt,
+          certifiedByUserID: certificationChanged ? (_c = certifiedByUserID != null ? certifiedByUserID : existingCertification == null ? void 0 : existingCertification.certifiedByUserID) != null ? _c : null : (_e = (_d = existingCertification == null ? void 0 : existingCertification.certifiedByUserID) != null ? _d : certifiedByUserID) != null ? _e : null
+        });
+      }
+      _db_connection.data.ridCertificates = _db_connection.data.ridCertificates.filter((certificationEntry) => certificationEntry.sessionID !== sessionID).concat(nextRIDCertificates);
+      return this.buildAttendeeRecords(session);
+    }
+    updateSessionAttendees(value) {
+      var _a, _b, _c, _d, _e;
+      const sessionID = Number(value == null ? void 0 : value.sessionID);
+      if (!Number.isFinite(sessionID)) {
+        return [];
+      }
+      const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
+      if (!session) {
+        return [];
+      }
+      const certifiedByUserID = this.normalizePositiveInteger(value == null ? void 0 : value.certifiedByUserID);
+      const attendeePayload = Array.isArray(value == null ? void 0 : value.attendees) ? value.attendees : [];
+      const nextAttendeeEntries = [];
+      const nextRIDCertificates = [];
+      const seenPersonIDs = /* @__PURE__ */ new Set();
+      for (const attendeeEntry of attendeePayload) {
+        const normalizedAttendeeEntry = this.normalizeSessionAttendeePayloadEntry(attendeeEntry, session);
+        if (!normalizedAttendeeEntry || seenPersonIDs.has(normalizedAttendeeEntry.personID)) {
+          continue;
+        }
+        seenPersonIDs.add(normalizedAttendeeEntry.personID);
+        nextAttendeeEntries.push(this.buildStoredAttendeeEntry(normalizedAttendeeEntry));
+        if (!normalizedAttendeeEntry.ridCertified) {
+          continue;
+        }
+        const existingCertification = this.getRIDCertificationRecord(sessionID, normalizedAttendeeEntry.personID);
+        const certifiedAt = (_b = (_a = normalizedAttendeeEntry.ridCertifiedAt) != null ? _a : existingCertification == null ? void 0 : existingCertification.certifiedAt) != null ? _b : (/* @__PURE__ */ new Date()).toISOString();
+        const certificationChanged = !existingCertification || existingCertification.certifiedAt !== certifiedAt;
+        nextRIDCertificates.push({
+          sessionID,
+          personID: normalizedAttendeeEntry.personID,
+          certifiedAt,
+          certifiedByUserID: certificationChanged ? (_c = certifiedByUserID != null ? certifiedByUserID : existingCertification == null ? void 0 : existingCertification.certifiedByUserID) != null ? _c : null : (_e = (_d = existingCertification == null ? void 0 : existingCertification.certifiedByUserID) != null ? _d : certifiedByUserID) != null ? _e : null
+        });
+      }
+      session.Attendees = nextAttendeeEntries;
+      session.AttendeesCt = nextAttendeeEntries.length;
+      _db_connection.data.ridCertificates = _db_connection.data.ridCertificates.filter((certificationEntry) => certificationEntry.sessionID !== sessionID).concat(nextRIDCertificates);
+      return this.buildAttendeeRecords(session);
+    }
+    normalizeSessionForRead(session) {
+      return {
+        ...structuredClone(session),
+        IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
+        IsSelfPacedSession: this.isSelfPacedSession(session),
+        Attendees: this.normalizeSessionAttendees(session == null ? void 0 : session.Attendees, session)
+      };
+    }
+    normalizeSessionAttendees(attendeeEntries = [], session = null) {
+      return this.normalizeStoredAttendeeEntries(attendeeEntries, session).map((attendeeEntry) => {
+        var _a, _b;
+        return [
+          String((_a = attendeeEntry.name) != null ? _a : "").trim(),
+          String((_b = attendeeEntry.email) != null ? _b : "").trim(),
+          this.buildAttendeeDateRangeDisplay(attendeeEntry.dateRangeStart, attendeeEntry.dateRangeEnd, session),
+          this.getAttendeeStatusLabel(attendeeEntry.certStatusID),
+          Number(attendeeEntry.personID)
+        ];
+      });
+    }
+    getAttendeeStatusLabel(statusValue) {
+      var _a;
+      const statusID = this.normalizeAttendeeStatusId(statusValue);
+      return (_a = _db_connection.data.attendeeStatuses[statusID]) != null ? _a : _db_connection.data.attendeeStatuses[4];
+    }
+    getRIDCertificationRecord(sessionID, personID) {
+      const numericSessionID = Number(sessionID);
+      const numericPersonID = Number(personID);
+      if (!Number.isFinite(numericSessionID) || !Number.isFinite(numericPersonID)) {
+        return null;
+      }
+      const certificationEntry = _db_connection.data.ridCertificates.find((entry) => {
+        return entry.sessionID === numericSessionID && entry.personID === numericPersonID;
+      });
+      if (!certificationEntry) {
+        return null;
+      }
+      return {
+        sessionID: numericSessionID,
+        personID: numericPersonID,
+        certifiedAt: this.normalizeRIDCertificationDateTime(certificationEntry.certifiedAt),
+        certifiedByUserID: this.normalizePositiveInteger(certificationEntry.certifiedByUserID)
+      };
+    }
+    isRIDQualifiedSession(session) {
+      var _a;
+      return String((_a = session == null ? void 0 : session.RIDQualify) != null ? _a : "").trim().toLowerCase() === "yes";
+    }
+    isSelfPacedSession(session) {
+      var _a;
+      return String((_a = session == null ? void 0 : session.Date) != null ? _a : "").trim() === "Self Paced";
+    }
+    normalizeAttendeeStatusId(statusValue) {
+      const numericStatusID = Number(statusValue);
+      if (Number.isFinite(numericStatusID) && _db_connection.data.attendeeStatuses[numericStatusID]) {
+        return numericStatusID;
+      }
+      const normalizedStatusLabel = String(statusValue != null ? statusValue : "").trim().toLowerCase();
+      if (normalizedStatusLabel === "") {
+        return 4;
+      }
+      for (const [statusID, statusLabel] of Object.entries(_db_connection.data.attendeeStatuses)) {
+        if (String(statusLabel).trim().toLowerCase() === normalizedStatusLabel) {
+          return Number(statusID);
+        }
+      }
+      if (normalizedStatusLabel === "associate") {
+        return 1;
+      }
+      return 4;
+    }
+    normalizeAttendeeRIDPayloadEntry(attendeeEntry) {
+      const personID = Number(attendeeEntry == null ? void 0 : attendeeEntry.personID);
+      if (!Number.isFinite(personID)) {
+        return null;
+      }
+      const ridCertified = (attendeeEntry == null ? void 0 : attendeeEntry.ridCertified) === true;
+      return {
+        personID,
+        ridCertified,
+        ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry == null ? void 0 : attendeeEntry.ridCertifiedAt) : null
+      };
+    }
+    normalizeSessionAttendeePayloadEntry(attendeeEntry, session) {
+      const personID = Number(attendeeEntry == null ? void 0 : attendeeEntry.personID);
+      if (!Number.isFinite(personID)) {
+        return null;
+      }
+      const attendeeDirectoryRecord = this.getAttendeeDirectoryRecord(personID);
+      if (!attendeeDirectoryRecord) {
+        return null;
+      }
+      const certStatusID = this.normalizeAttendeeStatusId(attendeeEntry == null ? void 0 : attendeeEntry.certStatusID);
+      const isRIDQualifiedSession = this.isRIDQualifiedSession(session);
+      const ridCertified = isRIDQualifiedSession && (attendeeEntry == null ? void 0 : attendeeEntry.ridCertified) === true;
+      const normalizedDateRange = this.normalizeSessionAttendeeDateRange(attendeeEntry, session);
+      return {
+        personID,
+        name: attendeeDirectoryRecord.name,
+        email: attendeeDirectoryRecord.email,
+        dateRangeStart: normalizedDateRange.dateRangeStart,
+        dateRangeEnd: normalizedDateRange.dateRangeEnd,
+        certStatusID,
+        ridCertified,
+        ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry == null ? void 0 : attendeeEntry.ridCertifiedAt) : null
+      };
+    }
+    normalizeSessionAttendeeDateRange(attendeeEntry, session) {
+      if (!this.isSelfPacedSession(session)) {
+        return {
+          dateRangeStart: null,
+          dateRangeEnd: null
+        };
+      }
+      const normalizedSeparatedDateRange = this.normalizeAttendeeDateRangeValues(
+        attendeeEntry == null ? void 0 : attendeeEntry.dateRangeStart,
+        attendeeEntry == null ? void 0 : attendeeEntry.dateRangeEnd,
+        session
+      );
+      if (normalizedSeparatedDateRange.dateRangeStart !== null || normalizedSeparatedDateRange.dateRangeEnd !== null) {
+        return normalizedSeparatedDateRange;
+      }
+      return this.parseLegacyAttendeeDateRange(attendeeEntry == null ? void 0 : attendeeEntry.dateRange, session);
+    }
+    normalizeStoredAttendeeEntries(attendeeEntries = [], session = null) {
+      if (!Array.isArray(attendeeEntries)) {
+        return [];
+      }
+      return attendeeEntries.map((attendeeEntry) => this.normalizeStoredAttendeeEntry(attendeeEntry, session)).filter((attendeeEntry) => attendeeEntry !== null);
+    }
+    normalizeStoredAttendeeEntry(attendeeEntry, session = null) {
+      var _a, _b;
+      if (!Array.isArray(attendeeEntry)) {
+        return null;
+      }
+      const normalizedName = String((_a = attendeeEntry == null ? void 0 : attendeeEntry[0]) != null ? _a : "").trim();
+      const normalizedEmail = String((_b = attendeeEntry == null ? void 0 : attendeeEntry[1]) != null ? _b : "").trim();
+      if (normalizedName === "" || normalizedEmail === "") {
+        return null;
+      }
+      const isExpandedTuple = attendeeEntry.length >= 6;
+      const dateRangeValues = isExpandedTuple ? this.normalizeAttendeeDateRangeValues(attendeeEntry == null ? void 0 : attendeeEntry[2], attendeeEntry == null ? void 0 : attendeeEntry[3], session) : this.parseLegacyAttendeeDateRange(attendeeEntry == null ? void 0 : attendeeEntry[2], session);
+      const certStatusID = isExpandedTuple ? attendeeEntry == null ? void 0 : attendeeEntry[4] : attendeeEntry == null ? void 0 : attendeeEntry[3];
+      const personID = Number(isExpandedTuple ? attendeeEntry == null ? void 0 : attendeeEntry[5] : attendeeEntry == null ? void 0 : attendeeEntry[4]);
+      if (!Number.isFinite(personID)) {
+        return null;
+      }
+      return {
+        name: normalizedName,
+        email: normalizedEmail,
+        dateRangeStart: dateRangeValues.dateRangeStart,
+        dateRangeEnd: dateRangeValues.dateRangeEnd,
+        certStatusID: this.normalizeAttendeeStatusId(certStatusID),
+        personID
+      };
+    }
+    buildStoredAttendeeEntry(attendeeEntry) {
+      var _a, _b, _c, _d;
+      return [
+        String((_a = attendeeEntry == null ? void 0 : attendeeEntry.name) != null ? _a : "").trim(),
+        String((_b = attendeeEntry == null ? void 0 : attendeeEntry.email) != null ? _b : "").trim(),
+        (_c = attendeeEntry == null ? void 0 : attendeeEntry.dateRangeStart) != null ? _c : null,
+        (_d = attendeeEntry == null ? void 0 : attendeeEntry.dateRangeEnd) != null ? _d : null,
+        this.normalizeAttendeeStatusId(attendeeEntry == null ? void 0 : attendeeEntry.certStatusID),
+        Number(attendeeEntry == null ? void 0 : attendeeEntry.personID)
+      ];
+    }
+    normalizeAttendeeDateRangeValues(dateRangeStart, dateRangeEnd, session = null) {
+      if (!this.isSelfPacedSession(session)) {
+        return {
+          dateRangeStart: null,
+          dateRangeEnd: null
+        };
+      }
+      const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
+      const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
+      if (normalizedStartDate === null) {
+        return {
+          dateRangeStart: null,
+          dateRangeEnd: null
+        };
+      }
+      if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
+        return {
+          dateRangeStart: normalizedStartDate,
+          dateRangeEnd: null
+        };
+      }
+      return {
+        dateRangeStart: normalizedStartDate,
+        dateRangeEnd: normalizedEndDate
+      };
+    }
+    parseLegacyAttendeeDateRange(dateRange, session = null) {
+      if (!this.isSelfPacedSession(session)) {
+        return {
+          dateRangeStart: null,
+          dateRangeEnd: null
+        };
+      }
+      const normalizedDateRange = String(dateRange != null ? dateRange : "").trim();
+      if (normalizedDateRange === "" || normalizedDateRange.toLowerCase() === "not started") {
+        return {
+          dateRangeStart: null,
+          dateRangeEnd: null
+        };
+      }
+      const [startDate, endDate] = normalizedDateRange.split(/\s+to\s+/i);
+      const normalizedStartDate = this.normalizeFlexibleDateValue(startDate);
+      if (normalizedStartDate === null) {
+        return {
+          dateRangeStart: null,
+          dateRangeEnd: null
+        };
+      }
+      const normalizedEndDateLabel = String(endDate != null ? endDate : "").trim().toLowerCase();
+      if (normalizedEndDateLabel === "" || normalizedEndDateLabel === "ongoing") {
+        return {
+          dateRangeStart: normalizedStartDate,
+          dateRangeEnd: null
+        };
+      }
+      const normalizedEndDate = this.normalizeFlexibleDateValue(endDate);
+      if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
+        return {
+          dateRangeStart: normalizedStartDate,
+          dateRangeEnd: null
+        };
+      }
+      return {
+        dateRangeStart: normalizedStartDate,
+        dateRangeEnd: normalizedEndDate
+      };
+    }
+    buildAttendeeDateRangeDisplay(dateRangeStart, dateRangeEnd, session = null) {
+      if (!this.isSelfPacedSession(session)) {
+        return null;
+      }
+      const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
+      const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
+      if (normalizedStartDate === null) {
+        return "Not started";
+      }
+      const formattedStartDate = this.formatInputDate(normalizedStartDate);
+      if (formattedStartDate === null) {
+        return "Not started";
+      }
+      if (normalizedEndDate === null) {
+        return `${formattedStartDate} to Ongoing`;
+      }
+      const formattedEndDate = this.formatInputDate(normalizedEndDate);
+      if (formattedEndDate === null) {
+        return `${formattedStartDate} to Ongoing`;
+      }
+      return `${formattedStartDate} to ${formattedEndDate}`;
+    }
+    normalizeFlexibleDateValue(dateValue) {
+      const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
+      if (normalizedDateValue === "") {
+        return null;
+      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedDateValue)) {
+        return normalizedDateValue;
+      }
+      const displayDateMatch = normalizedDateValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (!displayDateMatch) {
+        return null;
+      }
+      const [, month, day, year] = displayDateMatch;
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+    normalizeRIDCertificationDateTime(value) {
+      const normalizedValue = String(value != null ? value : "").trim();
+      if (normalizedValue === "") {
+        return null;
+      }
+      const timestamp = Date.parse(normalizedValue);
+      if (Number.isNaN(timestamp)) {
+        return null;
+      }
+      return new Date(timestamp).toISOString();
+    }
+    normalizePositiveInteger(value) {
+      const numericValue = Number(value);
+      if (!Number.isInteger(numericValue) || numericValue <= 0) {
+        return null;
+      }
+      return numericValue;
+    }
+    normalizeOptionId(value) {
+      const optionId = Number(value);
+      return Number.isFinite(optionId) ? optionId : null;
+    }
+    getOptionLabel(resource, optionId) {
+      var _a, _b;
+      if (optionId === null || optionId === void 0) {
+        return null;
+      }
+      const resourceData = (_a = _db_connection.data[resource]) != null ? _a : {};
+      return (_b = resourceData[optionId]) != null ? _b : null;
+    }
+    formatYesNoLabel(value) {
+      return String(value).toLowerCase() === "yes" ? "Yes" : "No";
+    }
+    formatDateOption(dateOption) {
+      if (!Array.isArray(dateOption) || dateOption.length < 3) {
+        return null;
+      }
+      const [dateType, startDate, endDate] = dateOption;
+      if (dateType === 3) {
+        return "Self Paced";
+      }
+      if (dateType === 2) {
+        const formattedStartDate = this.formatInputDate(startDate);
+        const formattedEndDate = this.formatInputDate(endDate);
+        if (!formattedStartDate || !formattedEndDate) {
+          return null;
+        }
+        return `${formattedStartDate} to ${formattedEndDate}`;
+      }
+      const formattedSingleDate = this.formatInputDate(startDate);
+      return formattedSingleDate != null ? formattedSingleDate : null;
+    }
+    formatInputDate(dateValue) {
+      const normalizedDate = String(dateValue != null ? dateValue : "").trim();
+      const parts = normalizedDate.split("-");
+      if (parts.length !== 3) {
+        return null;
+      }
+      const [year, month, day] = parts;
+      if (year === "" || month === "" || day === "") {
+        return null;
+      }
+      return `${month}/${day}/${year}`;
+    }
+    async addFlag(flag) {
+      const label = String(flag != null ? flag : "").trim();
+      if (label === "") {
+        return null;
+      }
+      for (const [flagId, flagLabel] of Object.entries(_db_connection.data.flags)) {
+        if (flagId === "top") {
+          continue;
+        }
+        if (String(flagLabel).trim().toLowerCase() === label.toLowerCase()) {
+          return Number(flagId);
+        }
+      }
+      const nextId = Object.keys(_db_connection.data.flags).filter((flagId) => flagId !== "top").map((flagId) => Number(flagId)).filter((flagId) => Number.isFinite(flagId)).reduce((maxId, flagId) => Math.max(maxId, flagId), 0) + 1;
+      _db_connection.data.flags[nextId] = label;
+      return nextId;
+    }
+  };
+  /*
+  {
+  "sessionID" : null,
+  "Date": ("Self Paced" | "MM/DD/YYYY" | "MM/DD/YYYY to MM/DD/YYYY"),
+  "SessionTitle" : "Name",
+  "Length" : 60,
+  "SessionType" : "",
+  "CEUWeight" : 1.0,
+  "CEUConsideration" : "",
+  "CEUQualify" : "",
+  "RIDQualify" : "",
+  "EventType" :  "",
+  "ParentType" : "",
+  "Organizer" : "",
+  "AttendeesCt" : 0,
+  "Lock" : (0 | 1),
+  "Locker" : (null | "Jason Zinza"),
+  "Attendees" : [
+      ["Name", "Email", (null | "YYYY-MM-DD"), (null | "YYYY-MM-DD"), attendeeStatusID, personID ],
+      ...
+  ]
+  }
+  Note, if date is not self paced, then attendee start/end dates are null
+  */
+  __publicField(_db_connection, "attendeeDateRangesNormalized", false);
+  __publicField(_db_connection, "data", {
+    "sessions": [
+      {
+        "sessionID": 1,
+        "Date": "03/11/2026",
+        "SessionTitle": "Interpreter Ethics in Hybrid Teams",
+        "Length": 75,
+        "SessionType": "Lecture",
+        "CEUWeight": 1.25,
+        "CEUConsideration": "Ethics focus",
+        "CEUQualify": "Yes",
+        "RIDQualify": "Yes",
+        "EventType": "Webinar",
+        "ParentType": "March Learning Lab",
+        "Organizer": "Carmen Wu",
+        "AttendeesCt": 5,
+        "Lock": 1,
+        "Locker": "Priya Singh",
+        "Attendees": [
+          ["Talia Morgan", "talia.morgan@example.com", null, null, 2, 1],
+          ["Evan Price", "evan.price@example.com", null, null, 1, 2],
+          ["Sofia Kim", "sofia.kim@example.com", null, null, 3, 3],
+          ["Daniel Ross", "daniel.ross@example.com", null, null, 4, 4],
+          ["Mina Ali", "mina.ali@example.com", null, null, 2, 5]
+        ]
+      },
+      {
+        "sessionID": 2,
+        "Date": "03/18/2026",
+        "SessionTitle": "Medical Terminology Drill",
+        "Length": 90,
+        "SessionType": "Workshop",
+        "CEUWeight": 1.5,
+        "CEUConsideration": "Specialty vocabulary",
+        "CEUQualify": "No",
+        "RIDQualify": "No",
+        "EventType": "Breakout",
+        "ParentType": "Skill Builder Week",
+        "Organizer": "Noah Patel",
+        "AttendeesCt": 4,
+        "Lock": 0,
+        "Locker": null,
+        "Attendees": [
+          ["Harper Nguyen", "harper.nguyen@example.com", null, null, 1, 6],
+          ["Jonah Clark", "jonah.clark@example.com", null, null, 4, 7],
+          ["Layla Scott", "layla.scott@example.com", null, null, 3, 8],
+          ["Isaac Bell", "isaac.bell@example.com", null, null, 2, 9]
+        ]
+      },
+      {
+        "sessionID": 3,
+        "Date": "Self Paced",
+        "SessionTitle": "Boundary Setting for Freelance Interpreters",
+        "Length": 45,
+        "SessionType": "Module",
+        "CEUWeight": 0.75,
+        "CEUConsideration": "Professional practice",
+        "CEUQualify": "Yes",
+        "RIDQualify": "Yes",
+        "EventType": "Online Course",
+        "ParentType": "Resource Library",
+        "Organizer": "Rina Flores",
+        "AttendeesCt": 6,
+        "Lock": 0,
+        "Locker": null,
+        "Attendees": [
+          ["Nora Diaz", "nora.diaz@example.com", null, null, 1, 10],
+          ["Caleb Foster", "caleb.foster@example.com", "2026-03-01", null, 2, 11],
+          ["Ivy Chen", "ivy.chen@example.com", "2026-03-07", "2026-03-10", 3, 12],
+          ["Peter Shah", "peter.shah@example.com", null, null, 4, 13],
+          ["Grace Hill", "grace.hill@example.com", "2026-03-05", null, 1, 14],
+          ["Owen Reed", "owen.reed@example.com", "2026-03-07", "2026-03-10", 2, 15]
+        ]
+      },
+      {
+        "sessionID": 4,
+        "Date": "04/02/2026 to 04/04/2026",
+        "SessionTitle": "Leadership Intensive",
+        "Length": 180,
+        "SessionType": "Roundtable",
+        "CEUWeight": 3,
+        "CEUConsideration": "Advanced practice",
+        "CEUQualify": "Yes",
+        "RIDQualify": "Yes",
+        "EventType": "Retreat",
+        "ParentType": "Leadership Series",
+        "Organizer": "Marcos Lee",
+        "AttendeesCt": 5,
+        "Lock": 1,
+        "Locker": "Jason Zinza",
+        "Attendees": [
+          ["Amara Lewis", "amara.lewis@example.com", null, null, 2, 16],
+          ["Theo Grant", "theo.grant@example.com", null, null, 1, 17],
+          ["Jade Rivera", "jade.rivera@example.com", null, null, 3, 18],
+          ["Miles Cooper", "miles.cooper@example.com", null, null, 4, 19],
+          ["Zoe Brooks", "zoe.brooks@example.com", null, null, 2, 20]
+        ]
+      },
+      {
+        "sessionID": 5,
+        "Date": "04/09/2026",
+        "SessionTitle": "Legal Prep: Depositions and Hearings",
+        "Length": 120,
+        "SessionType": "Seminar",
+        "CEUWeight": 2,
+        "CEUConsideration": "Domain-specific scenarios",
+        "CEUQualify": "Yes",
+        "RIDQualify": "Yes",
+        "EventType": "Conference",
+        "ParentType": "Justice Access Forum",
+        "Organizer": "Elena Brooks",
+        "AttendeesCt": 4,
+        "Lock": 1,
+        "Locker": "Marta Silva",
+        "Attendees": [
+          ["Leo Bennett", "leo.bennett@example.com", null, null, 2, 21],
+          ["Aisha Coleman", "aisha.coleman@example.com", null, null, 1, 22],
+          ["Riley Ward", "riley.ward@example.com", null, null, 3, 23],
+          ["Emma Stone", "emma.stone@example.com", null, null, 2, 24]
+        ]
+      },
+      {
+        "sessionID": 6,
+        "Date": "04/21/2026 to 04/22/2026",
+        "SessionTitle": "Mentor Circle Facilitation Lab",
+        "Length": 150,
+        "SessionType": "Workshop",
+        "CEUWeight": 0,
+        "CEUConsideration": "None",
+        "CEUQualify": "No",
+        "RIDQualify": "Yes",
+        "EventType": "Cohort",
+        "ParentType": "Spring Mentor Program",
+        "Organizer": "Community Ops",
+        "AttendeesCt": 5,
+        "Lock": 1,
+        "Locker": "Jason Zinza",
+        "Attendees": [
+          ["Seth Howard", "seth.howard@example.com", null, null, 1, 25],
+          ["Priya Desai", "priya.desai@example.com", null, null, 2, 26],
+          ["Naomi Turner", "naomi.turner@example.com", null, null, 4, 27],
+          ["Victor Hughes", "victor.hughes@example.com", null, null, 3, 28],
+          ["Claire Adams", "claire.adams@example.com", null, null, 1, 29]
+        ]
+      }
+    ],
+    "attendeeStatuses": {
+      1: "Certified",
+      2: "Master",
+      3: "None",
+      4: "Not Assigned"
+    },
+    "flags": {
+      "top": [1, 2, 3, 4],
+      1: "General",
+      2: "PPO",
+      3: "Advanced",
+      4: "Ethics",
+      5: "Medical",
+      6: "Legal",
+      7: "Educational",
+      8: "Technology",
+      9: "Leadership"
+    },
+    "sessionTypes": {
+      1: "lecture",
+      2: "workshop",
+      3: "panel",
+      4: "breakout",
+      5: "roundtable"
+    },
+    "EventTypes": {
+      1: "conference",
+      2: "webinar",
+      3: "retreat",
+      4: "training",
+      5: "series"
+    },
+    "CEUTypes": {
+      1: "conference",
+      2: "webinar",
+      3: "retreat",
+      4: "training",
+      5: "series"
+    },
+    // [Name, email, attendee[0|1], presenter[0|1], personID]
+    "members": [
+      ["Talia Morgan", "talia.morgan@example.com", 1, 1, 1],
+      ["Evan Price", "evan.price@example.com", 1, 0, 2],
+      ["Sofia Kim", "sofia.kim@example.com", 1, 0, 3],
+      ["Daniel Ross", "daniel.ross@example.com", 1, 1, 4],
+      ["Mina Ali", "mina.ali@example.com", 1, 0, 5],
+      ["Harper Nguyen", "harper.nguyen@example.com", 1, 1, 6],
+      ["Jonah Clark", "jonah.clark@example.com", 1, 0, 7],
+      ["Layla Scott", "layla.scott@example.com", 1, 0, 8],
+      ["Isaac Bell", "isaac.bell@example.com", 1, 1, 9],
+      ["Nora Diaz", "nora.diaz@example.com", 1, 0, 10],
+      ["Caleb Foster", "caleb.foster@example.com", 1, 1, 11],
+      ["Ivy Chen", "ivy.chen@example.com", 1, 0, 12],
+      ["Peter Shah", "peter.shah@example.com", 1, 0, 13],
+      ["Grace Hill", "grace.hill@example.com", 1, 1, 14],
+      ["Owen Reed", "owen.reed@example.com", 1, 1, 15],
+      ["Amara Lewis", "amara.lewis@example.com", 1, 0, 16],
+      ["Theo Grant", "theo.grant@example.com", 1, 1, 17],
+      ["Jade Rivera", "jade.rivera@example.com", 1, 0, 18],
+      ["Miles Cooper", "miles.cooper@example.com", 1, 0, 19],
+      ["Zoe Brooks", "zoe.brooks@example.com", 1, 1, 20],
+      ["Leo Bennett", "leo.bennett@example.com", 1, 1, 21],
+      ["Aisha Coleman", "aisha.coleman@example.com", 1, 0, 22],
+      ["Riley Ward", "riley.ward@example.com", 1, 0, 23],
+      ["Emma Stone", "emma.stone@example.com", 1, 1, 24],
+      ["Seth Howard", "seth.howard@example.com", 1, 0, 25],
+      ["Priya Desai", "priya.desai@example.com", 1, 1, 26],
+      ["Naomi Turner", "naomi.turner@example.com", 1, 0, 27],
+      ["Victor Hughes", "victor.hughes@example.com", 1, 1, 28],
+      ["Claire Adams", "claire.adams@example.com", 1, 0, 29]
+    ],
+    "ridCertificates": [],
+    "comments": []
+  });
+  var db_connection = _db_connection;
+
+  // js/session-table2/host_connection.js
+  var host_connection = class {
+    constructor(config = {}) {
+      this.config = config;
+    }
+    async get(resource) {
+      if (resource === "userID") {
+        return this.resolveUserID();
+      }
+      if (resource === "userName") {
+        return this.resolveUserName();
+      }
+      if (resource === "commentIconURL") {
+        return this.getComment();
+      }
+      return null;
+    }
+    async getComment() {
+      return this.resolveCommentIconURL();
+    }
+    resolveUserID() {
+      var _a, _b, _c;
+      const configuredUserID = this.normalizeUserID((_a = this.config) == null ? void 0 : _a.userID);
+      if (configuredUserID !== null) {
+        return configuredUserID;
+      }
+      const wpDataUserID = this.getWordPressUserID();
+      if (wpDataUserID !== null) {
+        return wpDataUserID;
+      }
+      const globalCandidates = [
+        globalThis == null ? void 0 : globalThis.PDTSessionTable2UserID,
+        (_b = globalThis == null ? void 0 : globalThis.PDTSessionTable2) == null ? void 0 : _b.userID,
+        (_c = globalThis == null ? void 0 : globalThis.PDTAttendeeModalData) == null ? void 0 : _c.userID
+      ];
+      for (const candidate of globalCandidates) {
+        const normalizedCandidate = this.normalizeUserID(candidate);
+        if (normalizedCandidate !== null) {
+          return normalizedCandidate;
+        }
+      }
+      return 1;
+    }
+    resolveUserName() {
+      var _a, _b, _c, _d, _e, _f, _g;
+      const configuredUserName = this.normalizeUserName((_c = (_a = this.config) == null ? void 0 : _a.userName) != null ? _c : (_b = this.config) == null ? void 0 : _b.displayName);
+      if (configuredUserName !== null) {
+        return configuredUserName;
+      }
+      const wpDataUserName = this.getWordPressUserName();
+      if (wpDataUserName !== null) {
+        return wpDataUserName;
+      }
+      const globalCandidates = [
+        globalThis == null ? void 0 : globalThis.PDTSessionTable2UserName,
+        (_d = globalThis == null ? void 0 : globalThis.PDTSessionTable2) == null ? void 0 : _d.userName,
+        (_e = globalThis == null ? void 0 : globalThis.PDTSessionTable2) == null ? void 0 : _e.displayName,
+        (_f = globalThis == null ? void 0 : globalThis.PDTAttendeeModalData) == null ? void 0 : _f.userName,
+        (_g = globalThis == null ? void 0 : globalThis.PDTAttendeeModalData) == null ? void 0 : _g.displayName
+      ];
+      for (const candidate of globalCandidates) {
+        const normalizedCandidate = this.normalizeUserName(candidate);
+        if (normalizedCandidate !== null) {
+          return normalizedCandidate;
+        }
+      }
+      return `User ${this.resolveUserID()}`;
+    }
+    getWordPressUserID() {
+      var _a, _b, _c, _d, _e;
+      try {
+        const currentUser = (_e = (_d = (_c = (_b = (_a = globalThis == null ? void 0 : globalThis.wp) == null ? void 0 : _a.data) == null ? void 0 : _b.select) == null ? void 0 : _c.call(_b, "core")) == null ? void 0 : _d.getCurrentUser) == null ? void 0 : _e.call(_d);
+        return this.normalizeUserID(currentUser == null ? void 0 : currentUser.id);
+      } catch (_error) {
+        return null;
+      }
+    }
+    getWordPressUserName() {
+      var _a, _b, _c, _d, _e, _f, _g, _h;
+      try {
+        const currentUser = (_e = (_d = (_c = (_b = (_a = globalThis == null ? void 0 : globalThis.wp) == null ? void 0 : _a.data) == null ? void 0 : _b.select) == null ? void 0 : _c.call(_b, "core")) == null ? void 0 : _d.getCurrentUser) == null ? void 0 : _e.call(_d);
+        return this.normalizeUserName(
+          (_h = (_g = (_f = currentUser == null ? void 0 : currentUser.name) != null ? _f : currentUser == null ? void 0 : currentUser.display_name) != null ? _g : currentUser == null ? void 0 : currentUser.nickname) != null ? _h : currentUser == null ? void 0 : currentUser.username
+        );
+      } catch (_error) {
+        return null;
+      }
+    }
+    resolveCommentIconURL() {
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i;
+      const configuredCommentIconURL = this.normalizeURL(
+        (_e = (_c = (_a = this.config) == null ? void 0 : _a.commentIconURL) != null ? _c : (_b = this.config) == null ? void 0 : _b.commentURL) != null ? _e : (_d = this.config) == null ? void 0 : _d.commentIcon
+      );
+      if (configuredCommentIconURL !== null) {
+        return configuredCommentIconURL;
+      }
+      const globalCandidates = [
+        globalThis == null ? void 0 : globalThis.PDTSessionTable2CommentIconURL,
+        (_f = globalThis == null ? void 0 : globalThis.PDTSessionTable2) == null ? void 0 : _f.commentIconURL,
+        (_g = globalThis == null ? void 0 : globalThis.PDTSessionTable2) == null ? void 0 : _g.commentURL,
+        (_h = globalThis == null ? void 0 : globalThis.PDTAttendeeModalData) == null ? void 0 : _h.commentIconURL,
+        (_i = globalThis == null ? void 0 : globalThis.PDTAttendeeModalData) == null ? void 0 : _i.commentURL
+      ];
+      for (const candidate of globalCandidates) {
+        const normalizedCandidate = this.normalizeURL(candidate);
+        if (normalizedCandidate !== null) {
+          return normalizedCandidate;
+        }
+      }
+      return "../assets/speech-bubble-1130.svg";
+    }
+    normalizeUserID(value) {
+      const numericUserID = Number(value);
+      if (!Number.isInteger(numericUserID) || numericUserID <= 0) {
+        return null;
+      }
+      return numericUserID;
+    }
+    normalizeUserName(value) {
+      const normalizedUserName = String(value != null ? value : "").trim();
+      if (normalizedUserName === "") {
+        return null;
+      }
+      return normalizedUserName;
+    }
+    normalizeURL(value) {
+      const normalizedURL = String(value != null ? value : "").trim();
+      if (normalizedURL === "") {
+        return null;
+      }
+      return normalizedURL;
+    }
+  };
+
+  // js/session-table2/comment_manager.js
+  var comment_manager = class {
+    constructor(db = null) {
+      this.db = db;
+      this.activeCommentContext = null;
+    }
+    init(commentFields, tableBody) {
+      this.bindModalEvents(commentFields);
+      this.bindOpenTriggers(commentFields, tableBody);
+    }
+    bindModalEvents(commentFields) {
+      commentFields.close.off("click.pdtComment").on("click.pdtComment", () => {
+        this.close(commentFields);
+      });
+      commentFields.wrapper.off("click.pdtComment").on("click.pdtComment", (event) => {
+        if (event.target !== commentFields.wrapper[0]) {
+          return;
+        }
+        this.close(commentFields);
+      });
+      commentFields.submit.off("click.pdtComment").on("click.pdtComment", async () => {
+        await this.saveComments(commentFields);
+      });
+    }
+    bindOpenTriggers(commentFields, tableBody) {
+      tableBody.off("click.pdtComment", ".pdt-person-card__icon").on("click.pdtComment", ".pdt-person-card__icon", async (event) => {
+        var _a;
+        const icon = jq(event.currentTarget);
+        if (icon.attr("data-session-locked") === "1") {
+          return;
+        }
+        const personCard = icon.closest(".pdt-person-card");
+        const personName = String((_a = personCard.find("p").first().text()) != null ? _a : "").trim();
+        const sessionID = Number(icon.attr("data-session-id"));
+        const personID = Number(icon.attr("data-person-id"));
+        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+          return;
+        }
+        await this.open(commentFields, {
+          sessionID,
+          personID,
+          personName
+        });
+      });
+    }
+    async open(commentFields, context) {
+      this.activeCommentContext = context;
+      commentFields.titleName.text(context.personName);
+      await this.loadComments(commentFields, context);
+      commentFields.wrapper.prop("hidden", false);
+      commentFields.admin.trigger("focus");
+    }
+    async loadComments(commentFields, context) {
+      var _a, _b;
+      const commentData = await this.db.get("comments", {
+        sessionID: context.sessionID,
+        personID: context.personID
+      });
+      commentFields.admin.val(String((_a = commentData == null ? void 0 : commentData.adminComment) != null ? _a : ""));
+      commentFields.member.val(String((_b = commentData == null ? void 0 : commentData.memberComment) != null ? _b : ""));
+    }
+    async saveComments(commentFields) {
+      var _a, _b, _c;
+      if (this.activeCommentContext === null) {
+        return;
+      }
+      const onSave = (_a = this.activeCommentContext) == null ? void 0 : _a.onSave;
+      await this.db.set("comments", {
+        sessionID: this.activeCommentContext.sessionID,
+        personID: this.activeCommentContext.personID,
+        adminComment: String((_b = commentFields.admin.val()) != null ? _b : ""),
+        memberComment: String((_c = commentFields.member.val()) != null ? _c : "")
+      });
+      this.close(commentFields);
+      if (typeof onSave === "function") {
+        await onSave();
+      }
+    }
+    close(commentFields) {
+      commentFields.wrapper.prop("hidden", true);
+      this.reset(commentFields);
+    }
+    reset(commentFields) {
+      commentFields.titleName.text("");
+      commentFields.admin.val("");
+      commentFields.member.val("");
+      this.activeCommentContext = null;
+    }
+  };
+
+  // js/session-table2/main_page.js
+  var main_page = class {
+    constructor(db, host, showAttendees, addEditSession) {
+      this.db = db;
+      this.host = host;
+      this.showAttendees = showAttendees;
+      this.addEditSession = addEditSession;
+      this.commentManager = new comment_manager(db);
+      this.commentFields = null;
+      this.commentIconURL = null;
+      this.attendeeSortModes = [
+        { field: "first", direction: "asc", label: "Sort: First A-Z" },
+        { field: "last", direction: "asc", label: "Sort: Last A-Z" },
+        { field: "first", direction: "desc", label: "Sort: First Z-A" },
+        { field: "last", direction: "desc", label: "Sort: Last Z-A" }
+      ];
+    }
+    async init() {
+      const tableBody = await this.loadTable();
+      if (tableBody.length === 0) {
+        return;
+      }
+      const commentFields = {
+        wrapper: jq("#pdt-shadow-comments"),
+        modal: jq("#pdt-shadow-comments .pdt-comment-box"),
+        titleName: jq("#pdt-shadow-comments h2 span"),
+        admin: jq("#comment_box_admin"),
+        member: jq("#comment_box"),
+        close: jq("#closeCommentModal"),
+        submit: jq("#submitCommentModal")
+      };
+      this.commentFields = commentFields;
+      this.bumpTableScrollHint();
+      this.commentManager.init(commentFields, tableBody);
+      await this.showAttendees.init(this, this.commentManager, commentFields);
+      tableBody.off("click.pdtDetails", ".pdt-details-button").on("click.pdtDetails", ".pdt-details-button", function() {
+        const sessionRow = jq(this).closest("tr");
+        const detailsRow = sessionRow.next("tr");
+        if (!detailsRow.hasClass("details-row")) {
+          return;
+        }
+        detailsRow.prop("hidden", !detailsRow.prop("hidden"));
+      });
+      tableBody.off("click.pdtSortAttendees", ".pdt-sort-attendees-button").on("click.pdtSortAttendees", ".pdt-sort-attendees-button", (event) => {
+        this.sortAttendees(jq(event.currentTarget));
+      });
+      tableBody.off("click.pdtToggleSessionLock", ".pdt-lock-toggle-button").on("click.pdtToggleSessionLock", ".pdt-lock-toggle-button", async (event) => {
+        await this.toggleSessionLock(jq(event.currentTarget));
+      });
+      tableBody.off("click.pdtOpenAttendeesModal", ".pdt-edit-attendees-button").on("click.pdtOpenAttendeesModal", ".pdt-edit-attendees-button", async (event) => {
+        const sessionID = Number(jq(event.currentTarget).attr("data-session-id"));
+        if (!Number.isFinite(sessionID)) {
+          return;
+        }
+        await this.showAttendees.openForSession(sessionID);
+      });
+      await this.addEditSession.init(this);
+      tableBody.off("click.pdtEditSession", ".pdt-edit-session-button").on("click.pdtEditSession", ".pdt-edit-session-button", async (event) => {
+        const sessionID = Number(jq(event.currentTarget).attr("data-session-id"));
+        if (!Number.isFinite(sessionID)) {
+          return;
+        }
+        await this.addEditSession.openForEdit(sessionID);
+      });
+    }
+    async loadTable() {
+      const tableBody = jq(".pdt-main .table-wrapper table tbody");
+      if (tableBody.length === 0) {
+        return tableBody;
+      }
+      const commentIconURL = await this.getCommentIconURL();
+      const sessionsResponse = await this.db.get("sessions");
+      const sessions = Array.isArray(sessionsResponse) ? sessionsResponse : [];
+      if (!Array.isArray(sessionsResponse)) {
+        console.error("PDT: Expected sessions array but received:", sessionsResponse);
+      }
+      tableBody.empty();
+      for (let session of sessions) {
+        const lockView = this.getSessionLockView(session);
+        let entry = `
+                <tr data-session-id="${session.sessionID}">
+                    <td>${session.Date}</td>
+                    <td>${session.SessionTitle}</td>
+                    <td>${session.Length} min</td>
+                    <td>${session.SessionType}</td>
+                    <td>${session.CEUWeight}</td>
+                    <td>${session.CEUConsideration}</td>
+                    <td>${session.CEUQualify}</td>
+                    <td>${session.RIDQualify}</td>
+                    <td>${session.EventType}</td>
+                    <td>${session.ParentType}</td>
+                    <td>${session.Organizer}</td>
+                    <td>${session.AttendeesCt}</td>
                     <td class="pdt-actions-column">
-                        <button data-session-id="${s.sessionID}" class="pdt-details-button" type="button">Details</button>
+                        <button data-session-id="${session.sessionID}" class="pdt-details-button" type="button">Details</button>
                     </td>
                 </tr>
-            `,n=document.createElement("div");n.className="pdt-details-people";for(let o of s.Attendees){let l=document.createElement("div");l.className="pdt-person-card",l.dataset.attendeeName=o[0],l.dataset.personId=String(o[4]);let d=i.isLocked?"pdt-person-card__icon pdt-person-card__icon--disabled":"pdt-person-card__icon",m=i.isLocked?`Comments are locked for this session. ${i.statusText}.`:"Open comments",p=o[2]===null?"":`<p>${o[2]}</p>`;l.innerHTML=`
-                    <img data-session-id="${s.sessionID}" data-person-id="${o[4]}" data-session-locked="${i.isLocked?"1":"0"}" class="${d}" src="../assets/speech-bubble-1130.svg" alt=""
-                    aria-hidden="true" title="${m}">
-                    <p>${o[0]}</p>
-                    <p>${o[1]}</p>
-                    ${p}
-                    <p>${o[3]}</p>
-                `,n.append(l)}let a=`
-                <tr data-session-id="${s.sessionID}" class="details-row" hidden>
+            `;
+        let attendeeContacts = document.createElement("div");
+        attendeeContacts.className = "pdt-details-people";
+        const attendees = Array.isArray(session == null ? void 0 : session.Attendees) ? session.Attendees : [];
+        for (let attendee of attendees) {
+          let attendeeContact = document.createElement("div");
+          attendeeContact.className = "pdt-person-card";
+          attendeeContact.dataset.attendeeName = attendee[0];
+          attendeeContact.dataset.personId = String(attendee[4]);
+          const commentIconClassName = lockView.isLocked ? "pdt-person-card__icon pdt-person-card__icon--disabled" : "pdt-person-card__icon";
+          const commentIconTitle = lockView.isLocked ? `Comments are locked for this session. ${lockView.statusText}.` : "Open comments";
+          const attendeeDateMarkup = attendee[2] === null ? "" : `<p>${attendee[2]}</p>`;
+          attendeeContact.innerHTML = `
+                    <img data-session-id="${session.sessionID}" data-person-id="${attendee[4]}" data-session-locked="${lockView.isLocked ? "1" : "0"}" class="${commentIconClassName}" src="${commentIconURL}" alt=""
+                    aria-hidden="true" title="${commentIconTitle}">
+                    <p>${attendee[0]}</p>
+                    <p>${attendee[1]}</p>
+                    ${attendeeDateMarkup}
+                    <p>${attendee[3]}</p>
+                `;
+          attendeeContacts.append(attendeeContact);
+        }
+        let attendeeSpace = `
+                <tr data-session-id="${session.sessionID}" class="details-row" hidden>
                     <td colspan="13">
                         <div class="pdt-details-panel">
-                            <div data-session-id="${s.sessionID}" class="pdt-buttons">
-                                <p>${i.statusText}</p>
-                                <button data-session-id="${s.sessionID}" class="pdt-lock-toggle-button" type="button">${i.toggleLabel}</button>
-                                <button data-session-id="${s.sessionID}" data-sort-index="-1" class="pdt-sort-attendees-button" type="button">Sort: Original</button>
-                                <button data-session-id="${s.sessionID}" class="pdt-edit-session-button" type="button" ${i.canEdit?"":"disabled"}>Edit Details</button>
-                                <button data-session-id="${s.sessionID}" class="pdt-edit-attendees-button" type="button" ${i.canEdit?"":"disabled"}>Edit Attendees</button>
+                            <div data-session-id="${session.sessionID}" class="pdt-buttons">
+                                <p>${lockView.statusText}</p>
+                                <button data-session-id="${session.sessionID}" class="pdt-lock-toggle-button" type="button">${lockView.toggleLabel}</button>
+                                <button data-session-id="${session.sessionID}" data-sort-index="-1" class="pdt-sort-attendees-button" type="button">Sort: Original</button>
+                                <button data-session-id="${session.sessionID}" class="pdt-edit-session-button" type="button" ${lockView.canEdit ? "" : "disabled"}>Edit Details</button>
+                                <button data-session-id="${session.sessionID}" class="pdt-edit-attendees-button" type="button" ${lockView.canEdit ? "" : "disabled"}>Edit Attendees</button>
                             </div>
-                            ${n.outerHTML}
+                            ${attendeeContacts.outerHTML}
                         </div>
                     </td>
-                </tr> `;e.append(r,a)}return e}getSessionLockView(e){var r;let t=String((r=e==null?void 0:e.Locker)!=null?r:"").trim(),s=t!=="",i=s&&Number(e==null?void 0:e.Lock)===1;return{canEdit:!i,isLocked:i,statusText:s?i?`Locked by ${t}`:`Unlocked by ${t}`:"Unlocked",toggleLabel:i?"Unlock":"Lock"}}async toggleSessionLock(e){var l,d;let t=Number(e.attr("data-session-id"));if(!Number.isFinite(t)||e.prop("disabled"))return;let s=e.closest(".details-row"),i=s.length>0&&s.prop("hidden")===!1,r=await this.db.get("session",{sessionID:t});if(!r){alert("That session could not be found. Please refresh the page and try again.");return}let n=String((d=await((l=this.host)==null?void 0:l.get("userName")))!=null?d:"").trim();if(n===""){alert("The current WordPress user name could not be determined, so the lock could not be updated.");return}let a=this.getSessionLockView(r),o=a.isLocked?0:1;e.prop("disabled",!0),e.text(o===1?"Locking...":"Unlocking...");try{await this.db.set("sessionLock",{sessionID:t,lock:o,locker:n}),await this.loadTable(),this.restoreDetailsRowVisibility(t,i)}catch(m){alert("The session lock could not be updated. Please refresh the page and try again."),e.prop("disabled",!1),e.text(a.toggleLabel)}}restoreDetailsRowVisibility(e,t){if(!t)return;let s=$(`.pdt-main .table-wrapper table tbody > tr[data-session-id="${e}"]`).not(".details-row").first();s.length!==0&&s.next(".details-row").prop("hidden",!1)}bumpTableScrollHint(){let e=$(".pdt-main .table-wrapper");if(e.length===0)return;let t=e[0];t.scrollWidth>t.clientWidth+1&&window.setTimeout(()=>{t.scrollLeft===0&&e.stop(!0).animate({scrollLeft:28},180).animate({scrollLeft:0},220)},1e3)}sortAttendees(e){let t=e.closest(".pdt-details-panel").find(".pdt-details-people").first();if(t.length===0)return;let s=this.getNextAttendeeSortIndex(e),i=this.attendeeSortModes[s],r=t.children(".pdt-person-card").get();r.sort((n,a)=>this.compareAttendeeCards(n,a,i)),t.append(r),e.attr("data-sort-index",String(s)),e.text(i.label)}getNextAttendeeSortIndex(e){let t=Number(e.attr("data-sort-index"));return!Number.isInteger(t)||t<0?0:(t+1)%this.attendeeSortModes.length}compareAttendeeCards(e,t,s){let i=this.getAttendeeSortData(e),r=this.getAttendeeSortData(t),n=0;return s.field==="first"?(n=this.compareSortValues(i.firstName,r.firstName),n===0&&(n=this.compareSortValues(i.lastName,r.lastName))):(n=this.compareSortValues(i.lastName,r.lastName),n===0&&(n=this.compareSortValues(i.firstName,r.firstName))),n===0&&(n=this.compareSortValues(i.fullName,r.fullName)),n===0&&(n=i.personID-r.personID),s.direction==="desc"&&(n*=-1),n}getAttendeeSortData(e){var o,l,d;let s=String((o=e.dataset.attendeeName)!=null?o:"").trim().replace(/\s+/g," ").trim(),i=s===""?[]:s.split(" "),r=((l=i[0])!=null?l:"").toLocaleLowerCase(),n=((d=i[i.length-1])!=null?d:r).toLocaleLowerCase(),a=Number(e.dataset.personId);return{firstName:r,lastName:n,fullName:s.toLocaleLowerCase(),personID:Number.isFinite(a)?a:0}}compareSortValues(e,t){return String(e).localeCompare(String(t),void 0,{sensitivity:"base"})}};var x=class{render(e,t,s={}){var p;if(!e||e.length===0||!t||t.length===0)return;let i=Array.isArray(s==null?void 0:s.attendees)?s.attendees:[],r=(s==null?void 0:s.showRIDColumn)===!0,n=(s==null?void 0:s.showSelfPacedDateRangeColumn)===!0,a=(s==null?void 0:s.dateRangeRenderMode)==="edit"?"edit":"display",o=(p=s==null?void 0:s.attendeeStatuses)!=null?p:{},l=typeof(s==null?void 0:s.buildAttendeeSearchText)=="function"?s.buildAttendeeSearchText:()=>"",d=this.getVisibleColumnLabels({showRIDColumn:r,showSelfPacedDateRangeColumn:n}),m=d.length;if(this.renderTableHead(e,d),t.empty(),t.append(this.buildSearchRow(m)),i.length===0){t.append(this.buildEmptyStateRow(m));return}for(let g of i)t.append(this.buildAttendeeRow(g,{attendeeStatuses:o,dateRangeRenderMode:a,showRIDColumn:r,showSelfPacedDateRangeColumn:n,attendeeSearchText:l(g)}))}getVisibleColumnCount(e={}){return this.getVisibleColumnLabels(e).length}getVisibleColumnLabels(e={}){let t=["Attendee","Certification Status at time of Attending"];return(e==null?void 0:e.showRIDColumn)===!0&&t.push("RID certified?"),(e==null?void 0:e.showSelfPacedDateRangeColumn)===!0&&t.push("Self Paced Date Range"),t.push("Comments","Delete?"),t}renderTableHead(e,t){let s=t.map(i=>`<th>${this.escapeHtml(i)}</th>`).join("");e.html(`
+                </tr> `;
+        tableBody.append(entry, attendeeSpace);
+      }
+      return tableBody;
+    }
+    async getCommentIconURL() {
+      var _a;
+      if (typeof this.commentIconURL === "string" && this.commentIconURL.trim() !== "") {
+        return this.commentIconURL;
+      }
+      const hostCommentIconURL = typeof ((_a = this.host) == null ? void 0 : _a.getComment) === "function" ? await this.host.getComment() : "../assets/speech-bubble-1130.svg";
+      this.commentIconURL = String(hostCommentIconURL != null ? hostCommentIconURL : "").trim() || "../assets/speech-bubble-1130.svg";
+      return this.commentIconURL;
+    }
+    getSessionLockView(session) {
+      var _a;
+      const lockerName = String((_a = session == null ? void 0 : session.Locker) != null ? _a : "").trim();
+      const hasLocker = lockerName !== "";
+      const isLocked = hasLocker && Number(session == null ? void 0 : session.Lock) === 1;
+      return {
+        canEdit: !isLocked,
+        isLocked,
+        statusText: hasLocker ? isLocked ? `Locked by ${lockerName}` : `Unlocked by ${lockerName}` : "Unlocked",
+        toggleLabel: isLocked ? "Unlock" : "Lock"
+      };
+    }
+    async toggleSessionLock(lockButton) {
+      var _a, _b;
+      const sessionID = Number(lockButton.attr("data-session-id"));
+      if (!Number.isFinite(sessionID) || lockButton.prop("disabled")) {
+        return;
+      }
+      const detailsRow = lockButton.closest(".details-row");
+      const shouldKeepDetailsOpen = detailsRow.length > 0 && detailsRow.prop("hidden") === false;
+      const session = await this.db.get("session", { sessionID });
+      if (!session) {
+        alert("That session could not be found. Please refresh the page and try again.");
+        return;
+      }
+      const userName = String((_b = await ((_a = this.host) == null ? void 0 : _a.get("userName"))) != null ? _b : "").trim();
+      if (userName === "") {
+        alert("The current WordPress user name could not be determined, so the lock could not be updated.");
+        return;
+      }
+      const currentLockView = this.getSessionLockView(session);
+      const nextLockState = currentLockView.isLocked ? 0 : 1;
+      lockButton.prop("disabled", true);
+      lockButton.text(nextLockState === 1 ? "Locking..." : "Unlocking...");
+      try {
+        await this.db.set("sessionLock", {
+          sessionID,
+          lock: nextLockState,
+          locker: userName
+        });
+        await this.loadTable();
+        this.restoreDetailsRowVisibility(sessionID, shouldKeepDetailsOpen);
+      } catch (_error) {
+        alert("The session lock could not be updated. Please refresh the page and try again.");
+        lockButton.prop("disabled", false);
+        lockButton.text(currentLockView.toggleLabel);
+      }
+    }
+    restoreDetailsRowVisibility(sessionID, shouldBeOpen) {
+      if (!shouldBeOpen) {
+        return;
+      }
+      const sessionRow = jq(`.pdt-main .table-wrapper table tbody > tr[data-session-id="${sessionID}"]`).not(".details-row").first();
+      if (sessionRow.length === 0) {
+        return;
+      }
+      sessionRow.next(".details-row").prop("hidden", false);
+    }
+    bumpTableScrollHint() {
+      const tableWrapper = jq(".pdt-main .table-wrapper");
+      if (tableWrapper.length === 0) {
+        return;
+      }
+      const wrapperElement = tableWrapper[0];
+      const hasMoreRight = wrapperElement.scrollWidth > wrapperElement.clientWidth + 1;
+      if (!hasMoreRight) {
+        return;
+      }
+      window.setTimeout(() => {
+        if (wrapperElement.scrollLeft !== 0) {
+          return;
+        }
+        tableWrapper.stop(true).animate({ scrollLeft: 28 }, 180).animate({ scrollLeft: 0 }, 220);
+      }, 1e3);
+    }
+    sortAttendees(sortButton) {
+      const attendeeContainer = sortButton.closest(".pdt-details-panel").find(".pdt-details-people").first();
+      if (attendeeContainer.length === 0) {
+        return;
+      }
+      const sortIndex = this.getNextAttendeeSortIndex(sortButton);
+      const sortMode = this.attendeeSortModes[sortIndex];
+      const attendeeCards = attendeeContainer.children(".pdt-person-card").get();
+      attendeeCards.sort((leftCard, rightCard) => {
+        return this.compareAttendeeCards(leftCard, rightCard, sortMode);
+      });
+      attendeeContainer.append(attendeeCards);
+      sortButton.attr("data-sort-index", String(sortIndex));
+      sortButton.text(sortMode.label);
+    }
+    getNextAttendeeSortIndex(sortButton) {
+      const currentSortIndex = Number(sortButton.attr("data-sort-index"));
+      if (!Number.isInteger(currentSortIndex) || currentSortIndex < 0) {
+        return 0;
+      }
+      return (currentSortIndex + 1) % this.attendeeSortModes.length;
+    }
+    compareAttendeeCards(leftCard, rightCard, sortMode) {
+      const leftSortData = this.getAttendeeSortData(leftCard);
+      const rightSortData = this.getAttendeeSortData(rightCard);
+      let comparison = 0;
+      if (sortMode.field === "first") {
+        comparison = this.compareSortValues(leftSortData.firstName, rightSortData.firstName);
+        if (comparison === 0) {
+          comparison = this.compareSortValues(leftSortData.lastName, rightSortData.lastName);
+        }
+      } else {
+        comparison = this.compareSortValues(leftSortData.lastName, rightSortData.lastName);
+        if (comparison === 0) {
+          comparison = this.compareSortValues(leftSortData.firstName, rightSortData.firstName);
+        }
+      }
+      if (comparison === 0) {
+        comparison = this.compareSortValues(leftSortData.fullName, rightSortData.fullName);
+      }
+      if (comparison === 0) {
+        comparison = leftSortData.personID - rightSortData.personID;
+      }
+      if (sortMode.direction === "desc") {
+        comparison *= -1;
+      }
+      return comparison;
+    }
+    getAttendeeSortData(attendeeCard) {
+      var _a, _b, _c;
+      const attendeeName = String((_a = attendeeCard.dataset.attendeeName) != null ? _a : "").trim();
+      const normalizedName = attendeeName.replace(/\s+/g, " ").trim();
+      const nameParts = normalizedName === "" ? [] : normalizedName.split(" ");
+      const firstName = ((_b = nameParts[0]) != null ? _b : "").toLocaleLowerCase();
+      const lastName = ((_c = nameParts[nameParts.length - 1]) != null ? _c : firstName).toLocaleLowerCase();
+      const personID = Number(attendeeCard.dataset.personId);
+      return {
+        firstName,
+        lastName,
+        fullName: normalizedName.toLocaleLowerCase(),
+        personID: Number.isFinite(personID) ? personID : 0
+      };
+    }
+    compareSortValues(leftValue, rightValue) {
+      return String(leftValue).localeCompare(String(rightValue), void 0, { sensitivity: "base" });
+    }
+  };
+
+  // js/session-table2/attendee_table_renderer.js
+  var attendee_table_renderer = class {
+    render(tableHead, tableBody, options = {}) {
+      var _a, _b;
+      if (!tableHead || tableHead.length === 0 || !tableBody || tableBody.length === 0) {
+        return;
+      }
+      const attendees = Array.isArray(options == null ? void 0 : options.attendees) ? options.attendees : [];
+      const showRIDColumn = (options == null ? void 0 : options.showRIDColumn) === true;
+      const showSelfPacedDateRangeColumn = (options == null ? void 0 : options.showSelfPacedDateRangeColumn) === true;
+      const dateRangeRenderMode = (options == null ? void 0 : options.dateRangeRenderMode) === "edit" ? "edit" : "display";
+      const attendeeStatuses = (_a = options == null ? void 0 : options.attendeeStatuses) != null ? _a : {};
+      const commentIconURL = String((_b = options == null ? void 0 : options.commentIconURL) != null ? _b : "../assets/speech-bubble-1130.svg");
+      const buildAttendeeSearchText = typeof (options == null ? void 0 : options.buildAttendeeSearchText) === "function" ? options.buildAttendeeSearchText : () => "";
+      const visibleColumnLabels = this.getVisibleColumnLabels({
+        showRIDColumn,
+        showSelfPacedDateRangeColumn
+      });
+      const visibleColumnCount = visibleColumnLabels.length;
+      this.renderTableHead(tableHead, visibleColumnLabels);
+      tableBody.empty();
+      tableBody.append(this.buildSearchRow(visibleColumnCount));
+      if (attendees.length === 0) {
+        tableBody.append(this.buildEmptyStateRow(visibleColumnCount));
+        return;
+      }
+      for (const attendee of attendees) {
+        tableBody.append(this.buildAttendeeRow(attendee, {
+          attendeeStatuses,
+          commentIconURL,
+          dateRangeRenderMode,
+          showRIDColumn,
+          showSelfPacedDateRangeColumn,
+          attendeeSearchText: buildAttendeeSearchText(attendee)
+        }));
+      }
+    }
+    getVisibleColumnCount(options = {}) {
+      return this.getVisibleColumnLabels(options).length;
+    }
+    getVisibleColumnLabels(options = {}) {
+      const columnLabels = [
+        "Attendee",
+        "Certification Status at time of Attending"
+      ];
+      if ((options == null ? void 0 : options.showRIDColumn) === true) {
+        columnLabels.push("RID certified?");
+      }
+      if ((options == null ? void 0 : options.showSelfPacedDateRangeColumn) === true) {
+        columnLabels.push("Self Paced Date Range");
+      }
+      columnLabels.push("Comments", "Delete?");
+      return columnLabels;
+    }
+    renderTableHead(tableHead, columnLabels) {
+      const headerCells = columnLabels.map((columnLabel) => {
+        return `<th>${this.escapeHtml(columnLabel)}</th>`;
+      }).join("");
+      tableHead.html(`
             <tr>
-                ${s}
+                ${headerCells}
             </tr>
-        `)}buildSearchRow(e){return`
+        `);
+    }
+    buildSearchRow(columnCount) {
+      return `
             <tr class="search-row">
-                <td colspan="${e}">
+                <td colspan="${columnCount}">
                     <input type="text" name="add-attendee" id="add-attendee"
                         placeholder="Add attendee: search attendees by name or email">
                 </td>
             </tr>
-        `}buildEmptyStateRow(e){return`
+        `;
+    }
+    buildEmptyStateRow(columnCount) {
+      return `
             <tr class="pdt-attendees-placeholder-row">
-                <td colspan="${e}">No attendees are attached to this session yet.</td>
+                <td colspan="${columnCount}">No attendees are attached to this session yet.</td>
             </tr>
-        `}buildAttendeeRow(e,t={}){let s=this.escapeHtml(e==null?void 0:e.name),i=this.escapeHtml(e==null?void 0:e.email),r=this.escapeHtml(t==null?void 0:t.attendeeSearchText),n=this.getSafeAttendeeStatusID(e==null?void 0:e.certStatusID,t==null?void 0:t.attendeeStatuses),a=this.getCommentButtonTitle(e),o=this.buildDateRangeMarkup(e,t==null?void 0:t.dateRangeRenderMode),l=[`
+        `;
+    }
+    buildAttendeeRow(attendee, options = {}) {
+      const attendeeName = this.escapeHtml(attendee == null ? void 0 : attendee.name);
+      const attendeeEmail = this.escapeHtml(attendee == null ? void 0 : attendee.email);
+      const attendeeSearchText = this.escapeHtml(options == null ? void 0 : options.attendeeSearchText);
+      const certStatusID = this.getSafeAttendeeStatusID(attendee == null ? void 0 : attendee.certStatusID, options == null ? void 0 : options.attendeeStatuses);
+      const commentButtonTitle = this.getCommentButtonTitle(attendee);
+      const commentIconURL = this.escapeHtml(options == null ? void 0 : options.commentIconURL);
+      const dateRangeMarkup = this.buildDateRangeMarkup(attendee, options == null ? void 0 : options.dateRangeRenderMode);
+      const attendeeCells = [
+        `
                 <td>
-                    <p>${s}</p>
-                    <p>${i}</p>
+                    <p>${attendeeName}</p>
+                    <p>${attendeeEmail}</p>
                 </td>
-            `,`
+            `,
+        `
                 <td>
                     <select class="pdt-attendee-cert-status">
-                        ${this.buildCertStatusOptions(t==null?void 0:t.attendeeStatuses,n)}
+                        ${this.buildCertStatusOptions(options == null ? void 0 : options.attendeeStatuses, certStatusID)}
                     </select>
                 </td>
-            `];return(t==null?void 0:t.showRIDColumn)===!0&&l.push(`
+            `
+      ];
+      if ((options == null ? void 0 : options.showRIDColumn) === true) {
+        attendeeCells.push(`
                 <td class="pdt-rid-cell">
-                    ${this.buildRIDCertificationMarkup(e)}
+                    ${this.buildRIDCertificationMarkup(attendee)}
                 </td>
-            `),(t==null?void 0:t.showSelfPacedDateRangeColumn)===!0&&l.push(`
+            `);
+      }
+      if ((options == null ? void 0 : options.showSelfPacedDateRangeColumn) === true) {
+        attendeeCells.push(`
                 <td class="date-range-cell">
-                    ${o}
+                    ${dateRangeMarkup}
                 </td>
-            `),l.push(`
+            `);
+      }
+      attendeeCells.push(`
             <td>
-                <button type="button" class="pdt-attendee-comment-button" title="${a}">
-                    <img class="pdt-person-card__icon" src="../assets/speech-bubble-1130.svg" alt=""
+                <button type="button" class="pdt-attendee-comment-button" title="${commentButtonTitle}">
+                    <img class="pdt-person-card__icon" src="${commentIconURL}" alt=""
                         aria-hidden="true">
                 </button>
             </td>
-        `),l.push('<td><button class="delete-button pdt-attendee-delete-button" type="button">X</button></td>'),`
-            <tr class="pdt-attendees-row" data-person-id="${this.getSafePersonID(e==null?void 0:e.personID)}" data-attendee-email="${i}" data-search-text="${r}">
-                ${l.join("")}
+        `);
+      attendeeCells.push(`<td><button class="delete-button pdt-attendee-delete-button" type="button">X</button></td>`);
+      return `
+            <tr class="pdt-attendees-row" data-person-id="${this.getSafePersonID(attendee == null ? void 0 : attendee.personID)}" data-attendee-email="${attendeeEmail}" data-search-text="${attendeeSearchText}">
+                ${attendeeCells.join("")}
             </tr>
-        `}buildRIDCertificationMarkup(e){let t=(e==null?void 0:e.ridCertified)===!0,s=this.escapeHtml(this.isoDateTimeToLocalInputValue(e==null?void 0:e.ridCertifiedAt));return`
+        `;
+    }
+    buildRIDCertificationMarkup(attendee) {
+      const isRIDCertified = (attendee == null ? void 0 : attendee.ridCertified) === true;
+      const ridCertifiedAtValue = this.escapeHtml(this.isoDateTimeToLocalInputValue(attendee == null ? void 0 : attendee.ridCertifiedAt));
+      return `
             <div class="pdt-rid-certification">
                 <label class="pdt-rid-certification__checkbox">
-                    <input type="checkbox" class="pdt-rid-certified-checkbox" ${t?"checked":""}>
+                    <input type="checkbox" class="pdt-rid-certified-checkbox" ${isRIDCertified ? "checked" : ""}>
                     <span>Certified</span>
                 </label>
-                <input type="datetime-local" class="pdt-rid-certified-at" value="${s}" ${t?"":"disabled"}>
+                <input type="datetime-local" class="pdt-rid-certified-at" value="${ridCertifiedAtValue}" ${isRIDCertified ? "" : "disabled"}>
             </div>
-        `}buildCertStatusOptions(e,t){let s=Object.entries(e!=null?e:{}).map(([i,r])=>({id:Number(i),label:String(r!=null?r:"")})).filter(i=>Number.isFinite(i.id)&&i.label!=="").sort((i,r)=>i.id-r.id);return s.length===0?'<option value="4" selected>Not Assigned</option>':s.map(i=>{let r=i.id===t?" selected":"";return`<option value="${i.id}"${r}>${this.escapeHtml(i.label)}</option>`}).join("")}buildDateRangeMarkup(e,t="display"){return t==="edit"?this.buildEditableDateRangeMarkup(e):this.buildDisplayDateRangeMarkup(e)}buildEditableDateRangeMarkup(e){let t=this.escapeHtml(this.normalizeDateInputValue(e==null?void 0:e.dateRangeStart)),s=this.escapeHtml(this.normalizeDateInputValue(e==null?void 0:e.dateRangeEnd));return`
+        `;
+    }
+    buildCertStatusOptions(attendeeStatuses, selectedStatusID) {
+      const statusOptions = Object.entries(attendeeStatuses != null ? attendeeStatuses : {}).map(([statusID, statusLabel]) => ({
+        id: Number(statusID),
+        label: String(statusLabel != null ? statusLabel : "")
+      })).filter((statusOption) => Number.isFinite(statusOption.id) && statusOption.label !== "").sort((leftStatus, rightStatus) => leftStatus.id - rightStatus.id);
+      if (statusOptions.length === 0) {
+        return `<option value="4" selected>Not Assigned</option>`;
+      }
+      return statusOptions.map((statusOption) => {
+        const isSelected = statusOption.id === selectedStatusID ? " selected" : "";
+        return `<option value="${statusOption.id}"${isSelected}>${this.escapeHtml(statusOption.label)}</option>`;
+      }).join("");
+    }
+    buildDateRangeMarkup(attendee, renderMode = "display") {
+      if (renderMode === "edit") {
+        return this.buildEditableDateRangeMarkup(attendee);
+      }
+      return this.buildDisplayDateRangeMarkup(attendee);
+    }
+    buildEditableDateRangeMarkup(attendee) {
+      const startDateValue = this.escapeHtml(this.normalizeDateInputValue(attendee == null ? void 0 : attendee.dateRangeStart));
+      const endDateValue = this.escapeHtml(this.normalizeDateInputValue(attendee == null ? void 0 : attendee.dateRangeEnd));
+      return `
             <div class="pdt-date-range-inputs">
-                <input type="date" class="pdt-attendee-date-start" value="${t}">
+                <input type="date" class="pdt-attendee-date-start" value="${startDateValue}">
                 <p>to</p>
-                <input type="date" class="pdt-attendee-date-end" value="${s}">
+                <input type="date" class="pdt-attendee-date-end" value="${endDateValue}">
             </div>
-        `}buildDisplayDateRangeMarkup(e){var r,n;let t=this.normalizeDateInputValue(e==null?void 0:e.dateRangeStart),s=this.normalizeDateInputValue(e==null?void 0:e.dateRangeEnd),i=String((n=(r=e==null?void 0:e.dateRangeDisplay)!=null?r:e==null?void 0:e.dateRange)!=null?n:"").trim();return t===""&&s===""?"<p>Not started</p>":t!==""&&s===""?`
-                <input type="date" value="${t}" disabled>
+        `;
+    }
+    buildDisplayDateRangeMarkup(attendee) {
+      var _a, _b;
+      const startDateValue = this.normalizeDateInputValue(attendee == null ? void 0 : attendee.dateRangeStart);
+      const endDateValue = this.normalizeDateInputValue(attendee == null ? void 0 : attendee.dateRangeEnd);
+      const dateRangeDisplay = String((_b = (_a = attendee == null ? void 0 : attendee.dateRangeDisplay) != null ? _a : attendee == null ? void 0 : attendee.dateRange) != null ? _b : "").trim();
+      if (startDateValue === "" && endDateValue === "") {
+        return `<p>Not started</p>`;
+      }
+      if (startDateValue !== "" && endDateValue === "") {
+        return `
+                <input type="date" value="${startDateValue}" disabled>
                 <p>to</p>
                 <p>Ongoing</p>
-            `:s===""?`<p>${this.escapeHtml(i)}</p>`:`
-            <input type="date" value="${t}" disabled>
+            `;
+      }
+      if (endDateValue === "") {
+        return `<p>${this.escapeHtml(dateRangeDisplay)}</p>`;
+      }
+      return `
+            <input type="date" value="${startDateValue}" disabled>
             <p>to</p>
-            <input type="date" value="${s}" disabled>
-        `}getCommentButtonTitle(e){var s,i;return String((s=e==null?void 0:e.adminComment)!=null?s:"").trim()!==""||String((i=e==null?void 0:e.memberComment)!=null?i:"").trim()!==""?"Comments exist for this attendee.":"No comments yet."}isoDateTimeToLocalInputValue(e){let t=this.normalizeRIDDateTimeValue(e);if(t===null)return"";let s=new Date(t);if(Number.isNaN(s.getTime()))return"";let i=s.getFullYear(),r=String(s.getMonth()+1).padStart(2,"0"),n=String(s.getDate()).padStart(2,"0"),a=String(s.getHours()).padStart(2,"0"),o=String(s.getMinutes()).padStart(2,"0");return`${i}-${r}-${n}T${a}:${o}`}normalizeRIDDateTimeValue(e){let t=String(e!=null?e:"").trim();if(t==="")return null;let s=Date.parse(t);return Number.isNaN(s)?null:new Date(s).toISOString()}normalizeDateInputValue(e){let t=String(e!=null?e:"").trim();return/^\d{4}-\d{2}-\d{2}$/.test(t)?t:""}getSafePersonID(e){let t=Number(e);return Number.isFinite(t)?t:0}getSafeAttendeeStatusID(e,t){let s=Number(e);return Number.isFinite(s)&&(t!=null&&t[s])?s:4}escapeHtml(e){return String(e!=null?e:"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")}};var B=class{constructor(e=null,t=null){this.db=e,this.host=t,this.attendeeRIDState=this.getDefaultState()}getDefaultState(){return{attendeesDraft:[],savedAttendees:[],isSaving:!1}}reset(){this.attendeeRIDState=this.getDefaultState()}load(e=[]){this.attendeeRIDState={attendeesDraft:this.cloneAttendees(e),savedAttendees:this.cloneAttendees(e),isSaving:!1}}getDraftAttendees(){return this.attendeeRIDState.attendeesDraft}getDraftPersonIDs(){return this.attendeeRIDState.attendeesDraft.map(e=>this.getSafePersonID(e==null?void 0:e.personID)).filter(e=>e>0)}isSaving(){return this.attendeeRIDState.isSaving===!0}hasPendingChanges(){return JSON.stringify(this.buildComparableAttendeeState(this.attendeeRIDState.attendeesDraft))!==JSON.stringify(this.buildComparableAttendeeState(this.attendeeRIDState.savedAttendees))}addAttendee(e){let t=this.getSafePersonID(e==null?void 0:e.personID);return t<=0||this.getDraftPersonIDs().includes(t)?!1:(this.attendeeRIDState.attendeesDraft=this.cloneAttendees([e,...this.attendeeRIDState.attendeesDraft]),!0)}updateAttendeeCertificationStatus(e,t,s=""){let i=this.attendeeRIDState.attendeesDraft.findIndex(o=>this.getSafePersonID(o==null?void 0:o.personID)===e);if(i<0)return;let r=this.attendeeRIDState.attendeesDraft[i],n=this.getPositiveIntegerOrDefault(t,4),a=String(s!=null?s:"").trim();this.attendeeRIDState.attendeesDraft[i]={...r,certStatusID:n,certStatus:a,certStatusLabel:a}}updateAttendeeDateRange(e,t={}){var a,o;let s=this.attendeeRIDState.attendeesDraft.findIndex(l=>this.getSafePersonID(l==null?void 0:l.personID)===e);if(s<0)return null;let i=this.attendeeRIDState.attendeesDraft[s],r=this.normalizeDateInputValue((a=t==null?void 0:t.dateRangeStart)!=null?a:i==null?void 0:i.dateRangeStart),n=this.normalizeDateInputValue((o=t==null?void 0:t.dateRangeEnd)!=null?o:i==null?void 0:i.dateRangeEnd);return(r===null||n!==null&&n<r)&&(n=null),this.attendeeRIDState.attendeesDraft[s]={...i,dateRangeStart:r,dateRangeEnd:n,dateRangeDisplay:null,dateRange:null},this.attendeeRIDState.attendeesDraft[s]}removeAttendee(e){let t=this.getSafePersonID(e);if(t<=0)return!1;let s=this.attendeeRIDState.attendeesDraft.filter(i=>this.getSafePersonID(i==null?void 0:i.personID)!==t);return s.length===this.attendeeRIDState.attendeesDraft.length?!1:(this.attendeeRIDState.attendeesDraft=this.cloneAttendees(s),!0)}handleCheckboxChange(e){var a;let t=e.closest(".pdt-attendees-row"),s=Number(t.attr("data-person-id"));if(!Number.isFinite(s))return;let i=t.find(".pdt-rid-certified-at").first(),r=e.prop("checked")===!0,n=String((a=i.val())!=null?a:"").trim();r?n===""&&(n=this.getCurrentDateTimeLocalInputValue(),i.val(n)):(n="",i.val("")),i.prop("disabled",!r),this.updateAttendeeRIDState(s,{ridCertified:r,ridCertifiedAt:r?this.dateTimeLocalInputValueToISO(n):null})}handleDateTimeChange(e){var r;if(e.prop("disabled"))return;let t=e.closest(".pdt-attendees-row"),s=Number(t.attr("data-person-id"));if(!Number.isFinite(s))return;let i=String((r=e.val())!=null?r:"").trim();i===""&&(i=this.getCurrentDateTimeLocalInputValue(),e.val(i)),this.updateAttendeeRIDState(s,{ridCertified:!0,ridCertifiedAt:this.dateTimeLocalInputValueToISO(i)})}async saveChanges(e){var i,r;if(this.attendeeRIDState.isSaving||!this.hasPendingChanges())return null;let t=Number(e);if(!Number.isFinite(t))return null;let s=this.attendeeRIDState.attendeesDraft.find(n=>(n==null?void 0:n.ridCertified)===!0&&this.normalizeRIDDateTimeValue(n==null?void 0:n.ridCertifiedAt)===null);if(s)return alert(`RID certification for ${String((i=s==null?void 0:s.name)!=null?i:"this attendee").trim()} needs a valid date and time before saving.`),null;this.attendeeRIDState.isSaving=!0;try{let n=Number(await((r=this.host)==null?void 0:r.get("userID")));if(!Number.isInteger(n)||n<=0)return alert("The current user could not be determined, so RID certification changes could not be saved."),null;let a=await this.db.put("sessionAttendees",{sessionID:t,certifiedByUserID:n,attendees:this.buildSessionAttendeePayload()});return this.attendeeRIDState.attendeesDraft=this.cloneAttendees(a),this.attendeeRIDState.savedAttendees=this.cloneAttendees(a),this.attendeeRIDState.attendeesDraft}finally{this.attendeeRIDState.isSaving=!1}}mergeIncomingAttendeeData(e=[]){let t=this.cloneAttendees(e),s=this.getDeletedPersonIDs(this.attendeeRIDState.savedAttendees,this.attendeeRIDState.attendeesDraft);this.attendeeRIDState.attendeesDraft=this.mergeAttendeeCollections(t,this.attendeeRIDState.attendeesDraft,{excludedPersonIDs:s}),this.attendeeRIDState.savedAttendees=this.cloneAttendees(t)}updateAttendeeRIDState(e,t){var r,n;let s=this.attendeeRIDState.attendeesDraft.findIndex(a=>this.getSafePersonID(a==null?void 0:a.personID)===e);if(s<0)return;let i=this.attendeeRIDState.attendeesDraft[s];this.attendeeRIDState.attendeesDraft[s]={...i,ridCertified:t.ridCertified===!0,ridCertifiedAt:t.ridCertified===!0&&(r=t.ridCertifiedAt)!=null?r:null,ridCertifiedByUserID:t.ridCertified===!0&&(n=i==null?void 0:i.ridCertifiedByUserID)!=null?n:null}}buildSessionAttendeePayload(){return this.attendeeRIDState.attendeesDraft.map(e=>{var i,r;let t=this.getSafePersonID(e==null?void 0:e.personID),s=(e==null?void 0:e.ridCertified)===!0;return{personID:t,certStatusID:Number(e==null?void 0:e.certStatusID),dateRangeStart:(i=e==null?void 0:e.dateRangeStart)!=null?i:null,dateRangeEnd:(r=e==null?void 0:e.dateRangeEnd)!=null?r:null,ridCertified:s,ridCertifiedAt:s?this.normalizeRIDDateTimeValue(e==null?void 0:e.ridCertifiedAt):null}})}mergeAttendeeCollections(e=[],t=[],s={}){let i=new Map(e.map(o=>[this.getSafePersonID(o==null?void 0:o.personID),o])),r=(s==null?void 0:s.excludedPersonIDs)instanceof Set?s.excludedPersonIDs:new Set,n=[],a=new Set;for(let o of Array.isArray(t)?t:[]){let l=this.getSafePersonID(o==null?void 0:o.personID);if(l<=0||a.has(l))continue;let d=i.get(l);d?n.push(this.applyDraftStateToAttendee(d,o)):n.push(this.cloneAttendees([o])[0]),a.add(l)}for(let o of e){let l=this.getSafePersonID(o==null?void 0:o.personID);l<=0||a.has(l)||r.has(l)||(n.push(this.cloneAttendees([o])[0]),a.add(l))}return n}applyDraftStateToAttendee(e,t){var r,n,a,o,l,d,m,p,g,h,u,f;if(!t)return this.cloneAttendees([e])[0];let s=Number(t==null?void 0:t.certStatusID),i=Number.isFinite(s)?s:Number(e==null?void 0:e.certStatusID);return{...this.cloneAttendees([e])[0],dateRangeStart:(n=(r=t==null?void 0:t.dateRangeStart)!=null?r:e==null?void 0:e.dateRangeStart)!=null?n:null,dateRangeEnd:(o=(a=t==null?void 0:t.dateRangeEnd)!=null?a:e==null?void 0:e.dateRangeEnd)!=null?o:null,dateRangeDisplay:(d=(l=t==null?void 0:t.dateRangeDisplay)!=null?l:e==null?void 0:e.dateRangeDisplay)!=null?d:null,dateRange:(p=(m=t==null?void 0:t.dateRange)!=null?m:e==null?void 0:e.dateRange)!=null?p:null,certStatusID:i,certStatus:(h=(g=t==null?void 0:t.certStatus)!=null?g:e==null?void 0:e.certStatus)!=null?h:"",certStatusLabel:(f=(u=t==null?void 0:t.certStatusLabel)!=null?u:e==null?void 0:e.certStatusLabel)!=null?f:"",ridCertified:(t==null?void 0:t.ridCertified)===!0,ridCertifiedAt:(t==null?void 0:t.ridCertified)===!0?this.normalizeRIDDateTimeValue(t==null?void 0:t.ridCertifiedAt):null,ridCertifiedByUserID:(t==null?void 0:t.ridCertified)===!0?this.getPositiveIntegerOrNull(t==null?void 0:t.ridCertifiedByUserID):null}}buildComparableAttendeeState(e=[]){return(Array.isArray(e)?e:[]).map(t=>{var i,r;let s=(t==null?void 0:t.ridCertified)===!0;return{personID:this.getSafePersonID(t==null?void 0:t.personID),certStatusID:Number(t==null?void 0:t.certStatusID),dateRangeStart:String((i=t==null?void 0:t.dateRangeStart)!=null?i:""),dateRangeEnd:String((r=t==null?void 0:t.dateRangeEnd)!=null?r:""),ridCertified:s,ridCertifiedAt:s?this.normalizeRIDDateTimeValue(t==null?void 0:t.ridCertifiedAt):null}}).sort((t,s)=>t.personID-s.personID)}cloneAttendees(e=[]){return structuredClone(Array.isArray(e)?e:[])}getCurrentDateTimeLocalInputValue(){let e=new Date,t=e.getFullYear(),s=String(e.getMonth()+1).padStart(2,"0"),i=String(e.getDate()).padStart(2,"0"),r=String(e.getHours()).padStart(2,"0"),n=String(e.getMinutes()).padStart(2,"0");return`${t}-${s}-${i}T${r}:${n}`}dateTimeLocalInputValueToISO(e){let t=String(e!=null?e:"").trim();if(t==="")return null;let s=new Date(t);return Number.isNaN(s.getTime())?null:s.toISOString()}normalizeRIDDateTimeValue(e){let t=String(e!=null?e:"").trim();if(t==="")return null;let s=Date.parse(t);return Number.isNaN(s)?null:new Date(s).toISOString()}normalizeDateInputValue(e){let t=String(e!=null?e:"").trim();return t===""||!/^\d{4}-\d{2}-\d{2}$/.test(t)?null:t}getSafePersonID(e){let t=Number(e);return Number.isFinite(t)?t:0}getPositiveIntegerOrNull(e){let t=Number(e);return!Number.isInteger(t)||t<=0?null:t}getPositiveIntegerOrDefault(e,t){let s=Number(e);return Number.isInteger(s)&&s>0?s:t}getDeletedPersonIDs(e=[],t=[]){let s=new Set((Array.isArray(t)?t:[]).map(i=>this.getSafePersonID(i==null?void 0:i.personID)).filter(i=>i>0));return new Set((Array.isArray(e)?e:[]).map(i=>this.getSafePersonID(i==null?void 0:i.personID)).filter(i=>i>0&&!s.has(i)))}};var Q=class{constructor(){this.filterRefs=null,this.activeSearchValue=""}init(e){this.filterRefs=e,this.bindEvents()}bindEvents(){var e;!((e=this.filterRefs)!=null&&e.searchField)||this.filterRefs.searchField.length===0||this.filterRefs.searchField.off("input.pdtAttendeeFilter").on("input.pdtAttendeeFilter",t=>{var s;this.activeSearchValue=String((s=$(t.currentTarget).val())!=null?s:""),this.applyFilter()})}reset(){var e,t,s,i;this.activeSearchValue="",((t=(e=this.filterRefs)==null?void 0:e.searchField)==null?void 0:t.length)>0&&this.filterRefs.searchField.val(""),((i=(s=this.filterRefs)==null?void 0:s.tableBody)==null?void 0:i.length)>0&&(this.filterRefs.tableBody.find(".pdt-attendees-filter-empty-row").remove(),this.filterRefs.tableBody.find(".pdt-attendees-row").prop("hidden",!1))}applyFilter(e=this.activeSearchValue){var r;if(!((r=this.filterRefs)!=null&&r.tableBody)||this.filterRefs.tableBody.length===0)return;this.activeSearchValue=String(e!=null?e:"");let t=this.normalizeSearchValue(this.activeSearchValue),s=this.filterRefs.tableBody.find(".pdt-attendees-row");if(this.filterRefs.tableBody.find(".pdt-attendees-filter-empty-row").remove(),s.length===0)return;let i=0;s.each((n,a)=>{let o=$(a),l=this.normalizeSearchValue(o.attr("data-search-text")),d=t===""||l.includes(t);o.prop("hidden",!d),d&&(i+=1)}),t!==""&&i===0&&this.filterRefs.tableBody.append(this.buildNoSearchResultsRow(this.getVisibleColumnCount()))}getVisibleColumnCount(){var e;return typeof((e=this.filterRefs)==null?void 0:e.getVisibleColumnCount)!="function"?1:Number(this.filterRefs.getVisibleColumnCount())||1}buildAttendeeSearchText(e){var t,s;return`${String((t=e==null?void 0:e.name)!=null?t:"").trim()} ${String((s=e==null?void 0:e.email)!=null?s:"").trim()}`.trim()}buildNoSearchResultsRow(e){return`
+            <input type="date" value="${endDateValue}" disabled>
+        `;
+    }
+    getCommentButtonTitle(attendee) {
+      var _a, _b;
+      const hasComments = String((_a = attendee == null ? void 0 : attendee.adminComment) != null ? _a : "").trim() !== "" || String((_b = attendee == null ? void 0 : attendee.memberComment) != null ? _b : "").trim() !== "";
+      return hasComments ? "Comments exist for this attendee." : "No comments yet.";
+    }
+    isoDateTimeToLocalInputValue(isoDateTime) {
+      const normalizedDateTime = this.normalizeRIDDateTimeValue(isoDateTime);
+      if (normalizedDateTime === null) {
+        return "";
+      }
+      const date = new Date(normalizedDateTime);
+      if (Number.isNaN(date.getTime())) {
+        return "";
+      }
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    normalizeRIDDateTimeValue(value) {
+      const normalizedValue = String(value != null ? value : "").trim();
+      if (normalizedValue === "") {
+        return null;
+      }
+      const parsedTimestamp = Date.parse(normalizedValue);
+      if (Number.isNaN(parsedTimestamp)) {
+        return null;
+      }
+      return new Date(parsedTimestamp).toISOString();
+    }
+    normalizeDateInputValue(dateValue) {
+      const normalizedDate = String(dateValue != null ? dateValue : "").trim();
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) {
+        return "";
+      }
+      return normalizedDate;
+    }
+    getSafePersonID(personID) {
+      const numericPersonID = Number(personID);
+      return Number.isFinite(numericPersonID) ? numericPersonID : 0;
+    }
+    getSafeAttendeeStatusID(statusID, attendeeStatuses) {
+      const numericStatusID = Number(statusID);
+      if (Number.isFinite(numericStatusID) && (attendeeStatuses == null ? void 0 : attendeeStatuses[numericStatusID])) {
+        return numericStatusID;
+      }
+      return 4;
+    }
+    escapeHtml(value) {
+      return String(value != null ? value : "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+    }
+  };
+
+  // js/session-table2/attendee_rid_manager.js
+  var attendee_rid_manager = class {
+    constructor(db = null, host = null) {
+      this.db = db;
+      this.host = host;
+      this.attendeeRIDState = this.getDefaultState();
+    }
+    getDefaultState() {
+      return {
+        attendeesDraft: [],
+        savedAttendees: [],
+        isSaving: false
+      };
+    }
+    reset() {
+      this.attendeeRIDState = this.getDefaultState();
+    }
+    load(attendees = []) {
+      this.attendeeRIDState = {
+        attendeesDraft: this.cloneAttendees(attendees),
+        savedAttendees: this.cloneAttendees(attendees),
+        isSaving: false
+      };
+    }
+    getDraftAttendees() {
+      return this.attendeeRIDState.attendeesDraft;
+    }
+    getDraftPersonIDs() {
+      return this.attendeeRIDState.attendeesDraft.map((attendee) => this.getSafePersonID(attendee == null ? void 0 : attendee.personID)).filter((personID) => personID > 0);
+    }
+    isSaving() {
+      return this.attendeeRIDState.isSaving === true;
+    }
+    hasPendingChanges() {
+      return JSON.stringify(this.buildComparableAttendeeState(this.attendeeRIDState.attendeesDraft)) !== JSON.stringify(this.buildComparableAttendeeState(this.attendeeRIDState.savedAttendees));
+    }
+    addAttendee(attendee) {
+      const personID = this.getSafePersonID(attendee == null ? void 0 : attendee.personID);
+      if (personID <= 0 || this.getDraftPersonIDs().includes(personID)) {
+        return false;
+      }
+      this.attendeeRIDState.attendeesDraft = this.cloneAttendees([
+        attendee,
+        ...this.attendeeRIDState.attendeesDraft
+      ]);
+      return true;
+    }
+    updateAttendeeCertificationStatus(personID, nextCertStatusID, nextCertStatusLabel = "") {
+      const attendeeIndex = this.attendeeRIDState.attendeesDraft.findIndex((attendee) => {
+        return this.getSafePersonID(attendee == null ? void 0 : attendee.personID) === personID;
+      });
+      if (attendeeIndex < 0) {
+        return;
+      }
+      const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
+      const normalizedStatusID = this.getPositiveIntegerOrDefault(nextCertStatusID, 4);
+      const normalizedStatusLabel = String(nextCertStatusLabel != null ? nextCertStatusLabel : "").trim();
+      this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
+        ...currentAttendee,
+        certStatusID: normalizedStatusID,
+        certStatus: normalizedStatusLabel,
+        certStatusLabel: normalizedStatusLabel
+      };
+    }
+    updateAttendeeDateRange(personID, nextDateRange = {}) {
+      var _a, _b;
+      const attendeeIndex = this.attendeeRIDState.attendeesDraft.findIndex((attendee) => {
+        return this.getSafePersonID(attendee == null ? void 0 : attendee.personID) === personID;
+      });
+      if (attendeeIndex < 0) {
+        return null;
+      }
+      const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
+      const normalizedStartDate = this.normalizeDateInputValue(
+        (_a = nextDateRange == null ? void 0 : nextDateRange.dateRangeStart) != null ? _a : currentAttendee == null ? void 0 : currentAttendee.dateRangeStart
+      );
+      let normalizedEndDate = this.normalizeDateInputValue(
+        (_b = nextDateRange == null ? void 0 : nextDateRange.dateRangeEnd) != null ? _b : currentAttendee == null ? void 0 : currentAttendee.dateRangeEnd
+      );
+      if (normalizedStartDate === null) {
+        normalizedEndDate = null;
+      } else if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
+        normalizedEndDate = null;
+      }
+      this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
+        ...currentAttendee,
+        dateRangeStart: normalizedStartDate,
+        dateRangeEnd: normalizedEndDate,
+        dateRangeDisplay: null,
+        dateRange: null
+      };
+      return this.attendeeRIDState.attendeesDraft[attendeeIndex];
+    }
+    removeAttendee(personID) {
+      const normalizedPersonID = this.getSafePersonID(personID);
+      if (normalizedPersonID <= 0) {
+        return false;
+      }
+      const nextDraftAttendees = this.attendeeRIDState.attendeesDraft.filter((attendee) => {
+        return this.getSafePersonID(attendee == null ? void 0 : attendee.personID) !== normalizedPersonID;
+      });
+      if (nextDraftAttendees.length === this.attendeeRIDState.attendeesDraft.length) {
+        return false;
+      }
+      this.attendeeRIDState.attendeesDraft = this.cloneAttendees(nextDraftAttendees);
+      return true;
+    }
+    handleCheckboxChange(ridCheckbox) {
+      var _a;
+      const attendeeRow = ridCheckbox.closest(".pdt-attendees-row");
+      const personID = Number(attendeeRow.attr("data-person-id"));
+      if (!Number.isFinite(personID)) {
+        return;
+      }
+      const ridDateTimeInput = attendeeRow.find(".pdt-rid-certified-at").first();
+      const isRIDCertified = ridCheckbox.prop("checked") === true;
+      let ridCertifiedAtValue = String((_a = ridDateTimeInput.val()) != null ? _a : "").trim();
+      if (isRIDCertified) {
+        if (ridCertifiedAtValue === "") {
+          ridCertifiedAtValue = this.getCurrentDateTimeLocalInputValue();
+          ridDateTimeInput.val(ridCertifiedAtValue);
+        }
+      } else {
+        ridCertifiedAtValue = "";
+        ridDateTimeInput.val("");
+      }
+      ridDateTimeInput.prop("disabled", !isRIDCertified);
+      this.updateAttendeeRIDState(personID, {
+        ridCertified: isRIDCertified,
+        ridCertifiedAt: isRIDCertified ? this.dateTimeLocalInputValueToISO(ridCertifiedAtValue) : null
+      });
+    }
+    handleDateTimeChange(ridDateTimeInput) {
+      var _a;
+      if (ridDateTimeInput.prop("disabled")) {
+        return;
+      }
+      const attendeeRow = ridDateTimeInput.closest(".pdt-attendees-row");
+      const personID = Number(attendeeRow.attr("data-person-id"));
+      if (!Number.isFinite(personID)) {
+        return;
+      }
+      let ridCertifiedAtValue = String((_a = ridDateTimeInput.val()) != null ? _a : "").trim();
+      if (ridCertifiedAtValue === "") {
+        ridCertifiedAtValue = this.getCurrentDateTimeLocalInputValue();
+        ridDateTimeInput.val(ridCertifiedAtValue);
+      }
+      this.updateAttendeeRIDState(personID, {
+        ridCertified: true,
+        ridCertifiedAt: this.dateTimeLocalInputValueToISO(ridCertifiedAtValue)
+      });
+    }
+    async saveChanges(sessionID) {
+      var _a, _b;
+      if (this.attendeeRIDState.isSaving || !this.hasPendingChanges()) {
+        return null;
+      }
+      const numericSessionID = Number(sessionID);
+      if (!Number.isFinite(numericSessionID)) {
+        return null;
+      }
+      const invalidAttendee = this.attendeeRIDState.attendeesDraft.find((attendee) => {
+        return (attendee == null ? void 0 : attendee.ridCertified) === true && this.normalizeRIDDateTimeValue(attendee == null ? void 0 : attendee.ridCertifiedAt) === null;
+      });
+      if (invalidAttendee) {
+        alert(`RID certification for ${String((_a = invalidAttendee == null ? void 0 : invalidAttendee.name) != null ? _a : "this attendee").trim()} needs a valid date and time before saving.`);
+        return null;
+      }
+      this.attendeeRIDState.isSaving = true;
+      try {
+        const currentUserID = Number(await ((_b = this.host) == null ? void 0 : _b.get("userID")));
+        if (!Number.isInteger(currentUserID) || currentUserID <= 0) {
+          alert("The current user could not be determined, so RID certification changes could not be saved.");
+          return null;
+        }
+        const attendees = await this.db.put("sessionAttendees", {
+          sessionID: numericSessionID,
+          certifiedByUserID: currentUserID,
+          attendees: this.buildSessionAttendeePayload()
+        });
+        this.attendeeRIDState.attendeesDraft = this.cloneAttendees(attendees);
+        this.attendeeRIDState.savedAttendees = this.cloneAttendees(attendees);
+        return this.attendeeRIDState.attendeesDraft;
+      } finally {
+        this.attendeeRIDState.isSaving = false;
+      }
+    }
+    mergeIncomingAttendeeData(attendees = []) {
+      const incomingAttendees = this.cloneAttendees(attendees);
+      const deletedDraftPersonIDs = this.getDeletedPersonIDs(
+        this.attendeeRIDState.savedAttendees,
+        this.attendeeRIDState.attendeesDraft
+      );
+      this.attendeeRIDState.attendeesDraft = this.mergeAttendeeCollections(
+        incomingAttendees,
+        this.attendeeRIDState.attendeesDraft,
+        { excludedPersonIDs: deletedDraftPersonIDs }
+      );
+      this.attendeeRIDState.savedAttendees = this.cloneAttendees(incomingAttendees);
+    }
+    updateAttendeeRIDState(personID, nextRIDState) {
+      var _a, _b;
+      const attendeeIndex = this.attendeeRIDState.attendeesDraft.findIndex((attendee) => {
+        return this.getSafePersonID(attendee == null ? void 0 : attendee.personID) === personID;
+      });
+      if (attendeeIndex < 0) {
+        return;
+      }
+      const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
+      this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
+        ...currentAttendee,
+        ridCertified: nextRIDState.ridCertified === true,
+        ridCertifiedAt: nextRIDState.ridCertified === true ? (_a = nextRIDState.ridCertifiedAt) != null ? _a : null : null,
+        ridCertifiedByUserID: nextRIDState.ridCertified === true ? (_b = currentAttendee == null ? void 0 : currentAttendee.ridCertifiedByUserID) != null ? _b : null : null
+      };
+    }
+    buildSessionAttendeePayload() {
+      return this.attendeeRIDState.attendeesDraft.map((attendee) => {
+        var _a, _b;
+        const personID = this.getSafePersonID(attendee == null ? void 0 : attendee.personID);
+        const isRIDCertified = (attendee == null ? void 0 : attendee.ridCertified) === true;
+        return {
+          personID,
+          certStatusID: Number(attendee == null ? void 0 : attendee.certStatusID),
+          dateRangeStart: (_a = attendee == null ? void 0 : attendee.dateRangeStart) != null ? _a : null,
+          dateRangeEnd: (_b = attendee == null ? void 0 : attendee.dateRangeEnd) != null ? _b : null,
+          ridCertified: isRIDCertified,
+          ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee == null ? void 0 : attendee.ridCertifiedAt) : null
+        };
+      });
+    }
+    mergeAttendeeCollections(incomingAttendees = [], existingAttendees = [], options = {}) {
+      const incomingAttendeeMap = new Map(
+        incomingAttendees.map((attendee) => [this.getSafePersonID(attendee == null ? void 0 : attendee.personID), attendee])
+      );
+      const excludedPersonIDs = (options == null ? void 0 : options.excludedPersonIDs) instanceof Set ? options.excludedPersonIDs : /* @__PURE__ */ new Set();
+      const mergedAttendees = [];
+      const seenPersonIDs = /* @__PURE__ */ new Set();
+      for (const attendee of Array.isArray(existingAttendees) ? existingAttendees : []) {
+        const personID = this.getSafePersonID(attendee == null ? void 0 : attendee.personID);
+        if (personID <= 0 || seenPersonIDs.has(personID)) {
+          continue;
+        }
+        const incomingAttendee = incomingAttendeeMap.get(personID);
+        if (incomingAttendee) {
+          mergedAttendees.push(this.applyDraftStateToAttendee(incomingAttendee, attendee));
+        } else {
+          mergedAttendees.push(this.cloneAttendees([attendee])[0]);
+        }
+        seenPersonIDs.add(personID);
+      }
+      for (const attendee of incomingAttendees) {
+        const personID = this.getSafePersonID(attendee == null ? void 0 : attendee.personID);
+        if (personID <= 0 || seenPersonIDs.has(personID) || excludedPersonIDs.has(personID)) {
+          continue;
+        }
+        mergedAttendees.push(this.cloneAttendees([attendee])[0]);
+        seenPersonIDs.add(personID);
+      }
+      return mergedAttendees;
+    }
+    applyDraftStateToAttendee(baseAttendee, draftAttendee) {
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+      if (!draftAttendee) {
+        return this.cloneAttendees([baseAttendee])[0];
+      }
+      const certStatusID = Number(draftAttendee == null ? void 0 : draftAttendee.certStatusID);
+      const normalizedCertStatusID = Number.isFinite(certStatusID) ? certStatusID : Number(baseAttendee == null ? void 0 : baseAttendee.certStatusID);
+      return {
+        ...this.cloneAttendees([baseAttendee])[0],
+        dateRangeStart: (_b = (_a = draftAttendee == null ? void 0 : draftAttendee.dateRangeStart) != null ? _a : baseAttendee == null ? void 0 : baseAttendee.dateRangeStart) != null ? _b : null,
+        dateRangeEnd: (_d = (_c = draftAttendee == null ? void 0 : draftAttendee.dateRangeEnd) != null ? _c : baseAttendee == null ? void 0 : baseAttendee.dateRangeEnd) != null ? _d : null,
+        dateRangeDisplay: (_f = (_e = draftAttendee == null ? void 0 : draftAttendee.dateRangeDisplay) != null ? _e : baseAttendee == null ? void 0 : baseAttendee.dateRangeDisplay) != null ? _f : null,
+        dateRange: (_h = (_g = draftAttendee == null ? void 0 : draftAttendee.dateRange) != null ? _g : baseAttendee == null ? void 0 : baseAttendee.dateRange) != null ? _h : null,
+        certStatusID: normalizedCertStatusID,
+        certStatus: (_j = (_i = draftAttendee == null ? void 0 : draftAttendee.certStatus) != null ? _i : baseAttendee == null ? void 0 : baseAttendee.certStatus) != null ? _j : "",
+        certStatusLabel: (_l = (_k = draftAttendee == null ? void 0 : draftAttendee.certStatusLabel) != null ? _k : baseAttendee == null ? void 0 : baseAttendee.certStatusLabel) != null ? _l : "",
+        ridCertified: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true,
+        ridCertifiedAt: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.normalizeRIDDateTimeValue(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedAt) : null,
+        ridCertifiedByUserID: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.getPositiveIntegerOrNull(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedByUserID) : null
+      };
+    }
+    buildComparableAttendeeState(attendees = []) {
+      return (Array.isArray(attendees) ? attendees : []).map((attendee) => {
+        var _a, _b;
+        const isRIDCertified = (attendee == null ? void 0 : attendee.ridCertified) === true;
+        return {
+          personID: this.getSafePersonID(attendee == null ? void 0 : attendee.personID),
+          certStatusID: Number(attendee == null ? void 0 : attendee.certStatusID),
+          dateRangeStart: String((_a = attendee == null ? void 0 : attendee.dateRangeStart) != null ? _a : ""),
+          dateRangeEnd: String((_b = attendee == null ? void 0 : attendee.dateRangeEnd) != null ? _b : ""),
+          ridCertified: isRIDCertified,
+          ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee == null ? void 0 : attendee.ridCertifiedAt) : null
+        };
+      }).sort((leftAttendee, rightAttendee) => leftAttendee.personID - rightAttendee.personID);
+    }
+    cloneAttendees(attendees = []) {
+      return structuredClone(Array.isArray(attendees) ? attendees : []);
+    }
+    getCurrentDateTimeLocalInputValue() {
+      const currentDate = /* @__PURE__ */ new Date();
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      const day = String(currentDate.getDate()).padStart(2, "0");
+      const hours = String(currentDate.getHours()).padStart(2, "0");
+      const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    dateTimeLocalInputValueToISO(dateTimeLocalValue) {
+      const normalizedDateTimeLocalValue = String(dateTimeLocalValue != null ? dateTimeLocalValue : "").trim();
+      if (normalizedDateTimeLocalValue === "") {
+        return null;
+      }
+      const localDate = new Date(normalizedDateTimeLocalValue);
+      if (Number.isNaN(localDate.getTime())) {
+        return null;
+      }
+      return localDate.toISOString();
+    }
+    normalizeRIDDateTimeValue(value) {
+      const normalizedValue = String(value != null ? value : "").trim();
+      if (normalizedValue === "") {
+        return null;
+      }
+      const parsedTimestamp = Date.parse(normalizedValue);
+      if (Number.isNaN(parsedTimestamp)) {
+        return null;
+      }
+      return new Date(parsedTimestamp).toISOString();
+    }
+    normalizeDateInputValue(dateValue) {
+      const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
+      if (normalizedDateValue === "") {
+        return null;
+      }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDateValue)) {
+        return null;
+      }
+      return normalizedDateValue;
+    }
+    getSafePersonID(personID) {
+      const numericPersonID = Number(personID);
+      return Number.isFinite(numericPersonID) ? numericPersonID : 0;
+    }
+    getPositiveIntegerOrNull(value) {
+      const numericValue = Number(value);
+      if (!Number.isInteger(numericValue) || numericValue <= 0) {
+        return null;
+      }
+      return numericValue;
+    }
+    getPositiveIntegerOrDefault(value, defaultValue) {
+      const numericValue = Number(value);
+      if (Number.isInteger(numericValue) && numericValue > 0) {
+        return numericValue;
+      }
+      return defaultValue;
+    }
+    getDeletedPersonIDs(savedAttendees = [], draftAttendees = []) {
+      const draftPersonIDs = new Set(
+        (Array.isArray(draftAttendees) ? draftAttendees : []).map((attendee) => this.getSafePersonID(attendee == null ? void 0 : attendee.personID)).filter((personID) => personID > 0)
+      );
+      return new Set(
+        (Array.isArray(savedAttendees) ? savedAttendees : []).map((attendee) => this.getSafePersonID(attendee == null ? void 0 : attendee.personID)).filter((personID) => personID > 0 && !draftPersonIDs.has(personID))
+      );
+    }
+  };
+
+  // js/session-table2/attendee_filter_manager.js
+  var attendee_filter_manager = class {
+    constructor() {
+      this.filterRefs = null;
+      this.activeSearchValue = "";
+    }
+    init(filterRefs) {
+      this.filterRefs = filterRefs;
+      this.bindEvents();
+    }
+    bindEvents() {
+      var _a;
+      if (!((_a = this.filterRefs) == null ? void 0 : _a.searchField) || this.filterRefs.searchField.length === 0) {
+        return;
+      }
+      this.filterRefs.searchField.off("input.pdtAttendeeFilter").on("input.pdtAttendeeFilter", (event) => {
+        var _a2;
+        this.activeSearchValue = String((_a2 = jq(event.currentTarget).val()) != null ? _a2 : "");
+        this.applyFilter();
+      });
+    }
+    reset() {
+      var _a, _b, _c, _d;
+      this.activeSearchValue = "";
+      if (((_b = (_a = this.filterRefs) == null ? void 0 : _a.searchField) == null ? void 0 : _b.length) > 0) {
+        this.filterRefs.searchField.val("");
+      }
+      if (((_d = (_c = this.filterRefs) == null ? void 0 : _c.tableBody) == null ? void 0 : _d.length) > 0) {
+        this.filterRefs.tableBody.find(".pdt-attendees-filter-empty-row").remove();
+        this.filterRefs.tableBody.find(".pdt-attendees-row").prop("hidden", false);
+      }
+    }
+    applyFilter(searchValue = this.activeSearchValue) {
+      var _a;
+      if (!((_a = this.filterRefs) == null ? void 0 : _a.tableBody) || this.filterRefs.tableBody.length === 0) {
+        return;
+      }
+      this.activeSearchValue = String(searchValue != null ? searchValue : "");
+      const normalizedSearchValue = this.normalizeSearchValue(this.activeSearchValue);
+      const attendeeRows = this.filterRefs.tableBody.find(".pdt-attendees-row");
+      this.filterRefs.tableBody.find(".pdt-attendees-filter-empty-row").remove();
+      if (attendeeRows.length === 0) {
+        return;
+      }
+      let visibleRowCount = 0;
+      attendeeRows.each((_, attendeeRow) => {
+        const attendeeRowElement = jq(attendeeRow);
+        const attendeeSearchText = this.normalizeSearchValue(attendeeRowElement.attr("data-search-text"));
+        const rowMatches = normalizedSearchValue === "" || attendeeSearchText.includes(normalizedSearchValue);
+        attendeeRowElement.prop("hidden", !rowMatches);
+        if (rowMatches) {
+          visibleRowCount += 1;
+        }
+      });
+      if (normalizedSearchValue !== "" && visibleRowCount === 0) {
+        this.filterRefs.tableBody.append(this.buildNoSearchResultsRow(this.getVisibleColumnCount()));
+      }
+    }
+    getVisibleColumnCount() {
+      var _a;
+      if (typeof ((_a = this.filterRefs) == null ? void 0 : _a.getVisibleColumnCount) !== "function") {
+        return 1;
+      }
+      return Number(this.filterRefs.getVisibleColumnCount()) || 1;
+    }
+    buildAttendeeSearchText(attendee) {
+      var _a, _b;
+      return `${String((_a = attendee == null ? void 0 : attendee.name) != null ? _a : "").trim()} ${String((_b = attendee == null ? void 0 : attendee.email) != null ? _b : "").trim()}`.trim();
+    }
+    buildNoSearchResultsRow(columnCount) {
+      return `
             <tr class="pdt-attendees-placeholder-row pdt-attendees-filter-empty-row">
-                <td colspan="${e}">No attendees match that search.</td>
+                <td colspan="${columnCount}">No attendees match that search.</td>
             </tr>
-        `}normalizeSearchValue(e){return String(e!=null?e:"").toLowerCase().trim().replace(/\s+/g," ")}};var H=class{constructor(e=null){this.db=e,this.attendeeSearchSelect=null,this.attendeeDirectory=[]}async init(){await this.load()}async load(){this.setDirectory(await this.db.get("attendees"))}setDirectory(e=[]){this.attendeeDirectory=Array.isArray(e)?e:[]}destroy(){this.attendeeSearchSelect&&(this.attendeeSearchSelect.destroy(),this.attendeeSearchSelect=null)}syncSearch(e,t={}){var r;if(this.destroy(),!e||e.length===0||typeof window.TomSelect=="undefined")return;let s=this.getAttendeeOptions((r=t==null?void 0:t.excludedPersonIDs)!=null?r:[]),i=s.length===0?"All attendees are already added":"Add attendee: search attendees by name or email";this.attendeeSearchSelect=new TomSelect(e[0],{valueField:"id",labelField:"label",searchField:["name","email"],options:s,maxItems:1,create:!1,persist:!1,placeholder:i,sortField:[{field:"name",direction:"asc"},{field:"email",direction:"asc"}],render:{option:(n,a)=>`
+        `;
+    }
+    normalizeSearchValue(value) {
+      return String(value != null ? value : "").toLowerCase().trim().replace(/\s+/g, " ");
+    }
+  };
+
+  // js/session-table2/attendee_add_manager.js
+  var attendee_add_manager = class {
+    constructor(db = null) {
+      this.db = db;
+      this.attendeeSearchSelect = null;
+      this.attendeeDirectory = [];
+    }
+    async init() {
+      await this.load();
+    }
+    async load() {
+      this.setDirectory(await this.db.get("attendees"));
+    }
+    setDirectory(attendeeDirectory = []) {
+      this.attendeeDirectory = Array.isArray(attendeeDirectory) ? attendeeDirectory : [];
+    }
+    destroy() {
+      if (!this.attendeeSearchSelect) {
+        return;
+      }
+      this.attendeeSearchSelect.destroy();
+      this.attendeeSearchSelect = null;
+    }
+    syncSearch(addAttendeeField, options = {}) {
+      var _a;
+      this.destroy();
+      if (!addAttendeeField || addAttendeeField.length === 0 || typeof window.TomSelect === "undefined") {
+        return;
+      }
+      const attendeeOptions = this.getAttendeeOptions((_a = options == null ? void 0 : options.excludedPersonIDs) != null ? _a : []);
+      const placeholder = attendeeOptions.length === 0 ? "All attendees are already added" : "Add attendee: search attendees by name or email";
+      this.attendeeSearchSelect = new TomSelect(addAttendeeField[0], {
+        valueField: "id",
+        labelField: "label",
+        searchField: ["name", "email"],
+        options: attendeeOptions,
+        maxItems: 1,
+        create: false,
+        persist: false,
+        placeholder,
+        sortField: [
+          { field: "name", direction: "asc" },
+          { field: "email", direction: "asc" }
+        ],
+        render: {
+          option: (optionData, escape) => {
+            return `
                         <div class="pdt-add-attendee-option">
-                            <span class="pdt-add-attendee-option__name">${a(n.name)}</span>
-                            <span class="pdt-add-attendee-option__email">${a(n.email)}</span>
+                            <span class="pdt-add-attendee-option__name">${escape(optionData.name)}</span>
+                            <span class="pdt-add-attendee-option__email">${escape(optionData.email)}</span>
                         </div>
-                    `,item:(n,a)=>`<div>${a(n.label)}</div>`,no_results:()=>'<div class="no-results">No matching attendees found.</div>'},onItemAdd:n=>{var l,d;let a=s.find(m=>m.id===Number(n));if(!a){alert("That attendee could not be added. Please refresh the page and try again."),(l=this.attendeeSearchSelect)==null||l.clear();return}(d=this.attendeeSearchSelect)==null||d.clear();let o=t==null?void 0:t.onAttendeeSelected;typeof o=="function"&&Promise.resolve(o(a))}}),s.length===0&&this.attendeeSearchSelect.disable()}getAttendeeOptions(e=[]){let t=new Set((Array.isArray(e)?e:[]).map(s=>Number(s)).filter(s=>Number.isFinite(s)));return this.attendeeDirectory.filter(s=>!t.has(Number(s==null?void 0:s.personID))).map(s=>{var i,r,n;return{id:Number(s==null?void 0:s.personID),personID:Number(s==null?void 0:s.personID),name:String((i=s==null?void 0:s.name)!=null?i:"").trim(),email:String((r=s==null?void 0:s.email)!=null?r:"").trim(),label:String((n=s==null?void 0:s.label)!=null?n:"").trim()}}).filter(s=>Number.isFinite(s.id)&&s.name!==""&&s.email!==""&&s.label!=="")}};var W=class{constructor(e=null,t=null){this.db=e,this.host=t,this.tableRenderer=new x,this.attendeeRIDManager=new B(e,t),this.attendeeFilterManager=new Q,this.attendeeAddManager=new H(e),this.mainPage=null,this.commentManager=null,this.commentFields=null,this.modalRefs=null,this.attendeeStatuses={},this.attendeeModalState=this.getDefaultAttendeeModalState()}async init(e,t=null,s=null){this.mainPage=e,this.commentManager=t,this.commentFields=s,this.modalRefs={wrapper:$("#pdt-shadow-attendees"),modal:$("#pdt-shadow-attendees .pdt-session-attendees"),sessionName:$("#pdt-shadow-attendees .session-name"),attendeeSearch:$("#pdt-shadow-attendees #attendee-search"),tableHead:$("#pdt-shadow-attendees .table-wrapper table thead"),tableBody:$("#pdt-shadow-attendees .table-wrapper table tbody"),cancel:$("#pdt-shadow-attendees #closeAttendeesModal"),submit:$("#pdt-shadow-attendees #saveAttendeesModal")},this.clearTableHead(),this.clearAttendeeRows(),this.bindModalEvents(),this.bindCommentTriggers(),this.bindAttendeeFieldEvents(),await this.attendeeAddManager.init(),this.attendeeFilterManager.init({searchField:this.modalRefs.attendeeSearch,tableBody:this.modalRefs.tableBody,getVisibleColumnCount:()=>this.getVisibleColumnCount()}),this.updateSubmitButtonState()}getDefaultAttendeeModalState(){return{activeSessionID:null,showRIDColumn:!1,showSelfPacedDateRangeColumn:!1}}bindModalEvents(){this.modalRefs&&(this.modalRefs.cancel.off("click.pdtShowAttendees").on("click.pdtShowAttendees",async()=>{await this.closeModal()}),this.modalRefs.wrapper.off("click.pdtShowAttendees").on("click.pdtShowAttendees",async e=>{e.target===this.modalRefs.wrapper[0]&&await this.closeModal()}),this.modalRefs.submit.off("click.pdtShowAttendees").on("click.pdtShowAttendees",async()=>{await this.saveAttendeeChanges()}))}bindCommentTriggers(){this.modalRefs&&this.modalRefs.tableBody.off("click.pdtAttendeeComment",".pdt-attendee-comment-button").on("click.pdtAttendeeComment",".pdt-attendee-comment-button",async e=>{await this.openCommentModal($(e.currentTarget))})}bindAttendeeFieldEvents(){this.modalRefs&&(this.modalRefs.tableBody.off("change.pdtRIDCertified",".pdt-rid-certified-checkbox").on("change.pdtRIDCertified",".pdt-rid-certified-checkbox",e=>{this.attendeeRIDManager.handleCheckboxChange($(e.currentTarget)),this.updateSubmitButtonState()}),this.modalRefs.tableBody.off("change.pdtRIDTimestamp",".pdt-rid-certified-at").on("change.pdtRIDTimestamp",".pdt-rid-certified-at",e=>{this.attendeeRIDManager.handleDateTimeChange($(e.currentTarget)),this.updateSubmitButtonState()}),this.modalRefs.tableBody.off("change.pdtAttendeeCertStatus",".pdt-attendee-cert-status").on("change.pdtAttendeeCertStatus",".pdt-attendee-cert-status",e=>{let t=$(e.currentTarget),s=t.closest(".pdt-attendees-row"),i=Number(s.attr("data-person-id"));if(!Number.isFinite(i))return;let r=Number(t.val());this.attendeeRIDManager.updateAttendeeCertificationStatus(i,r,this.getAttendeeStatusLabel(r)),this.updateSubmitButtonState()}),this.modalRefs.tableBody.off("change.pdtAttendeeDateStart",".pdt-attendee-date-start").on("change.pdtAttendeeDateStart",".pdt-attendee-date-start",e=>{this.handleAttendeeDateRangeChange($(e.currentTarget))}),this.modalRefs.tableBody.off("change.pdtAttendeeDateEnd",".pdt-attendee-date-end").on("change.pdtAttendeeDateEnd",".pdt-attendee-date-end",e=>{this.handleAttendeeDateRangeChange($(e.currentTarget))}),this.modalRefs.tableBody.off("click.pdtDeleteAttendee",".pdt-attendee-delete-button").on("click.pdtDeleteAttendee",".pdt-attendee-delete-button",e=>{let t=$(e.currentTarget).closest(".pdt-attendees-row"),s=Number(t.attr("data-person-id"));!Number.isFinite(s)||!this.attendeeRIDManager.removeAttendee(s)||(this.renderAttendeeRows(),this.updateSubmitButtonState())}))}handleAttendeeDateRangeChange(e){var a,o;let t=e.closest(".pdt-attendees-row"),s=Number(t.attr("data-person-id"));if(!Number.isFinite(s))return;let i=t.find(".pdt-attendee-date-start").first(),r=t.find(".pdt-attendee-date-end").first(),n=this.attendeeRIDManager.updateAttendeeDateRange(s,{dateRangeStart:i.val(),dateRangeEnd:r.val()});n&&(i.val((a=n.dateRangeStart)!=null?a:""),r.val((o=n.dateRangeEnd)!=null?o:""),this.updateSubmitButtonState())}async openForSession(e){var n;if(!this.modalRefs)return;let[t,s,i,r]=await Promise.all([this.db.get("session",{sessionID:e}),this.db.get("attendees",{sessionID:e}),this.db.get("attendeeStatuses"),this.db.get("attendees")]);if(!t){alert("That session could not be found. Please refresh the page and try again.");return}this.attendeeStatuses=i!=null?i:{},this.attendeeAddManager.setDirectory(r),this.attendeeModalState={activeSessionID:e,showRIDColumn:this.shouldShowRIDColumn(t),showSelfPacedDateRangeColumn:this.shouldShowSelfPacedDateRangeColumn(t)},this.attendeeRIDManager.load(s),this.modalRefs.sessionName.text(String((n=t.SessionTitle)!=null?n:"")),this.attendeeFilterManager.reset(),this.renderAttendeeRows(),this.getAddAttendeeField().val(""),this.updateSubmitButtonState(),this.modalRefs.wrapper.prop("hidden",!1),y.state="showAttendees"}async openCommentModal(e){var n;if(!this.commentManager||!this.commentFields)return;let t=Number(this.attendeeModalState.activeSessionID),s=e.closest(".pdt-attendees-row"),i=Number(s.attr("data-person-id")),r=String((n=s.find("td").first().find("p").first().text())!=null?n:"").trim();!Number.isFinite(t)||!Number.isFinite(i)||r===""||await this.commentManager.open(this.commentFields,{sessionID:t,personID:i,personName:r,onSave:async()=>{await this.refreshAttendees()}})}async saveAttendeeChanges(){var i;if(!this.modalRefs)return;let e=Number(this.attendeeModalState.activeSessionID);if(!Number.isFinite(e))return;let t=this.attendeeRIDManager.saveChanges(e);this.updateSubmitButtonState();let s=await t;this.updateSubmitButtonState(),Array.isArray(s)&&(await((i=this.mainPage)==null?void 0:i.loadTable()),this.renderAttendeeRows())}async closeModal(){this.modalRefs&&(this.modalRefs.wrapper.prop("hidden",!0),this.attendeeFilterManager.reset(),this.attendeeAddManager.destroy(),this.getAddAttendeeField().val(""),this.clearTableHead(),this.clearAttendeeRows(),this.attendeeRIDManager.reset(),this.attendeeModalState=this.getDefaultAttendeeModalState(),this.updateSubmitButtonState(),y.state="mainPage")}clearTableHead(){!this.modalRefs||this.modalRefs.tableHead.length===0||this.modalRefs.tableHead.empty()}clearAttendeeRows(){!this.modalRefs||this.modalRefs.tableBody.length===0||this.modalRefs.tableBody.empty()}async refreshAttendees(){let e=Number(this.attendeeModalState.activeSessionID);if(!Number.isFinite(e))return;let t=await this.db.get("attendees",{sessionID:e});this.attendeeRIDManager.mergeIncomingAttendeeData(t),this.renderAttendeeRows(),this.updateSubmitButtonState()}getAddAttendeeField(){return $("#pdt-shadow-attendees #add-attendee")}async addAttendeeToDraft(e){let t=Number(this.attendeeModalState.activeSessionID),s=Number(e==null?void 0:e.personID);if(!Number.isFinite(t)||!Number.isFinite(s))return;let i=await this.db.get("attendee",{sessionID:t,personID:s});if(!i){alert("That attendee could not be loaded. Please refresh the page and try again.");return}this.attendeeRIDManager.addAttendee(i)&&(this.renderAttendeeRows(),this.updateSubmitButtonState())}renderAttendeeRows(){!this.modalRefs||this.modalRefs.tableHead.length===0||this.modalRefs.tableBody.length===0||(this.tableRenderer.render(this.modalRefs.tableHead,this.modalRefs.tableBody,{attendees:this.attendeeRIDManager.getDraftAttendees(),attendeeStatuses:this.attendeeStatuses,dateRangeRenderMode:"edit",showRIDColumn:this.attendeeModalState.showRIDColumn,showSelfPacedDateRangeColumn:this.attendeeModalState.showSelfPacedDateRangeColumn,buildAttendeeSearchText:e=>this.attendeeFilterManager.buildAttendeeSearchText(e)}),this.attendeeFilterManager.applyFilter(),this.attendeeAddManager.syncSearch(this.getAddAttendeeField(),{excludedPersonIDs:this.attendeeRIDManager.getDraftPersonIDs(),onAttendeeSelected:async e=>{await this.addAttendeeToDraft(e)}}))}getVisibleColumnCount(){return this.tableRenderer.getVisibleColumnCount({showRIDColumn:this.attendeeModalState.showRIDColumn,showSelfPacedDateRangeColumn:this.attendeeModalState.showSelfPacedDateRangeColumn})}getAttendeeStatusLabel(e){var s;let t=Number(e);return Number.isFinite(t)&&this.attendeeStatuses[t]?this.attendeeStatuses[t]:(s=this.attendeeStatuses[4])!=null?s:"Not Assigned"}shouldShowRIDColumn(e){var t;return typeof(e==null?void 0:e.IsRIDQualifiedSession)=="boolean"?e.IsRIDQualifiedSession:String((t=e==null?void 0:e.RIDQualify)!=null?t:"").trim().toLowerCase()==="yes"}shouldShowSelfPacedDateRangeColumn(e){var t;return typeof(e==null?void 0:e.IsSelfPacedSession)=="boolean"?e.IsSelfPacedSession:String((t=e==null?void 0:e.Date)!=null?t:"").trim()==="Self Paced"}updateSubmitButtonState(){if(!this.modalRefs||this.modalRefs.submit.length===0)return;let e=this.attendeeRIDManager.isSaving();this.modalRefs.submit.text(e?"Saving...":"Save Attendees"),this.modalRefs.submit.prop("disabled",e||!this.attendeeRIDManager.hasPendingChanges())}};var j=class{constructor(e=null){this.db=e,this.flagSearchSelect=null,this.flagsData={top:[]},this.topFlagIds=new Set}async init(e){await this.load(e),this.setupSearch(e)}async reset(e){if(await this.load(e),!this.flagSearchSelect)return;let t=this.getflagOptions(this.flagsData,this.topFlagIds);this.flagSearchSelect.clearOptions(),this.flagSearchSelect.addOptions(t),this.flagSearchSelect.clear(),this.flagSearchSelect.refreshOptions(!1)}async load(e){this.flagsData=await this.db.get("flags"),this.topFlagIds=new Set(this.flagsData.top),this.loadFlags(e.list,this.flagsData)}setupSearch(e){if(e.search.length===0||typeof window.TomSelect=="undefined")return;this.flagSearchSelect&&this.flagSearchSelect.destroy();let t=this.getflagOptions(this.flagsData,this.topFlagIds);this.flagSearchSelect=new TomSelect(e.search[0],{valueField:"id",labelField:"name",searchField:["name"],options:t,maxItems:1,create:!1,render:{no_results:(s,i)=>`
-                        <div class="pdt-add-flag-option create button" data-input="${i(s.input)}">
-                            Add "${i(s.input)}"
-                        </div>`},onItemAdd:s=>{let i=Number(s);if(!this.flagsData[i]){alert("That flag option is invalid. Please refresh the page and try again."),this.flagSearchSelect.clear();return}this.addFlagToList(e.list,i,this.flagsData[i]),this.topFlagIds.add(i),this.flagSearchSelect.removeOption(s),this.flagSearchSelect.refreshOptions(!1),this.flagSearchSelect.clear()}}),this.flagSearchSelect.dropdown_content.addEventListener("mousedown",async s=>{var o;let i=s.target.closest(".pdt-add-flag-option");if(!i)return;s.preventDefault();let r=String((o=i.getAttribute("data-input"))!=null?o:"").trim();if(r==="")return;let n=this.findFlagId(this.flagsData,r);if(n!==null){this.addFlagToList(e.list,n,this.flagsData[n]),this.topFlagIds.add(n),this.flagSearchSelect.removeOption(n),this.flagSearchSelect.clear(),this.flagSearchSelect.close();return}let a=Number(await this.db.addFlag(r));if(!Number.isFinite(a)){alert("Unable to add that flag right now. Please try again.");return}this.flagsData[a]=r,this.addFlagToList(e.list,a,r),this.topFlagIds.add(a),this.flagSearchSelect.clear(),this.flagSearchSelect.close()})}loadFlags(e,t){e.empty();for(let s of t.top)this.addFlagToList(e,s,t[s],!1)}getflagOptions(e,t){return Object.entries(e).filter(([s])=>s!=="top"&&!t.has(Number(s))).map(([s,i])=>({id:Number(s),name:i}))}addFlagToList(e,t,s,i=!0){let r=e.find(`input[data-flagID="${t}"]`);if(r.length>0){r.prop("checked",i||r.prop("checked"));return}let n=`
+                    `;
+          },
+          item: (optionData, escape) => {
+            return `<div>${escape(optionData.label)}</div>`;
+          },
+          no_results: () => {
+            return `<div class="no-results">No matching attendees found.</div>`;
+          }
+        },
+        onItemAdd: (value) => {
+          var _a2, _b;
+          const selectedAttendee = attendeeOptions.find((attendeeOption) => {
+            return attendeeOption.id === Number(value);
+          });
+          if (!selectedAttendee) {
+            alert("That attendee could not be added. Please refresh the page and try again.");
+            (_a2 = this.attendeeSearchSelect) == null ? void 0 : _a2.clear();
+            return;
+          }
+          (_b = this.attendeeSearchSelect) == null ? void 0 : _b.clear();
+          const onAttendeeSelected = options == null ? void 0 : options.onAttendeeSelected;
+          if (typeof onAttendeeSelected === "function") {
+            void Promise.resolve(onAttendeeSelected(selectedAttendee));
+          }
+        }
+      });
+      if (attendeeOptions.length === 0) {
+        this.attendeeSearchSelect.disable();
+      }
+    }
+    getAttendeeOptions(excludedPersonIDs = []) {
+      const excludedPersonIDSet = new Set(
+        (Array.isArray(excludedPersonIDs) ? excludedPersonIDs : []).map((personID) => Number(personID)).filter((personID) => Number.isFinite(personID))
+      );
+      return this.attendeeDirectory.filter((attendeeEntry) => {
+        return !excludedPersonIDSet.has(Number(attendeeEntry == null ? void 0 : attendeeEntry.personID));
+      }).map((attendeeEntry) => {
+        var _a, _b, _c;
+        return {
+          id: Number(attendeeEntry == null ? void 0 : attendeeEntry.personID),
+          personID: Number(attendeeEntry == null ? void 0 : attendeeEntry.personID),
+          name: String((_a = attendeeEntry == null ? void 0 : attendeeEntry.name) != null ? _a : "").trim(),
+          email: String((_b = attendeeEntry == null ? void 0 : attendeeEntry.email) != null ? _b : "").trim(),
+          label: String((_c = attendeeEntry == null ? void 0 : attendeeEntry.label) != null ? _c : "").trim()
+        };
+      }).filter((attendeeOption) => {
+        return Number.isFinite(attendeeOption.id) && attendeeOption.name !== "" && attendeeOption.email !== "" && attendeeOption.label !== "";
+      });
+    }
+  };
+
+  // js/session-table2/show_attendees.js
+  var show_attendees = class {
+    constructor(db = null, host = null) {
+      this.db = db;
+      this.host = host;
+      this.tableRenderer = new attendee_table_renderer();
+      this.attendeeRIDManager = new attendee_rid_manager(db, host);
+      this.attendeeFilterManager = new attendee_filter_manager();
+      this.attendeeAddManager = new attendee_add_manager(db);
+      this.mainPage = null;
+      this.commentManager = null;
+      this.commentFields = null;
+      this.modalRefs = null;
+      this.attendeeStatuses = {};
+      this.commentIconURL = null;
+      this.attendeeModalState = this.getDefaultAttendeeModalState();
+    }
+    async init(mainPage, commentManager = null, commentFields = null) {
+      this.mainPage = mainPage;
+      this.commentManager = commentManager;
+      this.commentFields = commentFields;
+      this.modalRefs = {
+        wrapper: jq("#pdt-shadow-attendees"),
+        modal: jq("#pdt-shadow-attendees .pdt-session-attendees"),
+        sessionName: jq("#pdt-shadow-attendees .session-name"),
+        attendeeSearch: jq("#pdt-shadow-attendees #attendee-search"),
+        tableHead: jq("#pdt-shadow-attendees .table-wrapper table thead"),
+        tableBody: jq("#pdt-shadow-attendees .table-wrapper table tbody"),
+        cancel: jq("#pdt-shadow-attendees #closeAttendeesModal"),
+        submit: jq("#pdt-shadow-attendees #saveAttendeesModal")
+      };
+      this.clearTableHead();
+      this.clearAttendeeRows();
+      this.bindModalEvents();
+      this.bindCommentTriggers();
+      this.bindAttendeeFieldEvents();
+      await this.attendeeAddManager.init();
+      this.attendeeFilterManager.init({
+        searchField: this.modalRefs.attendeeSearch,
+        tableBody: this.modalRefs.tableBody,
+        getVisibleColumnCount: () => this.getVisibleColumnCount()
+      });
+      this.updateSubmitButtonState();
+    }
+    getDefaultAttendeeModalState() {
+      return {
+        activeSessionID: null,
+        showRIDColumn: false,
+        showSelfPacedDateRangeColumn: false
+      };
+    }
+    bindModalEvents() {
+      if (!this.modalRefs) {
+        return;
+      }
+      this.modalRefs.cancel.off("click.pdtShowAttendees").on("click.pdtShowAttendees", async () => {
+        await this.closeModal();
+      });
+      this.modalRefs.wrapper.off("click.pdtShowAttendees").on("click.pdtShowAttendees", async (event) => {
+        if (event.target !== this.modalRefs.wrapper[0]) {
+          return;
+        }
+        await this.closeModal();
+      });
+      this.modalRefs.submit.off("click.pdtShowAttendees").on("click.pdtShowAttendees", async () => {
+        await this.saveAttendeeChanges();
+      });
+    }
+    bindCommentTriggers() {
+      if (!this.modalRefs) {
+        return;
+      }
+      this.modalRefs.tableBody.off("click.pdtAttendeeComment", ".pdt-attendee-comment-button").on("click.pdtAttendeeComment", ".pdt-attendee-comment-button", async (event) => {
+        await this.openCommentModal(jq(event.currentTarget));
+      });
+    }
+    bindAttendeeFieldEvents() {
+      if (!this.modalRefs) {
+        return;
+      }
+      this.modalRefs.tableBody.off("change.pdtRIDCertified", ".pdt-rid-certified-checkbox").on("change.pdtRIDCertified", ".pdt-rid-certified-checkbox", (event) => {
+        this.attendeeRIDManager.handleCheckboxChange(jq(event.currentTarget));
+        this.updateSubmitButtonState();
+      });
+      this.modalRefs.tableBody.off("change.pdtRIDTimestamp", ".pdt-rid-certified-at").on("change.pdtRIDTimestamp", ".pdt-rid-certified-at", (event) => {
+        this.attendeeRIDManager.handleDateTimeChange(jq(event.currentTarget));
+        this.updateSubmitButtonState();
+      });
+      this.modalRefs.tableBody.off("change.pdtAttendeeCertStatus", ".pdt-attendee-cert-status").on("change.pdtAttendeeCertStatus", ".pdt-attendee-cert-status", (event) => {
+        const certificationStatusField = jq(event.currentTarget);
+        const attendeeRow = certificationStatusField.closest(".pdt-attendees-row");
+        const personID = Number(attendeeRow.attr("data-person-id"));
+        if (!Number.isFinite(personID)) {
+          return;
+        }
+        const statusID = Number(certificationStatusField.val());
+        this.attendeeRIDManager.updateAttendeeCertificationStatus(
+          personID,
+          statusID,
+          this.getAttendeeStatusLabel(statusID)
+        );
+        this.updateSubmitButtonState();
+      });
+      this.modalRefs.tableBody.off("change.pdtAttendeeDateStart", ".pdt-attendee-date-start").on("change.pdtAttendeeDateStart", ".pdt-attendee-date-start", (event) => {
+        this.handleAttendeeDateRangeChange(jq(event.currentTarget));
+      });
+      this.modalRefs.tableBody.off("change.pdtAttendeeDateEnd", ".pdt-attendee-date-end").on("change.pdtAttendeeDateEnd", ".pdt-attendee-date-end", (event) => {
+        this.handleAttendeeDateRangeChange(jq(event.currentTarget));
+      });
+      this.modalRefs.tableBody.off("click.pdtDeleteAttendee", ".pdt-attendee-delete-button").on("click.pdtDeleteAttendee", ".pdt-attendee-delete-button", (event) => {
+        const attendeeRow = jq(event.currentTarget).closest(".pdt-attendees-row");
+        const personID = Number(attendeeRow.attr("data-person-id"));
+        if (!Number.isFinite(personID)) {
+          return;
+        }
+        const didRemoveAttendee = this.attendeeRIDManager.removeAttendee(personID);
+        if (!didRemoveAttendee) {
+          return;
+        }
+        this.renderAttendeeRows();
+        this.updateSubmitButtonState();
+      });
+    }
+    handleAttendeeDateRangeChange(dateField) {
+      var _a, _b;
+      const attendeeRow = dateField.closest(".pdt-attendees-row");
+      const personID = Number(attendeeRow.attr("data-person-id"));
+      if (!Number.isFinite(personID)) {
+        return;
+      }
+      const startDateField = attendeeRow.find(".pdt-attendee-date-start").first();
+      const endDateField = attendeeRow.find(".pdt-attendee-date-end").first();
+      const updatedAttendee = this.attendeeRIDManager.updateAttendeeDateRange(personID, {
+        dateRangeStart: startDateField.val(),
+        dateRangeEnd: endDateField.val()
+      });
+      if (!updatedAttendee) {
+        return;
+      }
+      startDateField.val((_a = updatedAttendee.dateRangeStart) != null ? _a : "");
+      endDateField.val((_b = updatedAttendee.dateRangeEnd) != null ? _b : "");
+      this.updateSubmitButtonState();
+    }
+    async openForSession(sessionID) {
+      var _a;
+      if (!this.modalRefs) {
+        return;
+      }
+      const [sessionData, attendees, attendeeStatuses, attendeeDirectory] = await Promise.all([
+        this.db.get("session", { sessionID }),
+        this.db.get("attendees", { sessionID }),
+        this.db.get("attendeeStatuses"),
+        this.db.get("attendees")
+      ]);
+      if (!sessionData) {
+        alert("That session could not be found. Please refresh the page and try again.");
+        return;
+      }
+      this.attendeeStatuses = attendeeStatuses != null ? attendeeStatuses : {};
+      this.commentIconURL = await this.getCommentIconURL();
+      this.attendeeAddManager.setDirectory(attendeeDirectory);
+      this.attendeeModalState = {
+        activeSessionID: sessionID,
+        showRIDColumn: this.shouldShowRIDColumn(sessionData),
+        showSelfPacedDateRangeColumn: this.shouldShowSelfPacedDateRangeColumn(sessionData)
+      };
+      this.attendeeRIDManager.load(attendees);
+      this.modalRefs.sessionName.text(String((_a = sessionData.SessionTitle) != null ? _a : ""));
+      this.attendeeFilterManager.reset();
+      this.renderAttendeeRows();
+      this.getAddAttendeeField().val("");
+      this.updateSubmitButtonState();
+      this.modalRefs.wrapper.prop("hidden", false);
+      session_state.state = "showAttendees";
+    }
+    async openCommentModal(commentButton) {
+      var _a;
+      if (!this.commentManager || !this.commentFields) {
+        return;
+      }
+      const sessionID = Number(this.attendeeModalState.activeSessionID);
+      const attendeeRow = commentButton.closest(".pdt-attendees-row");
+      const personID = Number(attendeeRow.attr("data-person-id"));
+      const personName = String((_a = attendeeRow.find("td").first().find("p").first().text()) != null ? _a : "").trim();
+      if (!Number.isFinite(sessionID) || !Number.isFinite(personID) || personName === "") {
+        return;
+      }
+      await this.commentManager.open(this.commentFields, {
+        sessionID,
+        personID,
+        personName,
+        onSave: async () => {
+          await this.refreshAttendees();
+        }
+      });
+    }
+    async saveAttendeeChanges() {
+      var _a;
+      if (!this.modalRefs) {
+        return;
+      }
+      const sessionID = Number(this.attendeeModalState.activeSessionID);
+      if (!Number.isFinite(sessionID)) {
+        return;
+      }
+      const savePromise = this.attendeeRIDManager.saveChanges(sessionID);
+      this.updateSubmitButtonState();
+      const attendees = await savePromise;
+      this.updateSubmitButtonState();
+      if (!Array.isArray(attendees)) {
+        return;
+      }
+      await ((_a = this.mainPage) == null ? void 0 : _a.loadTable());
+      this.renderAttendeeRows();
+    }
+    async closeModal() {
+      if (!this.modalRefs) {
+        return;
+      }
+      this.modalRefs.wrapper.prop("hidden", true);
+      this.attendeeFilterManager.reset();
+      this.attendeeAddManager.destroy();
+      this.getAddAttendeeField().val("");
+      this.clearTableHead();
+      this.clearAttendeeRows();
+      this.attendeeRIDManager.reset();
+      this.attendeeModalState = this.getDefaultAttendeeModalState();
+      this.updateSubmitButtonState();
+      session_state.state = "mainPage";
+    }
+    clearTableHead() {
+      if (!this.modalRefs || this.modalRefs.tableHead.length === 0) {
+        return;
+      }
+      this.modalRefs.tableHead.empty();
+    }
+    clearAttendeeRows() {
+      if (!this.modalRefs || this.modalRefs.tableBody.length === 0) {
+        return;
+      }
+      this.modalRefs.tableBody.empty();
+    }
+    async refreshAttendees() {
+      const sessionID = Number(this.attendeeModalState.activeSessionID);
+      if (!Number.isFinite(sessionID)) {
+        return;
+      }
+      const attendees = await this.db.get("attendees", { sessionID });
+      this.attendeeRIDManager.mergeIncomingAttendeeData(attendees);
+      this.renderAttendeeRows();
+      this.updateSubmitButtonState();
+    }
+    getAddAttendeeField() {
+      return jq("#pdt-shadow-attendees #add-attendee");
+    }
+    async addAttendeeToDraft(attendeeDirectoryEntry) {
+      const sessionID = Number(this.attendeeModalState.activeSessionID);
+      const personID = Number(attendeeDirectoryEntry == null ? void 0 : attendeeDirectoryEntry.personID);
+      if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+        return;
+      }
+      const attendeeCandidate = await this.db.get("attendee", { sessionID, personID });
+      if (!attendeeCandidate) {
+        alert("That attendee could not be loaded. Please refresh the page and try again.");
+        return;
+      }
+      const addedAttendee = this.attendeeRIDManager.addAttendee(attendeeCandidate);
+      if (!addedAttendee) {
+        return;
+      }
+      this.renderAttendeeRows();
+      this.updateSubmitButtonState();
+    }
+    renderAttendeeRows() {
+      if (!this.modalRefs || this.modalRefs.tableHead.length === 0 || this.modalRefs.tableBody.length === 0) {
+        return;
+      }
+      this.tableRenderer.render(this.modalRefs.tableHead, this.modalRefs.tableBody, {
+        attendees: this.attendeeRIDManager.getDraftAttendees(),
+        attendeeStatuses: this.attendeeStatuses,
+        commentIconURL: this.commentIconURL,
+        dateRangeRenderMode: "edit",
+        showRIDColumn: this.attendeeModalState.showRIDColumn,
+        showSelfPacedDateRangeColumn: this.attendeeModalState.showSelfPacedDateRangeColumn,
+        buildAttendeeSearchText: (attendee) => this.attendeeFilterManager.buildAttendeeSearchText(attendee)
+      });
+      this.attendeeFilterManager.applyFilter();
+      this.attendeeAddManager.syncSearch(this.getAddAttendeeField(), {
+        excludedPersonIDs: this.attendeeRIDManager.getDraftPersonIDs(),
+        onAttendeeSelected: async (attendeeDirectoryEntry) => {
+          await this.addAttendeeToDraft(attendeeDirectoryEntry);
+        }
+      });
+    }
+    getVisibleColumnCount() {
+      return this.tableRenderer.getVisibleColumnCount({
+        showRIDColumn: this.attendeeModalState.showRIDColumn,
+        showSelfPacedDateRangeColumn: this.attendeeModalState.showSelfPacedDateRangeColumn
+      });
+    }
+    getAttendeeStatusLabel(statusID) {
+      var _a;
+      const numericStatusID = Number(statusID);
+      if (Number.isFinite(numericStatusID) && this.attendeeStatuses[numericStatusID]) {
+        return this.attendeeStatuses[numericStatusID];
+      }
+      return (_a = this.attendeeStatuses[4]) != null ? _a : "Not Assigned";
+    }
+    shouldShowRIDColumn(sessionData) {
+      var _a;
+      if (typeof (sessionData == null ? void 0 : sessionData.IsRIDQualifiedSession) === "boolean") {
+        return sessionData.IsRIDQualifiedSession;
+      }
+      return String((_a = sessionData == null ? void 0 : sessionData.RIDQualify) != null ? _a : "").trim().toLowerCase() === "yes";
+    }
+    shouldShowSelfPacedDateRangeColumn(sessionData) {
+      var _a;
+      if (typeof (sessionData == null ? void 0 : sessionData.IsSelfPacedSession) === "boolean") {
+        return sessionData.IsSelfPacedSession;
+      }
+      return String((_a = sessionData == null ? void 0 : sessionData.Date) != null ? _a : "").trim() === "Self Paced";
+    }
+    updateSubmitButtonState() {
+      if (!this.modalRefs || this.modalRefs.submit.length === 0) {
+        return;
+      }
+      const isSaving = this.attendeeRIDManager.isSaving();
+      this.modalRefs.submit.text(isSaving ? "Saving..." : "Save Attendees");
+      this.modalRefs.submit.prop("disabled", isSaving || !this.attendeeRIDManager.hasPendingChanges());
+    }
+    async getCommentIconURL() {
+      var _a;
+      if (typeof this.commentIconURL === "string" && this.commentIconURL.trim() !== "") {
+        return this.commentIconURL;
+      }
+      const hostCommentIconURL = typeof ((_a = this.host) == null ? void 0 : _a.getComment) === "function" ? await this.host.getComment() : "../assets/speech-bubble-1130.svg";
+      this.commentIconURL = String(hostCommentIconURL != null ? hostCommentIconURL : "").trim() || "../assets/speech-bubble-1130.svg";
+      return this.commentIconURL;
+    }
+  };
+
+  // js/session-table2/flag_manager.js
+  var flag_manager = class {
+    constructor(db = null) {
+      this.db = db;
+      this.flagSearchSelect = null;
+      this.flagsData = { top: [] };
+      this.topFlagIds = /* @__PURE__ */ new Set();
+    }
+    async init(flagFields) {
+      await this.load(flagFields);
+      this.setupSearch(flagFields);
+    }
+    async reset(flagFields) {
+      await this.load(flagFields);
+      if (!this.flagSearchSelect) {
+        return;
+      }
+      const flagOptions = this.getflagOptions(this.flagsData, this.topFlagIds);
+      this.flagSearchSelect.clearOptions();
+      this.flagSearchSelect.addOptions(flagOptions);
+      this.flagSearchSelect.clear();
+      this.flagSearchSelect.refreshOptions(false);
+    }
+    async load(flagFields) {
+      this.flagsData = await this.db.get("flags");
+      this.topFlagIds = new Set(this.flagsData.top);
+      this.loadFlags(flagFields.list, this.flagsData);
+    }
+    setupSearch(flagFields) {
+      if (flagFields.search.length === 0 || typeof window.TomSelect === "undefined") {
+        return;
+      }
+      if (this.flagSearchSelect) {
+        this.flagSearchSelect.destroy();
+      }
+      const flagOptions = this.getflagOptions(this.flagsData, this.topFlagIds);
+      this.flagSearchSelect = new TomSelect(flagFields.search[0], {
+        valueField: "id",
+        labelField: "name",
+        searchField: ["name"],
+        options: flagOptions,
+        maxItems: 1,
+        create: false,
+        render: {
+          no_results: (data, escape) => {
+            return `
+                        <div class="pdt-add-flag-option create button" data-input="${escape(data.input)}">
+                            Add "${escape(data.input)}"
+                        </div>`;
+          }
+        },
+        onItemAdd: (value) => {
+          const id = Number(value);
+          if (!this.flagsData[id]) {
+            alert("That flag option is invalid. Please refresh the page and try again.");
+            this.flagSearchSelect.clear();
+            return;
+          }
+          this.addFlagToList(flagFields.list, id, this.flagsData[id]);
+          this.topFlagIds.add(id);
+          this.flagSearchSelect.removeOption(value);
+          this.flagSearchSelect.refreshOptions(false);
+          this.flagSearchSelect.clear();
+        }
+      });
+      this.flagSearchSelect.dropdown_content.addEventListener("mousedown", async (event) => {
+        var _a;
+        const addFlagOption = event.target.closest(".pdt-add-flag-option");
+        if (!addFlagOption) {
+          return;
+        }
+        event.preventDefault();
+        const newFlagLabel = String((_a = addFlagOption.getAttribute("data-input")) != null ? _a : "").trim();
+        if (newFlagLabel === "") {
+          return;
+        }
+        const existingFlagId = this.findFlagId(this.flagsData, newFlagLabel);
+        if (existingFlagId !== null) {
+          this.addFlagToList(flagFields.list, existingFlagId, this.flagsData[existingFlagId]);
+          this.topFlagIds.add(existingFlagId);
+          this.flagSearchSelect.removeOption(existingFlagId);
+          this.flagSearchSelect.clear();
+          this.flagSearchSelect.close();
+          return;
+        }
+        const newFlagId = Number(await this.db.addFlag(newFlagLabel));
+        if (!Number.isFinite(newFlagId)) {
+          alert("Unable to add that flag right now. Please try again.");
+          return;
+        }
+        this.flagsData[newFlagId] = newFlagLabel;
+        this.addFlagToList(flagFields.list, newFlagId, newFlagLabel);
+        this.topFlagIds.add(newFlagId);
+        this.flagSearchSelect.clear();
+        this.flagSearchSelect.close();
+      });
+    }
+    loadFlags(flagList, flagsData) {
+      flagList.empty();
+      for (const flag of flagsData.top) {
+        this.addFlagToList(flagList, flag, flagsData[flag], false);
+      }
+    }
+    getflagOptions(flagsData, topFlagIds) {
+      return Object.entries(flagsData).filter(([flagId]) => flagId !== "top" && !topFlagIds.has(Number(flagId))).map(([flagId, label]) => ({
+        id: Number(flagId),
+        name: label
+      }));
+    }
+    addFlagToList(flagList, flagId, flagLabel, isChecked = true) {
+      const existingFlag = flagList.find(`input[data-flagID="${flagId}"]`);
+      if (existingFlag.length > 0) {
+        existingFlag.prop("checked", isChecked || existingFlag.prop("checked"));
+        return;
+      }
+      const option = `
             <label>
-                <input type="checkbox" data-flagID=${t} name="flags" value="${s}" ${i?"checked":""}>
-                ${s}
-            </label>`;e.append(n)}findFlagId(e,t){let s=String(t!=null?t:"").trim().toLowerCase();if(s==="")return null;for(let[i,r]of Object.entries(e))if(i!=="top"&&String(r).trim().toLowerCase()===s)return Number(i);return null}getFlags(e){let t=e.list.find('input[name="flags"]:checked'),s=[];return t.each(function(){let i=Number($(this).attr("data-flagID"));Number.isFinite(i)&&s.push(i)}),s}setFlags(e,t=[]){let s=t.filter(r=>this.flagsData[r]);this.topFlagIds=new Set(this.flagsData.top),this.loadFlags(e.list,this.flagsData);for(let r of s)this.addFlagToList(e.list,r,this.flagsData[r],!0),this.topFlagIds.add(r);if(!this.flagSearchSelect)return;let i=this.getflagOptions(this.flagsData,this.topFlagIds);this.flagSearchSelect.clearOptions(),this.flagSearchSelect.addOptions(i),this.flagSearchSelect.clear(),this.flagSearchSelect.refreshOptions(!1)}};var Y=class{constructor(e=null){this.db=e,this.dropDownAddState=null,this.addOptionModal=null}async init(e,t){this.addOptionModal=t,await this.loadDropDownFields(e),this.bindDropDownAddNew(e),this.bindAddOptionModal()}async reset(e){await this.loadDropDownFields(e)}async loadDropDownFields(e){let t=await this.db.get("sessionTypes"),s=await this.db.get("EventTypes"),i=await this.db.get("CEUTypes");this.loadDropDownOptions(e.sessionType,t),this.loadDropDownOptions(e.eventType,s),this.loadDropDownOptions(e.ceuType,i),e.ridQualified.val("no")}loadDropDownOptions(e,t){let s=e.find('option[value="0"]').detach(),i=e.find('option[value="-1"]').detach(),r=Object.entries(t!=null?t:{}).sort((n,a)=>String(n[1]).localeCompare(String(a[1]),void 0,{sensitivity:"base"}));e.empty(),e.append(s);for(let[n,a]of r)e.append(`<option value="${n}">${a}</option>`);e.append(i),e.val("0")}bindDropDownAddNew(e){let t=[e.sessionType,e.eventType,e.ceuType];for(let s of t)s.off("change.pdtAddNew").on("change.pdtAddNew",()=>{s.val()==="-1"&&this.handleDropDownAddNew(s)})}handleDropDownAddNew(e){e.val("0");let t=this.getDropDownModalData(e);t===null||!this.addOptionModal||(this.dropDownAddState={selectField:e,resource:t.resource},this.addOptionModal.title.text(t.title),this.addOptionModal.helper.text(t.helper),this.addOptionModal.input.val(""),this.addOptionModal.feedback.text("").prop("hidden",!0),this.addOptionModal.wrapper.prop("hidden",!1),this.addOptionModal.input.trigger("focus"))}bindAddOptionModal(){this.addOptionModal&&(this.addOptionModal.cancel.off("click.pdtAddOption").on("click.pdtAddOption",()=>{this.closeAddOptionModal()}),this.addOptionModal.wrapper.off("click.pdtAddOption").on("click.pdtAddOption",e=>{e.target===this.addOptionModal.wrapper[0]&&this.closeAddOptionModal()}),this.addOptionModal.submit.off("click.pdtAddOption").on("click.pdtAddOption",async()=>{await this.saveAddOptionModal()}))}closeAddOptionModal(){this.addOptionModal&&(this.addOptionModal.wrapper.prop("hidden",!0),this.addOptionModal.input.val(""),this.addOptionModal.feedback.text("").prop("hidden",!0),this.dropDownAddState=null)}getDropDownModalData(e){let t=e.attr("id");return t==="session_type"?{resource:"sessionTypes",title:"Add New Session Type",helper:"Enter a new session type label. Duplicate labels are case-insensitive."}:t==="event_type"?{resource:"EventTypes",title:"Add New Event Type",helper:"Enter a new event type label. Duplicate labels are case-insensitive."}:t==="ceu_type"?{resource:"CEUTypes",title:"Add New CEU Type",helper:"Enter a new CEU type label. Duplicate labels are case-insensitive."}:null}async saveAddOptionModal(){var i;if(this.dropDownAddState===null||!this.addOptionModal)return;let e=String((i=this.addOptionModal.input.val())!=null?i:"").trim();if(e===""){this.addOptionModal.feedback.text("Please enter a label.").prop("hidden",!1),this.addOptionModal.input.trigger("focus");return}let t=Number(await this.db.set(this.dropDownAddState.resource,e));if(!Number.isFinite(t)||t<0){this.addOptionModal.feedback.text("That label already exists or could not be added.").prop("hidden",!1),this.addOptionModal.input.trigger("focus");return}let s=await this.db.get(this.dropDownAddState.resource);this.loadDropDownOptions(this.dropDownAddState.selectField,s),this.dropDownAddState.selectField.val(String(t)),this.closeAddOptionModal()}getDropDownFields(e){var t;return{sessionType:this.normalizeDropDownValue(e.sessionType.val()),eventType:this.normalizeDropDownValue(e.eventType.val()),ceuType:this.normalizeDropDownValue(e.ceuType.val()),ridQualified:String((t=e.ridQualified.val())!=null?t:"no")}}setDropDownFields(e,t={}){var s;this.setDropDownValue(e.sessionType,t.sessionType),this.setDropDownValue(e.eventType,t.eventType),this.setDropDownValue(e.ceuType,t.ceuType),e.ridQualified.val(String((s=t.ridQualified)!=null?s:"no"))}setDropDownValue(e,t){if(t==null){e.val("0");return}e.val(String(t))}normalizeDropDownValue(e){return e==="0"||e==="-1"||e===null||e===void 0?null:Number(e)}resetDropDownFields(e){e.sessionType.val("0"),e.eventType.val("0"),e.ceuType.val("0"),e.ridQualified.val("no")}};var E=class{constructor(e=null){this.db=e,this.presenterSearchSelect=null,this.presentersData=[]}async init(e){await this.load(e),this.setupSearch(e)}async reset(e){if(await this.load(e),!this.presenterSearchSelect)return;let t=this.getPresenterOptions(this.presentersData);this.presenterSearchSelect.clearOptions(),this.presenterSearchSelect.addOptions(t),this.presenterSearchSelect.clear(),this.presenterSearchSelect.refreshOptions(!1)}async load(e){var t;this.presentersData=(t=await this.db.get("presenters"))!=null?t:[]}setupSearch(e){if(e.select.length===0||typeof window.TomSelect=="undefined")return;this.presenterSearchSelect&&this.presenterSearchSelect.destroy();let t=this.getPresenterOptions(this.presentersData);this.presenterSearchSelect=new TomSelect(e.select[0],{valueField:"id",labelField:"label",searchField:["name","email"],options:t,maxItems:null,create:!1,persist:!1,sortField:[{field:"name",direction:"asc"}]})}getPresenters(e){var s;return this.presenterSearchSelect?this.presenterSearchSelect.items.map(i=>Number(i)).filter(i=>Number.isFinite(i)):((s=e.select.val())!=null?s:[]).map(i=>Number(i)).filter(i=>Number.isFinite(i))}getPresenterOptions(e){return(e!=null?e:[]).map(t=>{let[s,i,r,n,a]=t;return{id:Number(a),name:String(s!=null?s:""),email:String(i!=null?i:""),label:`${String(s!=null?s:"")} (${String(i!=null?i:"")})`}}).filter(t=>Number.isFinite(t.id))}setPresenters(e,t=[]){let s=t.map(i=>Number(i)).filter(i=>Number.isFinite(i)).map(i=>String(i));if(this.presenterSearchSelect){this.presenterSearchSelect.setValue(s,!0);return}e.select.val(s)}};var J=class{constructor(e=null,t=null){this.db=e,this.host=t,this.flagManager=new j(e),this.dropDownAddManager=new Y(e),this.presenterManager=new E(e),this.mainPage=null,this.formRefs=null,this.sessionModalState={mode:"create",activeSessionID:null}}async init(e){this.mainPage=e;let t={wrapper:$("#pdt-shadow-session-modal"),modal:$("#pdt-shadow-session-modal .pdt-add-edit-modal"),title:$("#session-modal-title"),submit:$("#pdt-shadow-session-modal #submitModal"),cancel:$("#pdt-shadow-session-modal #cancelModal")},s=$(".pdt-main #add-session"),i={list:t.modal.find(".pdt-flag-list"),search:t.modal.find("#flag-search")},r={options:t.modal.find("#date-options"),singleDate:t.modal.find("#date"),startDate:t.modal.find("#date-start"),endDate:t.modal.find("#date-end")},n={organizer:t.modal.find("#organizer"),sessionTitle:t.modal.find("#session_title"),parentEvent:t.modal.find("#parent_event")},a={qualify:t.modal.find("#qual_for_ceu"),weight:t.modal.find("#ceu_weight")},o={select:t.modal.find("#presenter-select")},l=t.modal.find("#length"),d=t.modal.find(".pdt-panel--5"),m=d.find("#session_type"),p=d.find("#event_type"),g=d.find("#ceu_type"),h=d.find("#rid_qualified"),u={sessionType:m,eventType:p,ceuType:g,ridQualified:h},f={wrapper:$("#pdt-shadow-add-option-modal"),modal:$("#pdt-shadow-add-option-modal .pdt-add-option-modal"),title:$("#pdt-shadow-add-option-modal #add-option-title"),helper:$("#pdt-shadow-add-option-modal #add-option-helper"),input:$("#pdt-shadow-add-option-modal #add-option-input"),feedback:$("#pdt-shadow-add-option-modal #add-option-feedback"),submit:$("#pdt-shadow-add-option-modal #submitAddOption"),cancel:$("#pdt-shadow-add-option-modal #cancelAddOption")};await this.flagManager.init(i),await this.dropDownAddManager.init(u,f),await this.presenterManager.init(o),this.bindCEUFieldState(a,u),this.applyCEUFieldState(a,u),this.formRefs={sessionModal:t,flagFields:i,dateFields:r,textFields:n,ceuFields:a,presenterFields:o,lengthField:l,dropDownFields:u},s.off("click.pdtAddSession").on("click.pdtAddSession",async()=>{await this.openForCreate()}),t.wrapper.off("click.pdtAddSession").on("click.pdtAddSession",async S=>{S.target===t.wrapper[0]&&await this.closeModal()}),t.cancel.off("click.pdtAddSession").on("click.pdtAddSession",async()=>{await this.closeModal()}),t.submit.off("click.pdtAddSession").on("click.pdtAddSession",async()=>{var T,A;let S=this.getDate(r);if(!this.validateDate(S,r))return;let b=this.getLength(l);if(S[0]===1&&b===null){alert("Please enter a valid positive length in minutes."),l.trigger("focus");return}else if(S[0]!==1&&b!==null){alert("Length should only be set for a single date session."),l.trigger("focus");return}let M=this.flagManager.getFlags(i),I=this.getTextFields(n);if(!this.validateTextFields(I,n))return;let R=this.dropDownAddManager.getDropDownFields(u),P=this.presenterManager.getPresenters(o),N=String((T=a.qualify.val())!=null?T:"yes")==="yes",F=String((A=a.weight.val())!=null?A:"").trim(),w=null;if(N&&(w=Number(F),w<=0||Number.isNaN(w))){alert("Please enter a valid positive CEU weight."),a.weight.trigger("focus");return}let z=N?"Yes":"No",k=N?R.ceuType:null,L={sessionID:this.sessionModalState.activeSessionID,dateOption:S,length:b,flags:M,organizer:I.organizer,sessionTitle:I.sessionTitle,parentEvent:I.parentEvent,sessionType:R.sessionType,eventType:R.eventType,ceuType:k,ridQualified:R.ridQualified,presenters:P,ceuQualify:z,ceuWeight:w};await this.db.put("session",L),await this.mainPage.loadTable(),await this.closeModal()})}async openForCreate(){this.formRefs&&(await this.resetForm(),this.formRefs.sessionModal.wrapper.prop("hidden",!1))}async openForEdit(e){if(!this.formRefs)return;let t=await this.db.get("session",{sessionID:e});if(!t){alert("That session could not be found. Please refresh the page and try again.");return}await this.resetForm(),this.setModalMode("edit",t.sessionID),await this.populateFormFromSession(t),this.formRefs.sessionModal.wrapper.prop("hidden",!1)}async closeModal(){this.formRefs&&(this.formRefs.sessionModal.wrapper.prop("hidden",!0),await this.resetForm())}async resetForm(){if(!this.formRefs)return;let{dateFields:e,textFields:t,ceuFields:s,presenterFields:i,lengthField:r,dropDownFields:n,flagFields:a}=this.formRefs;this.setModalMode("create",null),this.resetDateInputs(e),this.resetLengthInput(r),this.resetTextFields(t),s.qualify.val("yes"),s.weight.val("1.0"),await this.dropDownAddManager.reset(n),await this.presenterManager.reset(i),await this.flagManager.reset(a),this.applyCEUFieldState(s,n)}setModalMode(e,t=null){if(this.sessionModalState={mode:e,activeSessionID:t},!!this.formRefs){if(e==="edit"){this.formRefs.sessionModal.title.text("Edit Session"),this.formRefs.sessionModal.submit.text("Save Changes");return}this.formRefs.sessionModal.title.text("Add Session"),this.formRefs.sessionModal.submit.text("Save Session")}}async populateFormFromSession(e){var d,m,p,g,h,u;let{dateFields:t,textFields:s,ceuFields:i,presenterFields:r,lengthField:n,dropDownFields:a,flagFields:o}=this.formRefs;this.setDateFieldsFromSession(e.Date,t),this.isSingleDateSession(e.Date)&&Number(e.Length)>0&&n.val(String(e.Length)),s.organizer.val(String((d=e.Organizer)!=null?d:"")),s.sessionTitle.val(String((m=e.SessionTitle)!=null?m:"")),s.parentEvent.val(String((p=e.ParentType)!=null?p:""));let l=await this.getSessionDropDownValues(e);this.dropDownAddManager.setDropDownFields(a,l),i.qualify.val(String((g=e.CEUQualify)!=null?g:"No").toLowerCase()==="yes"?"yes":"no"),i.weight.val(Number(e.CEUWeight)>0?String(e.CEUWeight):"1.0"),this.applyCEUFieldState(i,a),this.flagManager.setFlags(o,(h=e.FlagIDs)!=null?h:[]),this.presenterManager.setPresenters(r,(u=e.PresenterIDs)!=null?u:[])}async getSessionDropDownValues(e){var r,n,a,o;let[t,s,i]=await Promise.all([this.db.get("sessionTypes"),this.db.get("EventTypes"),this.db.get("CEUTypes")]);return{sessionType:(r=e.SessionTypeID)!=null?r:this.findOptionIdByLabel(t,e.SessionType),eventType:(n=e.EventTypeID)!=null?n:this.findOptionIdByLabel(s,e.EventType),ceuType:(a=e.CEUTypeID)!=null?a:this.findOptionIdByLabel(i,e.CEUConsideration),ridQualified:String((o=e.RIDQualify)!=null?o:"No").toLowerCase()==="yes"?"yes":"no"}}getDate(e){let t=e.options.find('input[name="date_mode"]:checked').val(),s=e.singleDate.val()||null,i=e.startDate.val()||null,r=e.endDate.val()||null;return t==="range"?[2,i,r]:t==="self_paced"?[3,null,null]:[1,s,null]}resetDateInputs(e){e.options.find('input[name="date_mode"][value="single"]').prop("checked",!0),e.singleDate.val(""),e.startDate.val(""),e.endDate.val("")}resetLengthInput(e){e.val("")}validateDate(e,t){let[s,i,r]=e;return s===1?i?!0:(alert("Please choose a single date."),t.singleDate.trigger("focus"),!1):s===2?i?r?r<i?(alert("End date must be on or after the start date."),t.endDate.trigger("focus"),!1):!0:(alert("Please choose an end date."),t.endDate.trigger("focus"),!1):(alert("Please choose a start date."),t.startDate.trigger("focus"),!1):!0}getLength(e){let t=Number(e.val());return t<=0||Number.isNaN(t)?null:t}getTextFields(e){var t,s,i;return{organizer:String((t=e.organizer.val())!=null?t:"").trim(),sessionTitle:String((s=e.sessionTitle.val())!=null?s:"").trim(),parentEvent:String((i=e.parentEvent.val())!=null?i:"").trim()}}validateTextFields(e,t){return e.sessionTitle===""?(alert("Please enter a session title."),t.sessionTitle.trigger("focus"),!1):!0}resetTextFields(e){e.organizer.val(""),e.sessionTitle.val(""),e.parentEvent.val("")}bindCEUFieldState(e,t){e.qualify.off("change.pdtCEUState").on("change.pdtCEUState",()=>{this.applyCEUFieldState(e,t)})}applyCEUFieldState(e,t){var i;let s=String((i=e.qualify.val())!=null?i:"yes")==="yes";e.weight.prop("disabled",!s),t.ceuType.prop("disabled",!s)}setDateFieldsFromSession(e,t){this.resetDateInputs(t);let s=String(e!=null?e:"").trim();if(s===""||s==="Self Paced"){t.options.find('input[name="date_mode"][value="self_paced"]').prop("checked",!0);return}if(s.includes(" to ")){let[i,r]=s.split(" to ");t.options.find('input[name="date_mode"][value="range"]').prop("checked",!0),t.startDate.val(this.displayDateToInputValue(i)),t.endDate.val(this.displayDateToInputValue(r));return}t.options.find('input[name="date_mode"][value="single"]').prop("checked",!0),t.singleDate.val(this.displayDateToInputValue(s))}displayDateToInputValue(e){let s=String(e!=null?e:"").trim().split("/");if(s.length!==3)return"";let[i,r,n]=s;return i===""||r===""||n===""?"":`${n}-${i.padStart(2,"0")}-${r.padStart(2,"0")}`}isSingleDateSession(e){let t=String(e!=null?e:"").trim();return t!==""&&t!=="Self Paced"&&!t.includes(" to ")}findOptionIdByLabel(e,t){let s=String(t!=null?t:"").trim().toLowerCase();if(s==="")return null;for(let[i,r]of Object.entries(e!=null?e:{}))if(String(r!=null?r:"").trim().toLowerCase()===s)return Number(i);return null}};(function(){let D=window.jQuery||window.jquery||window.$;window.jQuery=window.jQuery||D,window.jquery=window.jquery||D,window.$=window.$||D,typeof window.$=="undefined"?console.error("PDT: jQuery is required for pdt-session-table2.js"):$(document).ready(async function(){"use strict";let e=new O,t=new v,s=new V(e,t,new W(e,t),new J(e,t));y.state="mainPage",await s.init()})})();})();
+                <input type="checkbox" data-flagID=${flagId} name="flags" value="${flagLabel}" ${isChecked ? "checked" : ""}>
+                ${flagLabel}
+            </label>`;
+      flagList.append(option);
+    }
+    findFlagId(flagsData, flagLabel) {
+      const normalizedLabel = String(flagLabel != null ? flagLabel : "").trim().toLowerCase();
+      if (normalizedLabel === "") {
+        return null;
+      }
+      for (const [flagId, label] of Object.entries(flagsData)) {
+        if (flagId === "top") {
+          continue;
+        }
+        if (String(label).trim().toLowerCase() === normalizedLabel) {
+          return Number(flagId);
+        }
+      }
+      return null;
+    }
+    getFlags(flagFields) {
+      const checkedFlags = flagFields.list.find('input[name="flags"]:checked');
+      const flagIds = [];
+      checkedFlags.each(function() {
+        const flagId = Number(jq(this).attr("data-flagID"));
+        if (Number.isFinite(flagId)) {
+          flagIds.push(flagId);
+        }
+      });
+      return flagIds;
+    }
+    setFlags(flagFields, selectedFlagIds = []) {
+      const validSelectedIds = selectedFlagIds.filter((flagId) => this.flagsData[flagId]);
+      this.topFlagIds = new Set(this.flagsData.top);
+      this.loadFlags(flagFields.list, this.flagsData);
+      for (const flagId of validSelectedIds) {
+        this.addFlagToList(flagFields.list, flagId, this.flagsData[flagId], true);
+        this.topFlagIds.add(flagId);
+      }
+      if (!this.flagSearchSelect) {
+        return;
+      }
+      const flagOptions = this.getflagOptions(this.flagsData, this.topFlagIds);
+      this.flagSearchSelect.clearOptions();
+      this.flagSearchSelect.addOptions(flagOptions);
+      this.flagSearchSelect.clear();
+      this.flagSearchSelect.refreshOptions(false);
+    }
+  };
+
+  // js/session-table2/dropdown_add_manager.js
+  var dropdown_add_manager = class {
+    constructor(db = null) {
+      this.db = db;
+      this.dropDownAddState = null;
+      this.addOptionModal = null;
+    }
+    async init(dropDownFields, addOptionModal) {
+      this.addOptionModal = addOptionModal;
+      await this.loadDropDownFields(dropDownFields);
+      this.bindDropDownAddNew(dropDownFields);
+      this.bindAddOptionModal();
+    }
+    async reset(dropDownFields) {
+      await this.loadDropDownFields(dropDownFields);
+    }
+    async loadDropDownFields(dropDownFields) {
+      const sessionTypes = await this.db.get("sessionTypes");
+      const eventTypes = await this.db.get("EventTypes");
+      const ceuTypes = await this.db.get("CEUTypes");
+      this.loadDropDownOptions(dropDownFields.sessionType, sessionTypes);
+      this.loadDropDownOptions(dropDownFields.eventType, eventTypes);
+      this.loadDropDownOptions(dropDownFields.ceuType, ceuTypes);
+      dropDownFields.ridQualified.val("no");
+    }
+    loadDropDownOptions(selectField, optionsData) {
+      const noneOption = selectField.find('option[value="0"]').detach();
+      const addNewOption = selectField.find('option[value="-1"]').detach();
+      const sortedOptions = Object.entries(optionsData != null ? optionsData : {}).sort((leftOption, rightOption) => {
+        return String(leftOption[1]).localeCompare(String(rightOption[1]), void 0, { sensitivity: "base" });
+      });
+      selectField.empty();
+      selectField.append(noneOption);
+      for (const [optionId, optionLabel] of sortedOptions) {
+        selectField.append(`<option value="${optionId}">${optionLabel}</option>`);
+      }
+      selectField.append(addNewOption);
+      selectField.val("0");
+    }
+    bindDropDownAddNew(dropDownFields) {
+      const addNewSelects = [
+        dropDownFields.sessionType,
+        dropDownFields.eventType,
+        dropDownFields.ceuType
+      ];
+      for (const selectField of addNewSelects) {
+        selectField.off("change.pdtAddNew").on("change.pdtAddNew", () => {
+          if (selectField.val() !== "-1") {
+            return;
+          }
+          this.handleDropDownAddNew(selectField);
+        });
+      }
+    }
+    handleDropDownAddNew(selectField) {
+      selectField.val("0");
+      const modalData = this.getDropDownModalData(selectField);
+      if (modalData === null || !this.addOptionModal) {
+        return;
+      }
+      this.dropDownAddState = {
+        selectField,
+        resource: modalData.resource
+      };
+      this.addOptionModal.title.text(modalData.title);
+      this.addOptionModal.helper.text(modalData.helper);
+      this.addOptionModal.input.val("");
+      this.addOptionModal.feedback.text("").prop("hidden", true);
+      this.addOptionModal.wrapper.prop("hidden", false);
+      this.addOptionModal.input.trigger("focus");
+    }
+    bindAddOptionModal() {
+      if (!this.addOptionModal) {
+        return;
+      }
+      this.addOptionModal.cancel.off("click.pdtAddOption").on("click.pdtAddOption", () => {
+        this.closeAddOptionModal();
+      });
+      this.addOptionModal.wrapper.off("click.pdtAddOption").on("click.pdtAddOption", (event) => {
+        if (event.target !== this.addOptionModal.wrapper[0]) {
+          return;
+        }
+        this.closeAddOptionModal();
+      });
+      this.addOptionModal.submit.off("click.pdtAddOption").on("click.pdtAddOption", async () => {
+        await this.saveAddOptionModal();
+      });
+    }
+    closeAddOptionModal() {
+      if (!this.addOptionModal) {
+        return;
+      }
+      this.addOptionModal.wrapper.prop("hidden", true);
+      this.addOptionModal.input.val("");
+      this.addOptionModal.feedback.text("").prop("hidden", true);
+      this.dropDownAddState = null;
+    }
+    getDropDownModalData(selectField) {
+      const selectId = selectField.attr("id");
+      if (selectId === "session_type") {
+        return {
+          resource: "sessionTypes",
+          title: "Add New Session Type",
+          helper: "Enter a new session type label. Duplicate labels are case-insensitive."
+        };
+      }
+      if (selectId === "event_type") {
+        return {
+          resource: "EventTypes",
+          title: "Add New Event Type",
+          helper: "Enter a new event type label. Duplicate labels are case-insensitive."
+        };
+      }
+      if (selectId === "ceu_type") {
+        return {
+          resource: "CEUTypes",
+          title: "Add New CEU Type",
+          helper: "Enter a new CEU type label. Duplicate labels are case-insensitive."
+        };
+      }
+      return null;
+    }
+    async saveAddOptionModal() {
+      var _a;
+      if (this.dropDownAddState === null || !this.addOptionModal) {
+        return;
+      }
+      const label = String((_a = this.addOptionModal.input.val()) != null ? _a : "").trim();
+      if (label === "") {
+        this.addOptionModal.feedback.text("Please enter a label.").prop("hidden", false);
+        this.addOptionModal.input.trigger("focus");
+        return;
+      }
+      const optionId = Number(await this.db.set(this.dropDownAddState.resource, label));
+      if (!Number.isFinite(optionId) || optionId < 0) {
+        this.addOptionModal.feedback.text("That label already exists or could not be added.").prop("hidden", false);
+        this.addOptionModal.input.trigger("focus");
+        return;
+      }
+      const updatedOptions = await this.db.get(this.dropDownAddState.resource);
+      this.loadDropDownOptions(this.dropDownAddState.selectField, updatedOptions);
+      this.dropDownAddState.selectField.val(String(optionId));
+      this.closeAddOptionModal();
+    }
+    getDropDownFields(dropDownFields) {
+      var _a;
+      return {
+        sessionType: this.normalizeDropDownValue(dropDownFields.sessionType.val()),
+        eventType: this.normalizeDropDownValue(dropDownFields.eventType.val()),
+        ceuType: this.normalizeDropDownValue(dropDownFields.ceuType.val()),
+        ridQualified: String((_a = dropDownFields.ridQualified.val()) != null ? _a : "no")
+      };
+    }
+    setDropDownFields(dropDownFields, values = {}) {
+      var _a;
+      this.setDropDownValue(dropDownFields.sessionType, values.sessionType);
+      this.setDropDownValue(dropDownFields.eventType, values.eventType);
+      this.setDropDownValue(dropDownFields.ceuType, values.ceuType);
+      dropDownFields.ridQualified.val(String((_a = values.ridQualified) != null ? _a : "no"));
+    }
+    setDropDownValue(selectField, value) {
+      if (value === null || value === void 0) {
+        selectField.val("0");
+        return;
+      }
+      selectField.val(String(value));
+    }
+    normalizeDropDownValue(value) {
+      if (value === "0" || value === "-1" || value === null || value === void 0) {
+        return null;
+      }
+      return Number(value);
+    }
+    resetDropDownFields(dropDownFields) {
+      dropDownFields.sessionType.val("0");
+      dropDownFields.eventType.val("0");
+      dropDownFields.ceuType.val("0");
+      dropDownFields.ridQualified.val("no");
+    }
+  };
+
+  // js/session-table2/presenter_manager.js
+  var presenter_manager = class {
+    constructor(db = null) {
+      this.db = db;
+      this.presenterSearchSelect = null;
+      this.presentersData = [];
+    }
+    async init(presenterFields) {
+      await this.load(presenterFields);
+      this.setupSearch(presenterFields);
+    }
+    async reset(presenterFields) {
+      await this.load(presenterFields);
+      if (!this.presenterSearchSelect) {
+        return;
+      }
+      const presenterOptions = this.getPresenterOptions(this.presentersData);
+      this.presenterSearchSelect.clearOptions();
+      this.presenterSearchSelect.addOptions(presenterOptions);
+      this.presenterSearchSelect.clear();
+      this.presenterSearchSelect.refreshOptions(false);
+    }
+    async load(presenterFields) {
+      var _a;
+      this.presentersData = (_a = await this.db.get("presenters")) != null ? _a : [];
+    }
+    setupSearch(presenterFields) {
+      if (presenterFields.select.length === 0 || typeof window.TomSelect === "undefined") {
+        return;
+      }
+      if (this.presenterSearchSelect) {
+        this.presenterSearchSelect.destroy();
+      }
+      const presenterOptions = this.getPresenterOptions(this.presentersData);
+      this.presenterSearchSelect = new TomSelect(presenterFields.select[0], {
+        valueField: "id",
+        labelField: "label",
+        searchField: ["name", "email"],
+        options: presenterOptions,
+        maxItems: null,
+        create: false,
+        persist: false,
+        sortField: [
+          { field: "name", direction: "asc" }
+        ]
+      });
+    }
+    getPresenters(presenterFields) {
+      var _a;
+      if (this.presenterSearchSelect) {
+        return this.presenterSearchSelect.items.map((presenterId) => Number(presenterId)).filter((presenterId) => Number.isFinite(presenterId));
+      }
+      const selectedValues = (_a = presenterFields.select.val()) != null ? _a : [];
+      return selectedValues.map((presenterId) => Number(presenterId)).filter((presenterId) => Number.isFinite(presenterId));
+    }
+    getPresenterOptions(presentersData) {
+      return (presentersData != null ? presentersData : []).map((presenter) => {
+        const [name, email, attendeeIndex, presenterIndex, personId] = presenter;
+        return {
+          id: Number(personId),
+          name: String(name != null ? name : ""),
+          email: String(email != null ? email : ""),
+          label: `${String(name != null ? name : "")} (${String(email != null ? email : "")})`
+        };
+      }).filter((presenterOption) => Number.isFinite(presenterOption.id));
+    }
+    setPresenters(presenterFields, selectedPresenterIds = []) {
+      const presenterIds = selectedPresenterIds.map((presenterId) => Number(presenterId)).filter((presenterId) => Number.isFinite(presenterId)).map((presenterId) => String(presenterId));
+      if (this.presenterSearchSelect) {
+        this.presenterSearchSelect.setValue(presenterIds, true);
+        return;
+      }
+      presenterFields.select.val(presenterIds);
+    }
+  };
+
+  // js/session-table2/add-edit-session.js
+  var add_edit_session = class {
+    constructor(db = null, host = null) {
+      this.db = db;
+      this.host = host;
+      this.flagManager = new flag_manager(db);
+      this.dropDownAddManager = new dropdown_add_manager(db);
+      this.presenterManager = new presenter_manager(db);
+      this.mainPage = null;
+      this.formRefs = null;
+      this.sessionModalState = {
+        mode: "create",
+        activeSessionID: null
+      };
+    }
+    async init(mainPage) {
+      this.mainPage = mainPage;
+      const sessionModal = {
+        wrapper: jq("#pdt-shadow-session-modal"),
+        modal: jq("#pdt-shadow-session-modal .pdt-add-edit-modal"),
+        title: jq("#session-modal-title"),
+        submit: jq("#pdt-shadow-session-modal #submitModal"),
+        cancel: jq("#pdt-shadow-session-modal #cancelModal")
+      };
+      const addSessionButton = jq(".pdt-main #add-session");
+      const flagFields = {
+        list: sessionModal.modal.find(".pdt-flag-list"),
+        search: sessionModal.modal.find("#flag-search")
+      };
+      const dateFields = {
+        options: sessionModal.modal.find("#date-options"),
+        singleDate: sessionModal.modal.find("#date"),
+        startDate: sessionModal.modal.find("#date-start"),
+        endDate: sessionModal.modal.find("#date-end")
+      };
+      const textFields = {
+        organizer: sessionModal.modal.find("#organizer"),
+        sessionTitle: sessionModal.modal.find("#session_title"),
+        parentEvent: sessionModal.modal.find("#parent_event")
+      };
+      const ceuFields = {
+        qualify: sessionModal.modal.find("#qual_for_ceu"),
+        weight: sessionModal.modal.find("#ceu_weight")
+      };
+      const presenterFields = {
+        select: sessionModal.modal.find("#presenter-select")
+      };
+      const lengthField = sessionModal.modal.find("#length");
+      const dropDowns = sessionModal.modal.find(".pdt-panel--5");
+      const dropSession = dropDowns.find("#session_type");
+      const dropEvent = dropDowns.find("#event_type");
+      const dropCEU = dropDowns.find("#ceu_type");
+      const dropRID = dropDowns.find("#rid_qualified");
+      const dropDownFields = {
+        sessionType: dropSession,
+        eventType: dropEvent,
+        ceuType: dropCEU,
+        ridQualified: dropRID
+      };
+      const addOptionModal = {
+        wrapper: jq("#pdt-shadow-add-option-modal"),
+        modal: jq("#pdt-shadow-add-option-modal .pdt-add-option-modal"),
+        title: jq("#pdt-shadow-add-option-modal #add-option-title"),
+        helper: jq("#pdt-shadow-add-option-modal #add-option-helper"),
+        input: jq("#pdt-shadow-add-option-modal #add-option-input"),
+        feedback: jq("#pdt-shadow-add-option-modal #add-option-feedback"),
+        submit: jq("#pdt-shadow-add-option-modal #submitAddOption"),
+        cancel: jq("#pdt-shadow-add-option-modal #cancelAddOption")
+      };
+      await this.flagManager.init(flagFields);
+      await this.dropDownAddManager.init(dropDownFields, addOptionModal);
+      await this.presenterManager.init(presenterFields);
+      this.bindCEUFieldState(ceuFields, dropDownFields);
+      this.applyCEUFieldState(ceuFields, dropDownFields);
+      this.formRefs = {
+        sessionModal,
+        flagFields,
+        dateFields,
+        textFields,
+        ceuFields,
+        presenterFields,
+        lengthField,
+        dropDownFields
+      };
+      addSessionButton.off("click.pdtAddSession").on("click.pdtAddSession", async () => {
+        await this.openForCreate();
+      });
+      sessionModal.wrapper.off("click.pdtAddSession").on("click.pdtAddSession", async (event) => {
+        if (event.target === sessionModal.wrapper[0]) {
+          await this.closeModal();
+        }
+      });
+      sessionModal.cancel.off("click.pdtAddSession").on("click.pdtAddSession", async () => {
+        await this.closeModal();
+      });
+      sessionModal.submit.off("click.pdtAddSession").on("click.pdtAddSession", async () => {
+        var _a, _b;
+        let dateOption = this.getDate(dateFields);
+        if (!this.validateDate(dateOption, dateFields)) {
+          return;
+        }
+        let length = this.getLength(lengthField);
+        if (dateOption[0] === 1 && length === null) {
+          alert("Please enter a valid positive length in minutes.");
+          lengthField.trigger("focus");
+          return;
+        } else if (dateOption[0] !== 1 && length !== null) {
+          alert("Length should only be set for a single date session.");
+          lengthField.trigger("focus");
+          return;
+        }
+        let flags = this.flagManager.getFlags(flagFields);
+        let textFieldValues = this.getTextFields(textFields);
+        if (!this.validateTextFields(textFieldValues, textFields)) {
+          return;
+        }
+        let dropDownValues = this.dropDownAddManager.getDropDownFields(dropDownFields);
+        let presenterValues = this.presenterManager.getPresenters(presenterFields);
+        const qualifiesForCEU = String((_a = ceuFields.qualify.val()) != null ? _a : "yes") === "yes";
+        const ceuWeightValue = String((_b = ceuFields.weight.val()) != null ? _b : "").trim();
+        let ceuWeightForSave = null;
+        if (qualifiesForCEU) {
+          ceuWeightForSave = Number(ceuWeightValue);
+          if (ceuWeightForSave <= 0 || Number.isNaN(ceuWeightForSave)) {
+            alert("Please enter a valid positive CEU weight.");
+            ceuFields.weight.trigger("focus");
+            return;
+          }
+        }
+        const ceuQualifyForSave = qualifiesForCEU ? "Yes" : "No";
+        const ceuTypeForSave = qualifiesForCEU ? dropDownValues.ceuType : null;
+        const sessionPayload = {
+          sessionID: this.sessionModalState.activeSessionID,
+          dateOption,
+          length,
+          flags,
+          organizer: textFieldValues.organizer,
+          sessionTitle: textFieldValues.sessionTitle,
+          parentEvent: textFieldValues.parentEvent,
+          sessionType: dropDownValues.sessionType,
+          eventType: dropDownValues.eventType,
+          ceuType: ceuTypeForSave,
+          ridQualified: dropDownValues.ridQualified,
+          presenters: presenterValues,
+          ceuQualify: ceuQualifyForSave,
+          ceuWeight: ceuWeightForSave
+        };
+        await this.db.put("session", sessionPayload);
+        await this.mainPage.loadTable();
+        await this.closeModal();
+      });
+    }
+    async openForCreate() {
+      if (!this.formRefs) {
+        return;
+      }
+      await this.resetForm();
+      this.formRefs.sessionModal.wrapper.prop("hidden", false);
+    }
+    async openForEdit(sessionID) {
+      if (!this.formRefs) {
+        return;
+      }
+      const sessionData = await this.db.get("session", { sessionID });
+      if (!sessionData) {
+        alert("That session could not be found. Please refresh the page and try again.");
+        return;
+      }
+      await this.resetForm();
+      this.setModalMode("edit", sessionData.sessionID);
+      await this.populateFormFromSession(sessionData);
+      this.formRefs.sessionModal.wrapper.prop("hidden", false);
+    }
+    async closeModal() {
+      if (!this.formRefs) {
+        return;
+      }
+      this.formRefs.sessionModal.wrapper.prop("hidden", true);
+      await this.resetForm();
+    }
+    // The following are supporting functions for init, please understand init before continuing.
+    async resetForm() {
+      if (!this.formRefs) {
+        return;
+      }
+      const {
+        dateFields,
+        textFields,
+        ceuFields,
+        presenterFields,
+        lengthField,
+        dropDownFields,
+        flagFields
+      } = this.formRefs;
+      this.setModalMode("create", null);
+      this.resetDateInputs(dateFields);
+      this.resetLengthInput(lengthField);
+      this.resetTextFields(textFields);
+      ceuFields.qualify.val("yes");
+      ceuFields.weight.val("1.0");
+      await this.dropDownAddManager.reset(dropDownFields);
+      await this.presenterManager.reset(presenterFields);
+      await this.flagManager.reset(flagFields);
+      this.applyCEUFieldState(ceuFields, dropDownFields);
+    }
+    setModalMode(mode, sessionID = null) {
+      this.sessionModalState = {
+        mode,
+        activeSessionID: sessionID
+      };
+      if (!this.formRefs) {
+        return;
+      }
+      if (mode === "edit") {
+        this.formRefs.sessionModal.title.text("Edit Session");
+        this.formRefs.sessionModal.submit.text("Save Changes");
+        return;
+      }
+      this.formRefs.sessionModal.title.text("Add Session");
+      this.formRefs.sessionModal.submit.text("Save Session");
+    }
+    async populateFormFromSession(sessionData) {
+      var _a, _b, _c, _d, _e, _f;
+      const {
+        dateFields,
+        textFields,
+        ceuFields,
+        presenterFields,
+        lengthField,
+        dropDownFields,
+        flagFields
+      } = this.formRefs;
+      this.setDateFieldsFromSession(sessionData.Date, dateFields);
+      if (this.isSingleDateSession(sessionData.Date) && Number(sessionData.Length) > 0) {
+        lengthField.val(String(sessionData.Length));
+      }
+      textFields.organizer.val(String((_a = sessionData.Organizer) != null ? _a : ""));
+      textFields.sessionTitle.val(String((_b = sessionData.SessionTitle) != null ? _b : ""));
+      textFields.parentEvent.val(String((_c = sessionData.ParentType) != null ? _c : ""));
+      const dropDownValues = await this.getSessionDropDownValues(sessionData);
+      this.dropDownAddManager.setDropDownFields(dropDownFields, dropDownValues);
+      ceuFields.qualify.val(String((_d = sessionData.CEUQualify) != null ? _d : "No").toLowerCase() === "yes" ? "yes" : "no");
+      ceuFields.weight.val(Number(sessionData.CEUWeight) > 0 ? String(sessionData.CEUWeight) : "1.0");
+      this.applyCEUFieldState(ceuFields, dropDownFields);
+      this.flagManager.setFlags(flagFields, (_e = sessionData.FlagIDs) != null ? _e : []);
+      this.presenterManager.setPresenters(presenterFields, (_f = sessionData.PresenterIDs) != null ? _f : []);
+    }
+    async getSessionDropDownValues(sessionData) {
+      var _a, _b, _c, _d;
+      const [sessionTypes, eventTypes, ceuTypes] = await Promise.all([
+        this.db.get("sessionTypes"),
+        this.db.get("EventTypes"),
+        this.db.get("CEUTypes")
+      ]);
+      return {
+        sessionType: (_a = sessionData.SessionTypeID) != null ? _a : this.findOptionIdByLabel(sessionTypes, sessionData.SessionType),
+        eventType: (_b = sessionData.EventTypeID) != null ? _b : this.findOptionIdByLabel(eventTypes, sessionData.EventType),
+        ceuType: (_c = sessionData.CEUTypeID) != null ? _c : this.findOptionIdByLabel(ceuTypes, sessionData.CEUConsideration),
+        ridQualified: String((_d = sessionData.RIDQualify) != null ? _d : "No").toLowerCase() === "yes" ? "yes" : "no"
+      };
+    }
+    getDate(dateFields) {
+      const dateType = dateFields.options.find('input[name="date_mode"]:checked').val();
+      const singleDate = dateFields.singleDate.val() || null;
+      const startDate = dateFields.startDate.val() || null;
+      const endDate = dateFields.endDate.val() || null;
+      if (dateType === "range") {
+        return [2, startDate, endDate];
+      }
+      if (dateType === "self_paced") {
+        return [3, null, null];
+      }
+      return [1, singleDate, null];
+    }
+    resetDateInputs(dateFields) {
+      dateFields.options.find('input[name="date_mode"][value="single"]').prop("checked", true);
+      dateFields.singleDate.val("");
+      dateFields.startDate.val("");
+      dateFields.endDate.val("");
+    }
+    resetLengthInput(lengthField) {
+      lengthField.val("");
+    }
+    validateDate(dateOption, dateFields) {
+      const [dateType, startDate, endDate] = dateOption;
+      if (dateType === 1) {
+        if (!startDate) {
+          alert("Please choose a single date.");
+          dateFields.singleDate.trigger("focus");
+          return false;
+        }
+        return true;
+      }
+      if (dateType === 2) {
+        if (!startDate) {
+          alert("Please choose a start date.");
+          dateFields.startDate.trigger("focus");
+          return false;
+        }
+        if (!endDate) {
+          alert("Please choose an end date.");
+          dateFields.endDate.trigger("focus");
+          return false;
+        }
+        if (endDate < startDate) {
+          alert("End date must be on or after the start date.");
+          dateFields.endDate.trigger("focus");
+          return false;
+        }
+        return true;
+      }
+      return true;
+    }
+    getLength(lengthField) {
+      const length = Number(lengthField.val());
+      if (length <= 0 || Number.isNaN(length)) {
+        return null;
+      }
+      return length;
+    }
+    getTextFields(textFields) {
+      var _a, _b, _c;
+      return {
+        organizer: String((_a = textFields.organizer.val()) != null ? _a : "").trim(),
+        sessionTitle: String((_b = textFields.sessionTitle.val()) != null ? _b : "").trim(),
+        parentEvent: String((_c = textFields.parentEvent.val()) != null ? _c : "").trim()
+      };
+    }
+    validateTextFields(textFieldValues, textFields) {
+      if (textFieldValues.sessionTitle === "") {
+        alert("Please enter a session title.");
+        textFields.sessionTitle.trigger("focus");
+        return false;
+      }
+      return true;
+    }
+    resetTextFields(textFields) {
+      textFields.organizer.val("");
+      textFields.sessionTitle.val("");
+      textFields.parentEvent.val("");
+    }
+    bindCEUFieldState(ceuFields, dropDownFields) {
+      ceuFields.qualify.off("change.pdtCEUState").on("change.pdtCEUState", () => {
+        this.applyCEUFieldState(ceuFields, dropDownFields);
+      });
+    }
+    applyCEUFieldState(ceuFields, dropDownFields) {
+      var _a;
+      const qualifiesForCEU = String((_a = ceuFields.qualify.val()) != null ? _a : "yes") === "yes";
+      ceuFields.weight.prop("disabled", !qualifiesForCEU);
+      dropDownFields.ceuType.prop("disabled", !qualifiesForCEU);
+    }
+    setDateFieldsFromSession(dateValue, dateFields) {
+      this.resetDateInputs(dateFields);
+      const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
+      if (normalizedDateValue === "" || normalizedDateValue === "Self Paced") {
+        dateFields.options.find('input[name="date_mode"][value="self_paced"]').prop("checked", true);
+        return;
+      }
+      if (normalizedDateValue.includes(" to ")) {
+        const [startDate, endDate] = normalizedDateValue.split(" to ");
+        dateFields.options.find('input[name="date_mode"][value="range"]').prop("checked", true);
+        dateFields.startDate.val(this.displayDateToInputValue(startDate));
+        dateFields.endDate.val(this.displayDateToInputValue(endDate));
+        return;
+      }
+      dateFields.options.find('input[name="date_mode"][value="single"]').prop("checked", true);
+      dateFields.singleDate.val(this.displayDateToInputValue(normalizedDateValue));
+    }
+    displayDateToInputValue(displayDate) {
+      const normalizedDate = String(displayDate != null ? displayDate : "").trim();
+      const dateParts = normalizedDate.split("/");
+      if (dateParts.length !== 3) {
+        return "";
+      }
+      const [month, day, year] = dateParts;
+      if (month === "" || day === "" || year === "") {
+        return "";
+      }
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+    isSingleDateSession(dateValue) {
+      const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
+      return normalizedDateValue !== "" && normalizedDateValue !== "Self Paced" && !normalizedDateValue.includes(" to ");
+    }
+    findOptionIdByLabel(optionsData, label) {
+      const normalizedLabel = String(label != null ? label : "").trim().toLowerCase();
+      if (normalizedLabel === "") {
+        return null;
+      }
+      for (const [optionId, optionLabel] of Object.entries(optionsData != null ? optionsData : {})) {
+        if (String(optionLabel != null ? optionLabel : "").trim().toLowerCase() === normalizedLabel) {
+          return Number(optionId);
+        }
+      }
+      return null;
+    }
+  };
+
+  // js/session-table2.js
+  (function() {
+    if (typeof jq !== "function") {
+      console.error("PDT: jQuery is required for pdt-session-table2.js");
+    } else {
+      jq(document).ready(async function() {
+        "use strict";
+        const apiBaseUrl = "https://aslta-api-v3.judahsbase.com";
+        const jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjIsImV4cCI6MTUxNjIzOTMyMn0.r_yhCUsRyPFYNP5oQVT4EpS6Aojmhah0aMQQL_IPQg9DDQeADEVyUx84QlJt6rTx2S2QSjuxmI3xB2ftl7WE4UoFCgYOT-RW3ehU0tDcU_1RnMCW3NqBfMtaIHXDd_u3er0BiQm25nEiCWF8JtQcQWOASRHuRb5dox6wJO5C-Jm7iQlwJGsAnlXTGqTUqfH_AhPAm35CJO8omtpMX7lgfhdmvivMDtsdwW5sLXmeKm0JhrNKcpPQjZJ_HkTXJRP_LD80dgA1n1qQFSgbQint4giRITNeTMk6pqUUXXgkduJUUW_v1qqZoMwt85CkPNkyb7E9Fcc7gBj9IdTrrl_aXw";
+        const dbC = new db_connection(apiBaseUrl, jwt);
+        const hostC = new host_connection();
+        const mainPage = new main_page(
+          dbC,
+          hostC,
+          new show_attendees(dbC, hostC),
+          new add_edit_session(dbC, hostC)
+        );
+        session_state.state = "mainPage";
+        await mainPage.init();
+      });
+    }
+  })();
+})();
+//# sourceMappingURL=session-table2.js.map

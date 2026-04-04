@@ -1,3 +1,4 @@
+import JwtApiClient from "../core/security.js";
 import { session_state } from "./state.js";
 export class db_connection {
     /*
@@ -248,8 +249,22 @@ export class db_connection {
         "comments" : [],
     }
 
-    constructor() {
+    constructor(apiBaseUrl = null, jwt = null) {
+        this.apiBaseUrl = this.normalizeConfiguredValue(apiBaseUrl)?.replace(/\/+$/, "") ?? null;
+        this.jwt = this.normalizeConfiguredValue(jwt);
+        this.apiClient = this.apiBaseUrl && this.jwt
+            ? new JwtApiClient(this.apiBaseUrl, this.jwt)
+            : null;
         this.ensureNormalizedAttendeeDateRanges();
+    }
+
+    normalizeConfiguredValue(value) {
+        const normalizedValue = String(value ?? "").trim();
+        return normalizedValue === "" ? null : normalizedValue;
+    }
+
+    async getApiClient() {
+        return this.apiClient;
     }
 
     ensureNormalizedAttendeeDateRanges() {
@@ -267,14 +282,52 @@ export class db_connection {
     }
 
     async get(resource, query = null) {
-        if (resource === "sessions")
-            return structuredClone(
-                db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session))
-            );
+        if (resource === "sessions") {
+            try {
+                const apiClient = await this.getApiClient();
+                if (apiClient) {
+                    const sessionsPayload = await apiClient.get("api/sessions");
+                    return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
+                }
+
+                if (this.apiBaseUrl) {
+                    const response = await fetch(`${this.apiBaseUrl}/api/sessions`);
+                    if (!response.ok) {
+                        throw new Error(`Request failed with status ${response.status}`);
+                    }
+
+                    const sessionsPayload = await response.json();
+                    return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
+                }
+            } catch (error) {
+                console.warn("Falling back to local session data for get(\"sessions\").", error);
+                return structuredClone(this.getLocalSessions());
+            }
+        }
         else if (resource === "session") {
             const sessionID = Number(query?.sessionID);
             if (!Number.isFinite(sessionID)) {
                 return null;
+            }
+
+            try {
+                const apiClient = await this.getApiClient();
+                if (apiClient) {
+                    const sessionPayload = await apiClient.get(`api/sessions/${sessionID}`);
+                    return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
+                }
+
+                if (this.apiBaseUrl) {
+                    const response = await fetch(`${this.apiBaseUrl}/api/sessions/${sessionID}`);
+                    if (!response.ok) {
+                        throw new Error(`Request failed with status ${response.status}`);
+                    }
+
+                    const sessionPayload = await response.json();
+                    return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
+                }
+            } catch (error) {
+                console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
             }
 
             const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
@@ -345,6 +398,186 @@ export class db_connection {
         else if (resource === "CEUTypes")
             return structuredClone(db_connection.data.CEUTypes);
         return null;
+    }
+
+    getLocalSessions() {
+        return db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session));
+    }
+
+    normalizeSessionsResponse(sessionsPayload) {
+        const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
+        const sessions = this.extractSessionsArray(normalizedPayload);
+        if (!Array.isArray(sessions)) {
+            const payloadDescription = this.describePayloadShape(normalizedPayload);
+            throw new Error(`Unsupported sessions response shape (${payloadDescription})`);
+        }
+
+        return sessions
+            .map((session) => this.normalizeSessionRecordForRead(session))
+            .filter((session) => session !== null);
+    }
+
+    normalizeSingleSessionResponse(sessionPayload) {
+        const normalizedPayload = this.parseStructuredPayload(sessionPayload);
+        const session = this.extractSessionRecord(normalizedPayload);
+        if (session === null) {
+            const payloadDescription = this.describePayloadShape(normalizedPayload);
+            throw new Error(`Unsupported session response shape (${payloadDescription})`);
+        }
+
+        const normalizedSession = this.normalizeSessionRecordForRead(session);
+        if (normalizedSession === null) {
+            throw new Error("Unsupported session response record");
+        }
+
+        return normalizedSession;
+    }
+
+    extractSessionsArray(sessionsPayload) {
+        const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
+        if (normalizedPayload !== sessionsPayload) {
+            return this.extractSessionsArray(normalizedPayload);
+        }
+
+        if (Array.isArray(normalizedPayload)) {
+            return normalizedPayload;
+        }
+
+        if (!normalizedPayload || typeof normalizedPayload !== "object") {
+            return null;
+        }
+
+        for (const key of ["sessions", "data", "results", "items", "records", "rows", "payload"]) {
+            const candidate = normalizedPayload[key];
+            if (Array.isArray(candidate)) {
+                return candidate;
+            }
+
+            if (candidate && typeof candidate === "object") {
+                const nestedSessions = this.extractSessionsArray(candidate);
+                if (Array.isArray(nestedSessions)) {
+                    return nestedSessions;
+                }
+            }
+        }
+
+        const objectValues = Object.values(normalizedPayload);
+        if (objectValues.length > 0 && objectValues.every((value) => value && typeof value === "object" && !Array.isArray(value))) {
+            const sessionRecords = objectValues.filter((value) => this.isSessionRecord(value));
+            if (sessionRecords.length > 0) {
+                return sessionRecords;
+            }
+        }
+
+        return null;
+    }
+
+    extractSessionRecord(sessionPayload) {
+        const normalizedPayload = this.parseStructuredPayload(sessionPayload);
+        if (normalizedPayload !== sessionPayload) {
+            return this.extractSessionRecord(normalizedPayload);
+        }
+
+        if (this.isSessionRecord(normalizedPayload)) {
+            return normalizedPayload;
+        }
+
+        if (Array.isArray(normalizedPayload)) {
+            const sessionRecord = normalizedPayload.find((candidate) => this.isSessionRecord(candidate));
+            return sessionRecord ?? null;
+        }
+
+        if (!normalizedPayload || typeof normalizedPayload !== "object") {
+            return null;
+        }
+
+        for (const key of ["session", "data", "result", "item", "record", "row", "payload"]) {
+            const candidate = normalizedPayload[key];
+            if (this.isSessionRecord(candidate)) {
+                return candidate;
+            }
+
+            if (candidate && typeof candidate === "object") {
+                const nestedRecord = this.extractSessionRecord(candidate);
+                if (nestedRecord !== null) {
+                    return nestedRecord;
+                }
+            }
+        }
+
+        const objectValues = Object.values(normalizedPayload);
+        const sessionRecord = objectValues.find((candidate) => this.isSessionRecord(candidate));
+        return sessionRecord ?? null;
+    }
+
+    parseStructuredPayload(payload) {
+        if (typeof payload !== "string") {
+            return payload;
+        }
+
+        const trimmedPayload = payload.trim();
+        if (trimmedPayload === "") {
+            return payload;
+        }
+
+        const looksLikeJson = (
+            (trimmedPayload.startsWith("{") && trimmedPayload.endsWith("}"))
+            || (trimmedPayload.startsWith("[") && trimmedPayload.endsWith("]"))
+        );
+        if (!looksLikeJson) {
+            return payload;
+        }
+
+        try {
+            return JSON.parse(trimmedPayload);
+        } catch (_error) {
+            return payload;
+        }
+    }
+
+    describePayloadShape(payload) {
+        if (payload && typeof payload === "object") {
+            return `keys: ${Object.keys(payload).join(", ")}`;
+        }
+
+        if (typeof payload === "string") {
+            const preview = payload.trim().slice(0, 80).replace(/\s+/g, " ");
+            return preview === ""
+                ? "type: string (empty)"
+                : `type: string, preview: ${preview}`;
+        }
+
+        return `type: ${typeof payload}`;
+    }
+
+    normalizeSessionRecordForRead(session) {
+        if (!this.isSessionRecord(session)) {
+            return null;
+        }
+
+        const normalizedSession = structuredClone(session);
+        if (!Array.isArray(normalizedSession.Attendees) && Array.isArray(normalizedSession.attendees)) {
+            normalizedSession.Attendees = normalizedSession.attendees;
+        }
+
+        const attendeeCount = Number(normalizedSession.AttendeesCt);
+        normalizedSession.AttendeesCt = Number.isFinite(attendeeCount)
+            ? attendeeCount
+            : (Array.isArray(normalizedSession.Attendees) ? normalizedSession.Attendees.length : 0);
+
+        return this.normalizeSessionForRead(normalizedSession);
+    }
+
+    isSessionRecord(value) {
+        if (!value || typeof value !== "object" || Array.isArray(value)) {
+            return false;
+        }
+
+        return Number.isFinite(Number(value.sessionID))
+            || typeof value.SessionTitle === "string"
+            || typeof value.Date === "string"
+            || Array.isArray(value.Attendees)
+            || Array.isArray(value.attendees);
     }
 
     async set(resource, value) {

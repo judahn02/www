@@ -5,6 +5,7 @@ import { build, context } from "esbuild";
 const rootDir = process.cwd();
 const sourceDir = path.join(rootDir, "js");
 const outDir = path.join(rootDir, "js-compiled");
+const jqueryInjectPath = path.join(sourceDir, "shims", "jquery-global.js");
 
 const args = new Set(process.argv.slice(2));
 const isWatch = args.has("--watch");
@@ -32,6 +33,7 @@ await mkdir(outDir, { recursive: true });
 
 const config = {
   entryPoints: entries,
+  inject: [jqueryInjectPath],
   outdir: outDir,
   entryNames: "[name]",
   bundle: true,

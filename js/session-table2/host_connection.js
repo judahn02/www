@@ -13,7 +13,15 @@ export class host_connection {
             return this.resolveUserName();
         }
 
+        if (resource === "commentIconURL") {
+            return this.getComment();
+        }
+
         return null;
+    }
+
+    async getComment() {
+        return this.resolveCommentIconURL();
     }
 
     resolveUserID() {
@@ -96,6 +104,34 @@ export class host_connection {
         }
     }
 
+    resolveCommentIconURL() {
+        const configuredCommentIconURL = this.normalizeURL(
+            this.config?.commentIconURL
+            ?? this.config?.commentURL
+            ?? this.config?.commentIcon
+        );
+        if (configuredCommentIconURL !== null) {
+            return configuredCommentIconURL;
+        }
+
+        const globalCandidates = [
+            globalThis?.PDTSessionTable2CommentIconURL,
+            globalThis?.PDTSessionTable2?.commentIconURL,
+            globalThis?.PDTSessionTable2?.commentURL,
+            globalThis?.PDTAttendeeModalData?.commentIconURL,
+            globalThis?.PDTAttendeeModalData?.commentURL
+        ];
+
+        for (const candidate of globalCandidates) {
+            const normalizedCandidate = this.normalizeURL(candidate);
+            if (normalizedCandidate !== null) {
+                return normalizedCandidate;
+            }
+        }
+
+        return "../assets/speech-bubble-1130.svg";
+    }
+
     normalizeUserID(value) {
         const numericUserID = Number(value);
         if (!Number.isInteger(numericUserID) || numericUserID <= 0) {
@@ -112,5 +148,14 @@ export class host_connection {
         }
 
         return normalizedUserName;
+    }
+
+    normalizeURL(value) {
+        const normalizedURL = String(value ?? "").trim();
+        if (normalizedURL === "") {
+            return null;
+        }
+
+        return normalizedURL;
     }
 }

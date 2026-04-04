@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/homepage.css">
     <title>Professional Development Tracking</title>
 </head>
@@ -29,13 +32,14 @@
                 <h3>DB Configuration Settings</h3>
 
                 <p>DB URI</p>
-                <input type="text">
+                <input id="pdt-db-uri" type="text">
                 <p>DB Name</p>
-                <input type="text">
+                <input id="pdt-db-name" type="text">
                 <br>
-                <button type="button">Save Credentials</button>
+                <button id="pdt-save-credentials-btn" type="button">Save Credentials</button>
                 <br>
-                <button type="button">Generate KeyPairs</button>
+                <button id="pdt-generate-keypairs-btn" type="button">Generate KeyPairs</button>
+                <p id="pdt-jwt-key-status" class="pdt-db-config__status" role="status" aria-live="polite" hidden></p>
             </div>
 
             <div class="pdt-tutorials">
@@ -49,6 +53,7 @@
             </div>
         </div>
     </div>
+    <script type="module" src="../js/home-page.js"></script>
 </body>
 
 </html>

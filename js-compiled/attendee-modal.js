@@ -1,4 +1,284 @@
-(()=>{function u(e,n){let t=JSON.parse(e.textContent),a=JSON.parse(n.textContent);if(t.length===0)console.log("AttendeeData is empty");else{let d=document.getElementById("pdt-table-1");if(!d){console.error("table_1 not found.");return}let r=d.querySelector("tbody");if(!r){console.error("tbody not found");return}r.replaceChildren();for(let o of t)r.appendChild(w(o)),r.appendChild(v(o))}if(a.length===0)console.log("adminServiceData is empty");else{let d=document.getElementById("pdt-table-2");if(!d){console.error("table_2 not found.");return}let r=d.querySelector("tbody");if(!r){console.error("tbody not found");return}r.replaceChildren();for(let o of a)r.appendChild(b(o))}{let y=function(c){let _=c.currentTarget.dataset.tabTarget,m=document.getElementById(_);f.forEach(l=>{l.style.display="none"}),s.forEach(l=>{l.classList.remove("active")}),m&&(m.style.display="block"),c.currentTarget.classList.add("active")};document.getElementById("pdt-open-modal").addEventListener("click",()=>{let c=document.getElementById("pdt-modal");c&&(c.style.display="flex")}),document.getElementById("pdt-modal-close").addEventListener("click",()=>{let c=document.getElementById("pdt-modal");c&&(c.style.display="none")});let o=document.getElementById("pdt-modal");if(!o)return;o.addEventListener("click",c=>{c.target===o&&(o.style.display="none")});let i=document.getElementById("pdt-export-btn");if(!i)return;i.addEventListener("click",()=>{h(t,a)});let s=document.querySelectorAll(".pdt-tab-link"),f=document.querySelectorAll(".pdt-tab-content");s.forEach(c=>{c.addEventListener("click",y)}),s.length>0&&s[0].click()}}function w(e){let n=document.createElement("tr");n.className="pdt-history-table__session-row";let t=[e.date,e.title,e.type,e.hours,e.ceu_cap,e.ceu_wei,e.rid_qual,e.when_rid,e.par_evnt,e.evnt_type];for(let a of t){let d=document.createElement("td");d.textContent=a,n.appendChild(d)}return n}function v(e){let n=document.createElement("tr"),t=document.createElement("td");t.colSpan=10;let a=document.createElement("div");a.className="pdt-flags-and-comment";let d=document.createElement("div");d.className="pdt-flags";let r=document.createElement("span");r.textContent=e.flags,d.appendChild(r);let o=document.createElement("div");return o.className="pdt-comment",o.textContent=e.comment,a.append(d,o),t.appendChild(a),n.appendChild(t),n}function b(e){let n=document.createElement("tr"),t=[e.start,e.end,e.type,e.ceu_wei];for(let a of t){let d=document.createElement("td");d.textContent=a,n.appendChild(d)}return n}function h(e,n){let a=[g(e),"",E(n)].join(`
-`),d=new Blob([a],{type:"text/csv;charset=utf-8;"}),r=URL.createObjectURL(d),o=document.createElement("a");o.href=r,o.download="training-conference-admin-export.csv",document.body.appendChild(o),o.click(),document.body.removeChild(o),URL.revokeObjectURL(r)}function g(e){let n=[["Training and Conference History"],["Date","Session Title","Type","Hours","CEU Capable","CEU Weight","RID Qualified","When RID Submission?","Parent Event","Event Type","Flags","Comment"]];for(let t of e)n.push([t.date,t.title,t.type,t.hours,t.ceu_cap,t.ceu_wei,t.rid_qual,t.when_rid,t.par_evnt,t.evnt_type,t.flags,t.comment]);return n.map(p).join(`
-`)}function E(e){let n=[["Administrative Service"],["Start","End","Type","CEU Weight"]];for(let t of e)n.push([t.start,t.end,t.type,t.ceu_wei]);return n.map(p).join(`
-`)}function p(e){return e.map(C).join(",")}function C(e){return`"${String(e!=null?e:"").replaceAll('"','""')}"`}(function(){"use strict";let e=window.PDTAttendeeModalData||{},n=window.PDTAttendeeModalData&&(Array.isArray(e.sessions)||Array.isArray(e.admin_service)),t=Array.isArray(e.sessions)?e.sessions:[],a=Array.isArray(e.admin_service)?e.admin_service:[];window.PDTAttendeeModalData={sessions:t,admin_service:a},window.PDTModalGetSessions=function(){return window.PDTAttendeeModalData.sessions},window.PDTModalGetAdminService=function(){return window.PDTAttendeeModalData.admin_service};let d=typeof window.$!="undefined",r=typeof window.jQuery!="undefined";if(!d&&r&&(window.$=window.jQuery),typeof window.$=="undefined"){console.error("PDT: jQuery is required for pdt-attendee-table.js");return}function o(){let i,s;if(n)i={textContent:JSON.stringify(window.PDTModalGetSessions())},s={textContent:JSON.stringify(window.PDTModalGetAdminService())};else{if(i=document.getElementById("pdt-attendee-data"),s=document.getElementById("pdt-admin-service-data"),!i){console.error("The html json data is not found. Skipping table load.");return}if(!s){console.error("The admin service json data is not found. Skipping table load.");return}}u(i,s)}if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",o,{once:!0});return}o()})();})();
+(() => {
+  // js/shims/jquery-global.js
+  var jq = window.jQuery || window.$ || window.jquery;
+  if (typeof jq !== "function") {
+    throw new Error("PDT: jQuery is required before this bundle loads.");
+  }
+
+  // js/attendee-modal/event-hookups.js
+  function event_hookups(attendeeDataNode, adminServiceDataNode) {
+    const attendeeData = JSON.parse(attendeeDataNode.textContent);
+    const adminServiceData = JSON.parse(adminServiceDataNode.textContent);
+    {
+      if (attendeeData.length === 0) {
+        console.log("AttendeeData is empty");
+      } else {
+        const table_1 = document.getElementById("pdt-table-1");
+        if (!table_1) {
+          console.error("table_1 not found.");
+          return;
+        }
+        const tbody = table_1.querySelector("tbody");
+        if (!tbody) {
+          console.error("tbody not found");
+          return;
+        }
+        tbody.replaceChildren();
+        for (const sessionData of attendeeData) {
+          tbody.appendChild(format_session_row_1(sessionData));
+          tbody.appendChild(format_session_row_2(sessionData));
+        }
+      }
+    }
+    {
+      if (adminServiceData.length === 0) {
+        console.log("adminServiceData is empty");
+      } else {
+        const table_2 = document.getElementById("pdt-table-2");
+        if (!table_2) {
+          console.error("table_2 not found.");
+          return;
+        }
+        const tbody = table_2.querySelector("tbody");
+        if (!tbody) {
+          console.error("tbody not found");
+          return;
+        }
+        tbody.replaceChildren();
+        for (const adminServiceRow of adminServiceData) {
+          tbody.appendChild(format_admin_service_row(adminServiceRow));
+        }
+      }
+    }
+    {
+      let openPdtTab = function(event) {
+        const tabId = event.currentTarget.dataset.tabTarget;
+        const activePanel = document.getElementById(tabId);
+        pdtTabPanels.forEach((panel) => {
+          panel.style.display = "none";
+        });
+        pdtTabButtons.forEach((button) => {
+          button.classList.remove("active");
+        });
+        if (activePanel) {
+          activePanel.style.display = "block";
+        }
+        event.currentTarget.classList.add("active");
+      };
+      const modal_btn = document.getElementById("pdt-open-modal");
+      modal_btn.addEventListener("click", () => {
+        const modal = document.getElementById("pdt-modal");
+        if (!modal) {
+          return;
+        }
+        modal.style.display = "flex";
+      });
+      const modal_close_btn = document.getElementById("pdt-modal-close");
+      modal_close_btn.addEventListener("click", () => {
+        const modal = document.getElementById("pdt-modal");
+        if (!modal) {
+          return;
+        }
+        modal.style.display = "none";
+      });
+      const modal_window = document.getElementById("pdt-modal");
+      if (!modal_window) {
+        return;
+      }
+      modal_window.addEventListener("click", (event) => {
+        if (event.target !== modal_window) {
+          return;
+        }
+        modal_window.style.display = "none";
+      });
+      const export_btn = document.getElementById("pdt-export-btn");
+      if (!export_btn) {
+        return;
+      }
+      export_btn.addEventListener("click", () => {
+        export_attendee_modal_csv(attendeeData, adminServiceData);
+      });
+      const pdtTabButtons = document.querySelectorAll(".pdt-tab-link");
+      const pdtTabPanels = document.querySelectorAll(".pdt-tab-content");
+      pdtTabButtons.forEach((button) => {
+        button.addEventListener("click", openPdtTab);
+      });
+      if (pdtTabButtons.length > 0) {
+        pdtTabButtons[0].click();
+      }
+    }
+  }
+  function format_session_row_1(sessionData) {
+    const mainRow = document.createElement("tr");
+    mainRow.className = "pdt-history-table__session-row";
+    const mainRowValues = [
+      sessionData.date,
+      sessionData.title,
+      sessionData.type,
+      sessionData.hours,
+      sessionData.ceu_cap,
+      sessionData.ceu_wei,
+      sessionData.rid_qual,
+      sessionData.when_rid,
+      sessionData.par_evnt,
+      sessionData.evnt_type
+    ];
+    for (const value of mainRowValues) {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      mainRow.appendChild(cell);
+    }
+    return mainRow;
+  }
+  function format_session_row_2(sessionData) {
+    const detailRow = document.createElement("tr");
+    const detailCell = document.createElement("td");
+    detailCell.colSpan = 10;
+    const wrapper = document.createElement("div");
+    wrapper.className = "pdt-flags-and-comment";
+    const flags = document.createElement("div");
+    flags.className = "pdt-flags";
+    const flagsText = document.createElement("span");
+    flagsText.textContent = sessionData.flags;
+    flags.appendChild(flagsText);
+    const comment = document.createElement("div");
+    comment.className = "pdt-comment";
+    comment.textContent = sessionData.comment;
+    wrapper.append(flags, comment);
+    detailCell.appendChild(wrapper);
+    detailRow.appendChild(detailCell);
+    return detailRow;
+  }
+  function format_admin_service_row(adminServiceRow) {
+    const row = document.createElement("tr");
+    const rowValues = [
+      adminServiceRow.start,
+      adminServiceRow.end,
+      adminServiceRow.type,
+      adminServiceRow.ceu_wei
+    ];
+    for (const value of rowValues) {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.appendChild(cell);
+    }
+    return row;
+  }
+  function export_attendee_modal_csv(attendeeData, adminServiceData) {
+    const csvParts = [
+      build_session_csv(attendeeData),
+      "",
+      build_admin_service_csv(adminServiceData)
+    ];
+    const csvText = csvParts.join("\n");
+    const csvBlob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+    const csvUrl = URL.createObjectURL(csvBlob);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = csvUrl;
+    downloadLink.download = "training-conference-admin-export.csv";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    URL.revokeObjectURL(csvUrl);
+  }
+  function build_session_csv(attendeeData) {
+    const rows = [
+      ["Training and Conference History"],
+      ["Date", "Session Title", "Type", "Hours", "CEU Capable", "CEU Weight", "RID Qualified", "When RID Submission?", "Parent Event", "Event Type", "Flags", "Comment"]
+    ];
+    for (const sessionData of attendeeData) {
+      rows.push([
+        sessionData.date,
+        sessionData.title,
+        sessionData.type,
+        sessionData.hours,
+        sessionData.ceu_cap,
+        sessionData.ceu_wei,
+        sessionData.rid_qual,
+        sessionData.when_rid,
+        sessionData.par_evnt,
+        sessionData.evnt_type,
+        sessionData.flags,
+        sessionData.comment
+      ]);
+    }
+    return rows.map(format_csv_row).join("\n");
+  }
+  function build_admin_service_csv(adminServiceData) {
+    const rows = [
+      ["Administrative Service"],
+      ["Start", "End", "Type", "CEU Weight"]
+    ];
+    for (const adminServiceRow of adminServiceData) {
+      rows.push([
+        adminServiceRow.start,
+        adminServiceRow.end,
+        adminServiceRow.type,
+        adminServiceRow.ceu_wei
+      ]);
+    }
+    return rows.map(format_csv_row).join("\n");
+  }
+  function format_csv_row(rowValues) {
+    return rowValues.map(format_csv_cell).join(",");
+  }
+  function format_csv_cell(value) {
+    const text = String(value != null ? value : "");
+    const escapedText = text.replaceAll('"', '""');
+    return `"${escapedText}"`;
+  }
+
+  // js/attendee-modal.js
+  (function() {
+    "use strict";
+    const rawModalData = window.PDTAttendeeModalData || {};
+    const hasWindowModalData = window.PDTAttendeeModalData && (Array.isArray(rawModalData.sessions) || Array.isArray(rawModalData.admin_service));
+    const sessions = Array.isArray(rawModalData.sessions) ? rawModalData.sessions : [];
+    const adminService = Array.isArray(rawModalData.admin_service) ? rawModalData.admin_service : [];
+    window.PDTAttendeeModalData = {
+      sessions,
+      admin_service: adminService
+    };
+    window.PDTModalGetSessions = function() {
+      return window.PDTAttendeeModalData.sessions;
+    };
+    window.PDTModalGetAdminService = function() {
+      return window.PDTAttendeeModalData.admin_service;
+    };
+    const hasDollar = typeof window.$ !== "undefined";
+    const hasJQuery = typeof window.jQuery !== "undefined";
+    if (!hasDollar && hasJQuery) {
+      window.$ = window.jQuery;
+    }
+    if (typeof window.$ === "undefined") {
+      console.error("PDT: jQuery is required for pdt-attendee-table.js");
+      return;
+    }
+    function initAttendeeModal() {
+      let attendeeDataNode;
+      let adminServiceDataNode;
+      if (hasWindowModalData) {
+        attendeeDataNode = { textContent: JSON.stringify(window.PDTModalGetSessions()) };
+        adminServiceDataNode = { textContent: JSON.stringify(window.PDTModalGetAdminService()) };
+      } else {
+        attendeeDataNode = document.getElementById("pdt-attendee-data");
+        adminServiceDataNode = document.getElementById("pdt-admin-service-data");
+        if (!attendeeDataNode) {
+          console.error("The html json data is not found. Skipping table load.");
+          return;
+        }
+        if (!adminServiceDataNode) {
+          console.error("The admin service json data is not found. Skipping table load.");
+          return;
+        }
+      }
+      event_hookups(attendeeDataNode, adminServiceDataNode);
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", initAttendeeModal, { once: true });
+      return;
+    }
+    initAttendeeModal();
+  })();
+})();
+//# sourceMappingURL=attendee-modal.js.map
