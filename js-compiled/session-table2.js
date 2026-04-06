@@ -40,18 +40,49 @@
     }
   };
 
+  // js/core/utilties.js
+  var util = class {
+    constructor(parameters) {
+    }
+    /**
+     * Normalizing to the standard date format or returns null if the value cannot be parsed.
+     * @param {string} dateValue - A date string in YYYY-MM-DD or M/D/YYYY format.
+     * @returns {string|null} A date string in YYYY-MM-DD format, or null if invalid.
+     */
+    static enfDate(dateValue) {
+      console.warn("This should not be called because the backend should take care of this.");
+      const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
+      if (normalizedDateValue === "") {
+        return null;
+      }
+      if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedDateValue)) {
+        return normalizedDateValue;
+      }
+      const displayDateMatch = normalizedDateValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+      if (!displayDateMatch) {
+        return null;
+      }
+      const [, month, day, year] = displayDateMatch;
+      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    }
+  };
+
   // js/session-table2/db_connection.js
   var _db_connection = class _db_connection {
+    /**
+     * 
+     * @param {string} apiBaseUrl 
+     *  Can't have trailing '/'
+     * @param {string} jwt 
+     */
     constructor(apiBaseUrl = null, jwt = null) {
-      var _a, _b;
-      this.apiBaseUrl = (_b = (_a = this.normalizeConfiguredValue(apiBaseUrl)) == null ? void 0 : _a.replace(/\/+$/, "")) != null ? _b : null;
-      this.jwt = this.normalizeConfiguredValue(jwt);
-      this.apiClient = this.apiBaseUrl && this.jwt ? new JwtApiClient(this.apiBaseUrl, this.jwt) : null;
+      this.apiBaseUrl = apiBaseUrl;
+      this.jwt = jwt;
+      if (!apiBaseUrl || !jwt) {
+        throw new Error("API Base URL and or JWT are not present.");
+      }
+      this.apiClient = new JwtApiClient(apiBaseUrl, jwt);
       this.ensureNormalizedAttendeeDateRanges();
-    }
-    normalizeConfiguredValue(value) {
-      const normalizedValue = String(value != null ? value : "").trim();
-      return normalizedValue === "" ? null : normalizedValue;
     }
     async getApiClient() {
       return this.apiClient;
@@ -772,6 +803,13 @@
       }
       return this.parseLegacyAttendeeDateRange(attendeeEntry == null ? void 0 : attendeeEntry.dateRange, session);
     }
+    /**
+     * 
+     * @param {*} attendeeEntries 
+     * @param {*} session 
+     * @returns 
+     * 
+     */
     normalizeStoredAttendeeEntries(attendeeEntries = [], session = null) {
       if (!Array.isArray(attendeeEntries)) {
         return [];
@@ -815,6 +853,8 @@
         Number(attendeeEntry == null ? void 0 : attendeeEntry.personID)
       ];
     }
+    // Ensures that if the session is not self paced, the date entries won't be an issue
+    // not needed as data structure is enforced by back end. 
     normalizeAttendeeDateRangeValues(dateRangeStart, dateRangeEnd, session = null) {
       if (!this.isSelfPacedSession(session)) {
         return {
@@ -904,20 +944,9 @@
       }
       return `${formattedStartDate} to ${formattedEndDate}`;
     }
+    // working for multiple fuctions: 
     normalizeFlexibleDateValue(dateValue) {
-      const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
-      if (normalizedDateValue === "") {
-        return null;
-      }
-      if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedDateValue)) {
-        return normalizedDateValue;
-      }
-      const displayDateMatch = normalizedDateValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-      if (!displayDateMatch) {
-        return null;
-      }
-      const [, month, day, year] = displayDateMatch;
-      return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      return util.enfDate(dateValue);
     }
     normalizeRIDCertificationDateTime(value) {
       const normalizedValue = String(value != null ? value : "").trim();

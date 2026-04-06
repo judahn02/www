@@ -1,5 +1,6 @@
 import JwtApiClient from "../core/security.js";
 import { session_state } from "./state.js";
+import util from "../core/utilties.js"
 export class db_connection {
     /*
     {
@@ -249,18 +250,23 @@ export class db_connection {
         "comments" : [],
     }
 
+    /**
+     * 
+     * @param {string} apiBaseUrl 
+     *  Can't have trailing '/'
+     * @param {string} jwt 
+     */
     constructor(apiBaseUrl = null, jwt = null) {
-        this.apiBaseUrl = this.normalizeConfiguredValue(apiBaseUrl)?.replace(/\/+$/, "") ?? null;
-        this.jwt = this.normalizeConfiguredValue(jwt);
-        this.apiClient = this.apiBaseUrl && this.jwt
-            ? new JwtApiClient(this.apiBaseUrl, this.jwt)
-            : null;
-        this.ensureNormalizedAttendeeDateRanges();
-    }
+        
+        this.apiBaseUrl = apiBaseUrl;
+        this.jwt = jwt;
 
-    normalizeConfiguredValue(value) {
-        const normalizedValue = String(value ?? "").trim();
-        return normalizedValue === "" ? null : normalizedValue;
+        if (!apiBaseUrl || !jwt) {
+            throw new Error("API Base URL and or JWT are not present.");
+        }
+        this.apiClient = new JwtApiClient(apiBaseUrl, jwt);
+// This is my stopping point
+        this.ensureNormalizedAttendeeDateRanges();
     }
 
     async getApiClient() {
@@ -268,6 +274,7 @@ export class db_connection {
     }
 
     ensureNormalizedAttendeeDateRanges() {
+        // if true just return, I am guessing to prevent rework.
         if (db_connection.attendeeDateRangesNormalized) {
             return;
         }
@@ -1194,7 +1201,15 @@ export class db_connection {
         return this.parseLegacyAttendeeDateRange(attendeeEntry?.dateRange, session);
     }
 
+    /**
+     * 
+     * @param {*} attendeeEntries 
+     * @param {*} session 
+     * @returns 
+     * 
+     */
     normalizeStoredAttendeeEntries(attendeeEntries = [], session = null) {
+        // ensures attendeeEntries is an array
         if (!Array.isArray(attendeeEntries)) {
             return [];
         }
@@ -1208,13 +1223,15 @@ export class db_connection {
         if (!Array.isArray(attendeeEntry)) {
             return null;
         }
-
+        // TODO:ensure data sources are doing this already. 
         const normalizedName = String(attendeeEntry?.[0] ?? "").trim();
         const normalizedEmail = String(attendeeEntry?.[1] ?? "").trim();
+
+            // makes sence, if theres missing values, don't deal with it.
         if (normalizedName === "" || normalizedEmail === "") {
             return null;
         }
-
+        // It should always be an array of 6
         const isExpandedTuple = attendeeEntry.length >= 6;
         const dateRangeValues = isExpandedTuple
             ? this.normalizeAttendeeDateRangeValues(attendeeEntry?.[2], attendeeEntry?.[3], session)
@@ -1224,6 +1241,8 @@ export class db_connection {
         if (!Number.isFinite(personID)) {
             return null;
         }
+        // This code is in place because it has to deal with different versions of the attendee Entry array. \
+        // If one type is standardized, then will it be needed? 
 
         return {
             name: normalizedName,
@@ -1246,6 +1265,8 @@ export class db_connection {
         ];
     }
 
+    // Ensures that if the session is not self paced, the date entries won't be an issue
+    // not needed as data structure is enforced by back end. 
     normalizeAttendeeDateRangeValues(dateRangeStart, dateRangeEnd, session = null) {
         if (!this.isSelfPacedSession(session)) {
             return {
@@ -1254,8 +1275,8 @@ export class db_connection {
             };
         }
 
-        const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
-        const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
+        const normalizedStartDate = util.enfDate(dateRangeStart);
+        const normalizedEndDate = util.enfDate(dateRangeEnd);
 
         if (normalizedStartDate === null) {
             return {
@@ -1294,7 +1315,7 @@ export class db_connection {
         }
 
         const [startDate, endDate] = normalizedDateRange.split(/\s+to\s+/i);
-        const normalizedStartDate = this.normalizeFlexibleDateValue(startDate);
+        const normalizedStartDate = util.enfDate(startDate);
         if (normalizedStartDate === null) {
             return {
                 dateRangeStart: null,
@@ -1310,7 +1331,7 @@ export class db_connection {
             };
         }
 
-        const normalizedEndDate = this.normalizeFlexibleDateValue(endDate);
+        const normalizedEndDate = util.enfDate(endDate);
         if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
             return {
                 dateRangeStart: normalizedStartDate,
@@ -1329,8 +1350,8 @@ export class db_connection {
             return null;
         }
 
-        const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
-        const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
+        const normalizedStartDate = util.enfDate(dateRangeStart);
+        const normalizedEndDate = util.enfDate(dateRangeEnd);
 
         if (normalizedStartDate === null) {
             return "Not started";
@@ -1351,25 +1372,6 @@ export class db_connection {
         }
 
         return `${formattedStartDate} to ${formattedEndDate}`;
-    }
-
-    normalizeFlexibleDateValue(dateValue) {
-        const normalizedDateValue = String(dateValue ?? "").trim();
-        if (normalizedDateValue === "") {
-            return null;
-        }
-
-        if (/^\d{4}-\d{2}-\d{2}$/.test(normalizedDateValue)) {
-            return normalizedDateValue;
-        }
-
-        const displayDateMatch = normalizedDateValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-        if (!displayDateMatch) {
-            return null;
-        }
-
-        const [, month, day, year] = displayDateMatch;
-        return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     }
 
     normalizeRIDCertificationDateTime(value) {
