@@ -793,11 +793,10 @@
           dateRangeEnd: null
         };
       }
-      const normalizedSeparatedDateRange = this.normalizeAttendeeDateRangeValues(
-        attendeeEntry == null ? void 0 : attendeeEntry.dateRangeStart,
-        attendeeEntry == null ? void 0 : attendeeEntry.dateRangeEnd,
-        session
-      );
+      const normalizedSeparatedDateRange = {
+        dateRangeStart: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry.dateRangeStart),
+        dateRangeEnd: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry.dateRangeEnd)
+      };
       if (normalizedSeparatedDateRange.dateRangeStart !== null || normalizedSeparatedDateRange.dateRangeEnd !== null) {
         return normalizedSeparatedDateRange;
       }
@@ -827,7 +826,10 @@
         return null;
       }
       const isExpandedTuple = attendeeEntry.length >= 6;
-      const dateRangeValues = isExpandedTuple ? this.normalizeAttendeeDateRangeValues(attendeeEntry == null ? void 0 : attendeeEntry[2], attendeeEntry == null ? void 0 : attendeeEntry[3], session) : this.parseLegacyAttendeeDateRange(attendeeEntry == null ? void 0 : attendeeEntry[2], session);
+      const dateRangeValues = {
+        dateRangeStart: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry[2]),
+        dateRangeEnd: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry[3])
+      };
       const certStatusID = isExpandedTuple ? attendeeEntry == null ? void 0 : attendeeEntry[4] : attendeeEntry == null ? void 0 : attendeeEntry[3];
       const personID = Number(isExpandedTuple ? attendeeEntry == null ? void 0 : attendeeEntry[5] : attendeeEntry == null ? void 0 : attendeeEntry[4]);
       if (!Number.isFinite(personID)) {
@@ -853,81 +855,15 @@
         Number(attendeeEntry == null ? void 0 : attendeeEntry.personID)
       ];
     }
-    // Ensures that if the session is not self paced, the date entries won't be an issue
-    // not needed as data structure is enforced by back end. 
-    normalizeAttendeeDateRangeValues(dateRangeStart, dateRangeEnd, session = null) {
-      if (!this.isSelfPacedSession(session)) {
-        return {
-          dateRangeStart: null,
-          dateRangeEnd: null
-        };
-      }
-      const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
-      const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
-      if (normalizedStartDate === null) {
-        return {
-          dateRangeStart: null,
-          dateRangeEnd: null
-        };
-      }
-      if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
-        return {
-          dateRangeStart: normalizedStartDate,
-          dateRangeEnd: null
-        };
-      }
-      return {
-        dateRangeStart: normalizedStartDate,
-        dateRangeEnd: normalizedEndDate
-      };
-    }
     parseLegacyAttendeeDateRange(dateRange, session = null) {
-      if (!this.isSelfPacedSession(session)) {
-        return {
-          dateRangeStart: null,
-          dateRangeEnd: null
-        };
-      }
-      const normalizedDateRange = String(dateRange != null ? dateRange : "").trim();
-      if (normalizedDateRange === "" || normalizedDateRange.toLowerCase() === "not started") {
-        return {
-          dateRangeStart: null,
-          dateRangeEnd: null
-        };
-      }
-      const [startDate, endDate] = normalizedDateRange.split(/\s+to\s+/i);
-      const normalizedStartDate = this.normalizeFlexibleDateValue(startDate);
-      if (normalizedStartDate === null) {
-        return {
-          dateRangeStart: null,
-          dateRangeEnd: null
-        };
-      }
-      const normalizedEndDateLabel = String(endDate != null ? endDate : "").trim().toLowerCase();
-      if (normalizedEndDateLabel === "" || normalizedEndDateLabel === "ongoing") {
-        return {
-          dateRangeStart: normalizedStartDate,
-          dateRangeEnd: null
-        };
-      }
-      const normalizedEndDate = this.normalizeFlexibleDateValue(endDate);
-      if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
-        return {
-          dateRangeStart: normalizedStartDate,
-          dateRangeEnd: null
-        };
-      }
-      return {
-        dateRangeStart: normalizedStartDate,
-        dateRangeEnd: normalizedEndDate
-      };
+      throw Error("Legacy Attendees Range Not Allowed");
     }
     buildAttendeeDateRangeDisplay(dateRangeStart, dateRangeEnd, session = null) {
       if (!this.isSelfPacedSession(session)) {
         return null;
       }
-      const normalizedStartDate = this.normalizeFlexibleDateValue(dateRangeStart);
-      const normalizedEndDate = this.normalizeFlexibleDateValue(dateRangeEnd);
+      const normalizedStartDate = util.enfDate(dateRangeStart);
+      const normalizedEndDate = util.enfDate(dateRangeEnd);
       if (normalizedStartDate === null) {
         return "Not started";
       }
@@ -943,10 +879,6 @@
         return `${formattedStartDate} to Ongoing`;
       }
       return `${formattedStartDate} to ${formattedEndDate}`;
-    }
-    // working for multiple fuctions: 
-    normalizeFlexibleDateValue(dateValue) {
-      return util.enfDate(dateValue);
     }
     normalizeRIDCertificationDateTime(value) {
       const normalizedValue = String(value != null ? value : "").trim();

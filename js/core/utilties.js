@@ -10,6 +10,7 @@ export default class util {
      * @returns {string|null} A date string in YYYY-MM-DD format, or null if invalid.
      */
     static enfDate (dateValue) {
+        // console.log("This is v1");
         console.warn("This should not be called because the backend should take care of this.");
 
         const normalizedDateValue = String(dateValue ?? "").trim();

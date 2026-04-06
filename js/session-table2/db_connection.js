@@ -1182,6 +1182,8 @@ export class db_connection {
     }
 
     normalizeSessionAttendeeDateRange(attendeeEntry, session) {
+        if (attendeeEntry.length != 6) throw Error("Attendee Entry using wrong count of indexes.");
+
         if (!this.isSelfPacedSession(session)) {
             return {
                 dateRangeStart: null,
@@ -1189,16 +1191,13 @@ export class db_connection {
             };
         }
 
-        const normalizedSeparatedDateRange = this.normalizeAttendeeDateRangeValues(
-            attendeeEntry?.dateRangeStart,
-            attendeeEntry?.dateRangeEnd,
-            session
-        );
-        if (normalizedSeparatedDateRange.dateRangeStart !== null || normalizedSeparatedDateRange.dateRangeEnd !== null) {
-            return normalizedSeparatedDateRange;
+        const normalizedSeparatedDateRange = { 
+            dateRangeStart: util.enfDate(attendeeEntry?.dateRangeStart), 
+            dateRangeEnd: util.enfDate(attendeeEntry?.dateRangeEnd)
         }
 
-        return this.parseLegacyAttendeeDateRange(attendeeEntry?.dateRange, session);
+        return normalizedSeparatedDateRange;
+
     }
 
     /**
@@ -1233,9 +1232,12 @@ export class db_connection {
         }
         // It should always be an array of 6
         const isExpandedTuple = attendeeEntry.length >= 6;
-        const dateRangeValues = isExpandedTuple
-            ? this.normalizeAttendeeDateRangeValues(attendeeEntry?.[2], attendeeEntry?.[3], session)
-            : this.parseLegacyAttendeeDateRange(attendeeEntry?.[2], session);
+
+        const dateRangeValues = { 
+            dateRangeStart: util.enfDate(attendeeEntry?.[2]), 
+            dateRangeEnd: util.enfDate(attendeeEntry?.[3])
+        }
+
         const certStatusID = isExpandedTuple ? attendeeEntry?.[4] : attendeeEntry?.[3];
         const personID = Number(isExpandedTuple ? attendeeEntry?.[5] : attendeeEntry?.[4]);
         if (!Number.isFinite(personID)) {
@@ -1263,86 +1265,6 @@ export class db_connection {
             this.normalizeAttendeeStatusId(attendeeEntry?.certStatusID),
             Number(attendeeEntry?.personID)
         ];
-    }
-
-    // Ensures that if the session is not self paced, the date entries won't be an issue
-    // not needed as data structure is enforced by back end. 
-    normalizeAttendeeDateRangeValues(dateRangeStart, dateRangeEnd, session = null) {
-        if (!this.isSelfPacedSession(session)) {
-            return {
-                dateRangeStart: null,
-                dateRangeEnd: null
-            };
-        }
-
-        const normalizedStartDate = util.enfDate(dateRangeStart);
-        const normalizedEndDate = util.enfDate(dateRangeEnd);
-
-        if (normalizedStartDate === null) {
-            return {
-                dateRangeStart: null,
-                dateRangeEnd: null
-            };
-        }
-
-        if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
-            return {
-                dateRangeStart: normalizedStartDate,
-                dateRangeEnd: null
-            };
-        }
-
-        return {
-            dateRangeStart: normalizedStartDate,
-            dateRangeEnd: normalizedEndDate
-        };
-    }
-
-    parseLegacyAttendeeDateRange(dateRange, session = null) {
-        if (!this.isSelfPacedSession(session)) {
-            return {
-                dateRangeStart: null,
-                dateRangeEnd: null
-            };
-        }
-
-        const normalizedDateRange = String(dateRange ?? "").trim();
-        if (normalizedDateRange === "" || normalizedDateRange.toLowerCase() === "not started") {
-            return {
-                dateRangeStart: null,
-                dateRangeEnd: null
-            };
-        }
-
-        const [startDate, endDate] = normalizedDateRange.split(/\s+to\s+/i);
-        const normalizedStartDate = util.enfDate(startDate);
-        if (normalizedStartDate === null) {
-            return {
-                dateRangeStart: null,
-                dateRangeEnd: null
-            };
-        }
-
-        const normalizedEndDateLabel = String(endDate ?? "").trim().toLowerCase();
-        if (normalizedEndDateLabel === "" || normalizedEndDateLabel === "ongoing") {
-            return {
-                dateRangeStart: normalizedStartDate,
-                dateRangeEnd: null
-            };
-        }
-
-        const normalizedEndDate = util.enfDate(endDate);
-        if (normalizedEndDate !== null && normalizedEndDate < normalizedStartDate) {
-            return {
-                dateRangeStart: normalizedStartDate,
-                dateRangeEnd: null
-            };
-        }
-
-        return {
-            dateRangeStart: normalizedStartDate,
-            dateRangeEnd: normalizedEndDate
-        };
     }
 
     buildAttendeeDateRangeDisplay(dateRangeStart, dateRangeEnd, session = null) {
