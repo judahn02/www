@@ -294,10 +294,10 @@ export class db_connection {
                 const apiClient = await this.getApiClient();
 
                 // Trying with toke system
-                if (apiClient) {
-                    const sessionsPayload = await apiClient.get("api/sessions");
-                    return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
-                }
+                // if (apiClient) { // construcutor enforces this to exist.
+                const sessionsPayload = await apiClient.get("api/sessions");
+                return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
+                // }
 
             } catch (error) {
                 console.warn("Falling back to local session data for get(\"sessions\").", error);
@@ -406,7 +406,8 @@ export class db_connection {
 
     normalizeSessionsResponse(sessionsPayload) {
         const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
-        const sessions = this.extractSessionsArray(normalizedPayload);
+        // const sessions = this.extractSessionsArray(normalizedPayload);
+        const sessions = normalizedPayload["sessions"];
         if (!Array.isArray(sessions)) {
             const payloadDescription = this.describePayloadShape(normalizedPayload);
             throw new Error(`Unsupported sessions response shape (${payloadDescription})`);
@@ -431,45 +432,6 @@ export class db_connection {
         }
 
         return normalizedSession;
-    }
-
-    extractSessionsArray(sessionsPayload) {
-        const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
-        if (normalizedPayload !== sessionsPayload) {
-            return this.extractSessionsArray(normalizedPayload);
-        }
-
-        if (Array.isArray(normalizedPayload)) {
-            return normalizedPayload;
-        }
-
-        if (!normalizedPayload || typeof normalizedPayload !== "object") {
-            return null;
-        }
-
-        for (const key of ["sessions", "data", "results", "items", "records", "rows", "payload"]) {
-            const candidate = normalizedPayload[key];
-            if (Array.isArray(candidate)) {
-                return candidate;
-            }
-
-            if (candidate && typeof candidate === "object") {
-                const nestedSessions = this.extractSessionsArray(candidate);
-                if (Array.isArray(nestedSessions)) {
-                    return nestedSessions;
-                }
-            }
-        }
-
-        const objectValues = Object.values(normalizedPayload);
-        if (objectValues.length > 0 && objectValues.every((value) => value && typeof value === "object" && !Array.isArray(value))) {
-            const sessionRecords = objectValues.filter((value) => this.isSessionRecord(value));
-            if (sessionRecords.length > 0) {
-                return sessionRecords;
-            }
-        }
-
-        return null;
     }
 
     extractSessionRecord(sessionPayload) {
