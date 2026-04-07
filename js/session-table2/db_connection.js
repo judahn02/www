@@ -269,7 +269,7 @@ export class db_connection {
         this.ensureNormalizedAttendeeDateRanges();
     }
 
-    async getApiClient() {
+    getApiClient() {
         return this.apiClient;
     }
 
@@ -292,20 +292,13 @@ export class db_connection {
         if (resource === "sessions") {
             try {
                 const apiClient = await this.getApiClient();
+
+                // Trying with toke system
                 if (apiClient) {
                     const sessionsPayload = await apiClient.get("api/sessions");
                     return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
                 }
 
-                if (this.apiBaseUrl) {
-                    const response = await fetch(`${this.apiBaseUrl}/api/sessions`);
-                    if (!response.ok) {
-                        throw new Error(`Request failed with status ${response.status}`);
-                    }
-
-                    const sessionsPayload = await response.json();
-                    return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
-                }
             } catch (error) {
                 console.warn("Falling back to local session data for get(\"sessions\").", error);
                 return structuredClone(this.getLocalSessions());

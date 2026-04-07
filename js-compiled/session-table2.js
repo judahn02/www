@@ -84,7 +84,7 @@
       this.apiClient = new JwtApiClient(apiBaseUrl, jwt);
       this.ensureNormalizedAttendeeDateRanges();
     }
-    async getApiClient() {
+    getApiClient() {
       return this.apiClient;
     }
     ensureNormalizedAttendeeDateRanges() {
@@ -104,14 +104,7 @@
           const apiClient = await this.getApiClient();
           if (apiClient) {
             const sessionsPayload = await apiClient.get("api/sessions");
-            return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
-          }
-          if (this.apiBaseUrl) {
-            const response = await fetch(`${this.apiBaseUrl}/api/sessions`);
-            if (!response.ok) {
-              throw new Error(`Request failed with status ${response.status}`);
-            }
-            const sessionsPayload = await response.json();
+            console.log("sessionsPayload", sessionsPayload);
             return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
           }
         } catch (error) {
@@ -787,6 +780,7 @@
       };
     }
     normalizeSessionAttendeeDateRange(attendeeEntry, session) {
+      if (attendeeEntry.length != 6) throw Error("Attendee Entry using wrong count of indexes.");
       if (!this.isSelfPacedSession(session)) {
         return {
           dateRangeStart: null,
@@ -797,10 +791,7 @@
         dateRangeStart: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry.dateRangeStart),
         dateRangeEnd: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry.dateRangeEnd)
       };
-      if (normalizedSeparatedDateRange.dateRangeStart !== null || normalizedSeparatedDateRange.dateRangeEnd !== null) {
-        return normalizedSeparatedDateRange;
-      }
-      return this.parseLegacyAttendeeDateRange(attendeeEntry == null ? void 0 : attendeeEntry.dateRange, session);
+      return normalizedSeparatedDateRange;
     }
     /**
      * 
@@ -854,9 +845,6 @@
         this.normalizeAttendeeStatusId(attendeeEntry == null ? void 0 : attendeeEntry.certStatusID),
         Number(attendeeEntry == null ? void 0 : attendeeEntry.personID)
       ];
-    }
-    parseLegacyAttendeeDateRange(dateRange, session = null) {
-      throw Error("Legacy Attendees Range Not Allowed");
     }
     buildAttendeeDateRangeDisplay(dateRangeStart, dateRangeEnd, session = null) {
       if (!this.isSelfPacedSession(session)) {
