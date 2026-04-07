@@ -104,7 +104,6 @@
           const apiClient = await this.getApiClient();
           if (apiClient) {
             const sessionsPayload = await apiClient.get("api/sessions");
-            console.log("sessionsPayload", sessionsPayload);
             return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
           }
         } catch (error) {
@@ -284,19 +283,7 @@
       if (typeof payload !== "string") {
         return payload;
       }
-      const trimmedPayload = payload.trim();
-      if (trimmedPayload === "") {
-        return payload;
-      }
-      const looksLikeJson = trimmedPayload.startsWith("{") && trimmedPayload.endsWith("}") || trimmedPayload.startsWith("[") && trimmedPayload.endsWith("]");
-      if (!looksLikeJson) {
-        return payload;
-      }
-      try {
-        return JSON.parse(trimmedPayload);
-      } catch (_error) {
-        return payload;
-      }
+      throw new Error("parseStructuredPayload: A string was passed in here. Not sure why. BackEnd Fix?");
     }
     describePayloadShape(payload) {
       if (payload && typeof payload === "object") {

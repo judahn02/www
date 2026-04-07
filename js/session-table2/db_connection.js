@@ -511,28 +511,13 @@ export class db_connection {
     }
 
     parseStructuredPayload(payload) {
+        // console.log("parseStructuredPayload")
         if (typeof payload !== "string") {
+            // console.log("It's not a string");
             return payload;
         }
-
-        const trimmedPayload = payload.trim();
-        if (trimmedPayload === "") {
-            return payload;
-        }
-
-        const looksLikeJson = (
-            (trimmedPayload.startsWith("{") && trimmedPayload.endsWith("}"))
-            || (trimmedPayload.startsWith("[") && trimmedPayload.endsWith("]"))
-        );
-        if (!looksLikeJson) {
-            return payload;
-        }
-
-        try {
-            return JSON.parse(trimmedPayload);
-        } catch (_error) {
-            return payload;
-        }
+        throw new Error("parseStructuredPayload: A string was passed in here. Not sure why. BackEnd Fix?");
+        
     }
 
     describePayloadShape(payload) {
