@@ -657,7 +657,6 @@ export class db_connection {
             });
             const ridCertification = this.getRIDCertificationRecord(sessionID, attendeeEntry.personID);
             const normalizedStatusID = this.normalizeAttendeeStatusId(attendeeEntry.certStatusID);
-            const certStatusLabel = this.getAttendeeStatusLabel(normalizedStatusID);
             const dateRangeDisplay = this.buildAttendeeDateRangeDisplay(
                 attendeeEntry.dateRangeStart,
                 attendeeEntry.dateRangeEnd,
@@ -673,8 +672,6 @@ export class db_connection {
                 dateRangeEnd: attendeeEntry.dateRangeEnd,
                 dateRangeDisplay,
                 certStatusID: normalizedStatusID,
-                certStatus: certStatusLabel,
-                certStatusLabel,
                 ridCertified: ridCertification !== null,
                 ridCertifiedAt: ridCertification?.certifiedAt ?? null,
                 ridCertifiedByUserID: ridCertification?.certifiedByUserID ?? null,
@@ -779,8 +776,6 @@ export class db_connection {
             return commentEntry.sessionID === sessionID && commentEntry.personID === Number(personID);
         });
         const defaultStatusID = 4;
-        const defaultStatusLabel = this.getAttendeeStatusLabel(defaultStatusID);
-
         let theReturn = 
        {
             sessionID,
@@ -791,8 +786,6 @@ export class db_connection {
             dateRangeEnd: null,
             dateRangeDisplay: this.buildAttendeeDateRangeDisplay(null, null, session),
             certStatusID: defaultStatusID,
-            certStatus: defaultStatusLabel,
-            certStatusLabel: defaultStatusLabel,
             ridCertified: false,
             ridCertifiedAt: null,
             ridCertifiedByUserID: null,

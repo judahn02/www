@@ -67,13 +67,9 @@ export class attendee_rid_manager {
 
         const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
         const normalizedStatusID = this.getPositiveIntegerOrDefault(nextCertStatusID, 4);
-        const normalizedStatusLabel = String(nextCertStatusLabel ?? "").trim();
-
         this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
             ...currentAttendee,
-            certStatusID: normalizedStatusID,
-            certStatus: normalizedStatusLabel,
-            certStatusLabel: normalizedStatusLabel
+            certStatusID: normalizedStatusID
         };
     }
 
@@ -318,8 +314,6 @@ export class attendee_rid_manager {
             dateRangeEnd: draftAttendee?.dateRangeEnd ?? baseAttendee?.dateRangeEnd ?? null,
             dateRangeDisplay: draftAttendee?.dateRangeDisplay ?? baseAttendee?.dateRangeDisplay ?? null,
             certStatusID: normalizedCertStatusID,
-            certStatus: draftAttendee?.certStatus ?? baseAttendee?.certStatus ?? "",
-            certStatusLabel: draftAttendee?.certStatusLabel ?? baseAttendee?.certStatusLabel ?? "",
             ridCertified: draftAttendee?.ridCertified === true,
             ridCertifiedAt: draftAttendee?.ridCertified === true ? this.normalizeRIDDateTimeValue(draftAttendee?.ridCertifiedAt) : null,
             ridCertifiedByUserID: draftAttendee?.ridCertified === true ? this.getPositiveIntegerOrNull(draftAttendee?.ridCertifiedByUserID) : null

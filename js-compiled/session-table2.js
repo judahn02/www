@@ -357,7 +357,6 @@
         });
         const ridCertification = this.getRIDCertificationRecord(sessionID, attendeeEntry.personID);
         const normalizedStatusID = this.normalizeAttendeeStatusId(attendeeEntry.certStatusID);
-        const certStatusLabel = this.getAttendeeStatusLabel(normalizedStatusID);
         const dateRangeDisplay = this.buildAttendeeDateRangeDisplay(
           attendeeEntry.dateRangeStart,
           attendeeEntry.dateRangeEnd,
@@ -372,8 +371,6 @@
           dateRangeEnd: attendeeEntry.dateRangeEnd,
           dateRangeDisplay,
           certStatusID: normalizedStatusID,
-          certStatus: certStatusLabel,
-          certStatusLabel,
           ridCertified: ridCertification !== null,
           ridCertifiedAt: (_c = ridCertification == null ? void 0 : ridCertification.certifiedAt) != null ? _c : null,
           ridCertifiedByUserID: (_d = ridCertification == null ? void 0 : ridCertification.certifiedByUserID) != null ? _d : null,
@@ -461,7 +458,6 @@
         return commentEntry.sessionID === sessionID && commentEntry.personID === Number(personID);
       });
       const defaultStatusID = 4;
-      const defaultStatusLabel = this.getAttendeeStatusLabel(defaultStatusID);
       let theReturn = {
         sessionID,
         personID: attendeeDirectoryRecord.personID,
@@ -471,8 +467,6 @@
         dateRangeEnd: null,
         dateRangeDisplay: this.buildAttendeeDateRangeDisplay(null, null, session),
         certStatusID: defaultStatusID,
-        certStatus: defaultStatusLabel,
-        certStatusLabel: defaultStatusLabel,
         ridCertified: false,
         ridCertifiedAt: null,
         ridCertifiedByUserID: null,
@@ -1918,12 +1912,9 @@
       }
       const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
       const normalizedStatusID = this.getPositiveIntegerOrDefault(nextCertStatusID, 4);
-      const normalizedStatusLabel = String(nextCertStatusLabel != null ? nextCertStatusLabel : "").trim();
       this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
         ...currentAttendee,
-        certStatusID: normalizedStatusID,
-        certStatus: normalizedStatusLabel,
-        certStatusLabel: normalizedStatusLabel
+        certStatusID: normalizedStatusID
       };
     }
     updateAttendeeDateRange(personID, nextDateRange = {}) {
@@ -2123,7 +2114,7 @@
       return mergedAttendees;
     }
     applyDraftStateToAttendee(baseAttendee, draftAttendee) {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+      var _a, _b, _c, _d, _e, _f;
       if (!draftAttendee) {
         return this.cloneAttendees([baseAttendee])[0];
       }
@@ -2135,8 +2126,6 @@
         dateRangeEnd: (_d = (_c = draftAttendee == null ? void 0 : draftAttendee.dateRangeEnd) != null ? _c : baseAttendee == null ? void 0 : baseAttendee.dateRangeEnd) != null ? _d : null,
         dateRangeDisplay: (_f = (_e = draftAttendee == null ? void 0 : draftAttendee.dateRangeDisplay) != null ? _e : baseAttendee == null ? void 0 : baseAttendee.dateRangeDisplay) != null ? _f : null,
         certStatusID: normalizedCertStatusID,
-        certStatus: (_h = (_g = draftAttendee == null ? void 0 : draftAttendee.certStatus) != null ? _g : baseAttendee == null ? void 0 : baseAttendee.certStatus) != null ? _h : "",
-        certStatusLabel: (_j = (_i = draftAttendee == null ? void 0 : draftAttendee.certStatusLabel) != null ? _i : baseAttendee == null ? void 0 : baseAttendee.certStatusLabel) != null ? _j : "",
         ridCertified: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true,
         ridCertifiedAt: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.normalizeRIDDateTimeValue(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedAt) : null,
         ridCertifiedByUserID: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.getPositiveIntegerOrNull(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedByUserID) : null
