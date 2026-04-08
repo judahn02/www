@@ -144,23 +144,9 @@
       else if (resource === "comments") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
         const personID = Number(query == null ? void 0 : query.personID);
-        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
-          return {
-            sessionID: null,
-            personID: null,
-            adminComment: "",
-            memberComment: ""
-          };
-        }
-        const comment = _db_connection.data.comments.find((entry) => {
-          return entry.sessionID === sessionID && entry.personID === personID;
-        });
-        return structuredClone(comment != null ? comment : {
-          sessionID,
-          personID,
-          adminComment: "",
-          memberComment: ""
-        });
+        util.assert(Number.isInteger(sessionID), "Comment: sessionID needs to be an Integer.");
+        util.assert(Number.isInteger(personID), "Comment: personID needs to be an Integer.");
+        return await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}/comments`);
       } else if (resource === "sessionTypes")
         return structuredClone(_db_connection.data.sessionTypes);
       else if (resource === "EventTypes")
@@ -3585,8 +3571,6 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
-        console.log("presenters: ", await dbC.get("presenters"));
-        console.log("presenters Dir: ", (await dbC.apiClient.get(`api/presenters/directory`))["members"]);
       });
     }
   })();

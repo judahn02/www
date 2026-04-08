@@ -349,26 +349,12 @@ export class db_connection {
         else if (resource === "comments") {
             const sessionID = Number(query?.sessionID);
             const personID = Number(query?.personID);
-            if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
-                return {
-                    sessionID: null,
-                    personID: null,
-                    adminComment: "",
-                    memberComment: ""
-                };
-            }
+            util.assert(Number.isInteger(sessionID), "Comment: sessionID needs to be an Integer.");
+            util.assert(Number.isInteger(personID), "Comment: personID needs to be an Integer.")
 
-            const comment = db_connection.data.comments.find((entry) => {
-                return entry.sessionID === sessionID && entry.personID === personID;
-            });
-
-            return structuredClone(comment ?? {
-                sessionID,
-                personID,
-                adminComment: "",
-                memberComment: ""
-            });
+            return await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}/comments`);
         }
+        
         else if (resource === "sessionTypes")
             return structuredClone(db_connection.data.sessionTypes);
         else if (resource === "EventTypes")

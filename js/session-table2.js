@@ -31,7 +31,9 @@ if (typeof $ !== "function") {
         // console.log("presenters: ", await dbC.get("presenters"));
         // console.log("presenters Dir: ", (await dbC.apiClient.get(`api/presenters/directory`))['members']);
 
-        
+        // console.log("comments: ", await dbC.get("comments", { sessionID: 1, personID: 5 }));
+        // console.log("comments og: ", await dbC.apiClient.get(`api/sessions/1/attendees/5/comments`));
+   
     });
 }
 })();
