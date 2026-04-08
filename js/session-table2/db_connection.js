@@ -302,7 +302,7 @@ export class db_connection {
         else if (resource === "session") {
             const sessionID = Number(query?.sessionID);
             
-            util.assert(Number.isFinite(sessionID), "sessionID for the get session call is invalid");
+            util.assert(Number.isInteger(sessionID), "sessionID for the get session call is invalid");
             try {
 
                 return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}`));
@@ -310,33 +310,26 @@ export class db_connection {
             } catch (error) {
                 throw Error(`api/sessions/${sessionID} is not available`);
             }
-
         }
 
 // Currently triggered in main
         else if (resource === "attendee") {
             const sessionID = Number(query?.sessionID);
             const personID = Number(query?.personID);
-            if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+            if (!Number.isInteger(sessionID) || !Number.isInteger(personID)) {
                 return null;
             }
+            
             return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}`));
         }
 
-
         else if (resource === "attendees") {
             const sessionID = Number(query?.sessionID);
-            if (!Number.isFinite(sessionID)) {
-                return structuredClone(this.buildAttendeeDirectoryRecords());
-            }
-
-            const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-            if (!session) {
-                return [];
-            }
-
-            return structuredClone(this.buildAttendeeRecords(session));
+            util.assert(Number.isInteger(sessionID), "sessionID for get(\"attendees\" needs to be an int.");
+            return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees`));
+            
         }
+        
         else if (resource === "attendeeStatuses")
             return structuredClone(db_connection.data.attendeeStatuses);
         else if (resource === "flags")

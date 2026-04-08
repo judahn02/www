@@ -24,7 +24,8 @@ if (typeof $ !== "function") {
         );
         session_state.state = "mainPage" ;
         await mainPage.init();
-        //console.log(await dbC.get("attendee", { sessionID: 1, personID: 5 }));
+        // console.log("attendee: ", await dbC.get("attendee", { sessionID: 1, personID: 5 }));
+        // console.log("attendees: ", await dbC.apiClient.get(`api/sessions/1/attendees`));
 
     });
 }
