@@ -140,9 +140,7 @@
       else if (resource === "flags")
         return structuredClone(await this.apiClient.get(`api/lookups/flags`));
       else if (resource === "presenters")
-        return structuredClone(
-          _db_connection.data.members.filter((member) => member[3] === 1)
-        );
+        return (await this.apiClient.get(`api/presenters/directory`))["members"];
       else if (resource === "comments") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
         const personID = Number(query == null ? void 0 : query.personID);
@@ -3587,7 +3585,8 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
-        console.log("flags", await dbC.apiClient.get("api/lookups/flags"));
+        console.log("presenters: ", await dbC.get("presenters"));
+        console.log("presenters Dir: ", (await dbC.apiClient.get(`api/presenters/directory`))["members"]);
       });
     }
   })();

@@ -344,9 +344,8 @@ export class db_connection {
             return structuredClone(await this.apiClient.get(`api/lookups/flags`));
         
         else if (resource === "presenters")
-            return structuredClone(
-                db_connection.data.members.filter((member) => member[3] === 1)
-            );
+            return  (await this.apiClient.get(`api/presenters/directory`))['members'];
+        
         else if (resource === "comments") {
             const sessionID = Number(query?.sessionID);
             const personID = Number(query?.personID);
