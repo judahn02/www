@@ -24,6 +24,7 @@ if (typeof $ !== "function") {
         );
         session_state.state = "mainPage" ;
         await mainPage.init();
+        console.log(await dbC.get("attendee", { sessionID: 1, personID: 1 }));
     });
 }
 })();

@@ -312,6 +312,8 @@ export class db_connection {
             }
 
         }
+
+// Currently triggered in main
         else if (resource === "attendee") {
             const sessionID = Number(query?.sessionID);
             const personID = Number(query?.personID);
@@ -326,6 +328,8 @@ export class db_connection {
 
             return structuredClone(this.buildSessionAttendeeCandidate(session, personID));
         }
+
+
         else if (resource === "attendees") {
             const sessionID = Number(query?.sessionID);
             if (!Number.isFinite(sessionID)) {
@@ -668,7 +672,6 @@ export class db_connection {
                 dateRangeStart: attendeeEntry.dateRangeStart,
                 dateRangeEnd: attendeeEntry.dateRangeEnd,
                 dateRangeDisplay,
-                dateRange: dateRangeDisplay,
                 certStatusID: normalizedStatusID,
                 certStatus: certStatusLabel,
                 certStatusLabel,
@@ -778,7 +781,8 @@ export class db_connection {
         const defaultStatusID = 4;
         const defaultStatusLabel = this.getAttendeeStatusLabel(defaultStatusID);
 
-        return {
+        let theReturn = 
+       {
             sessionID,
             personID: attendeeDirectoryRecord.personID,
             name: attendeeDirectoryRecord.name,
@@ -786,7 +790,6 @@ export class db_connection {
             dateRangeStart: null,
             dateRangeEnd: null,
             dateRangeDisplay: this.buildAttendeeDateRangeDisplay(null, null, session),
-            dateRange: this.buildAttendeeDateRangeDisplay(null, null, session),
             certStatusID: defaultStatusID,
             certStatus: defaultStatusLabel,
             certStatusLabel: defaultStatusLabel,
@@ -796,6 +799,8 @@ export class db_connection {
             adminComment: String(attendeeComments?.adminComment ?? ""),
             memberComment: String(attendeeComments?.memberComment ?? "")
         };
+        console.log(theReturn);
+        return theReturn;
     }
 
     updateAttendeeRIDCertifications(value) {

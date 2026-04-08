@@ -371,7 +371,6 @@
           dateRangeStart: attendeeEntry.dateRangeStart,
           dateRangeEnd: attendeeEntry.dateRangeEnd,
           dateRangeDisplay,
-          dateRange: dateRangeDisplay,
           certStatusID: normalizedStatusID,
           certStatus: certStatusLabel,
           certStatusLabel,
@@ -463,7 +462,7 @@
       });
       const defaultStatusID = 4;
       const defaultStatusLabel = this.getAttendeeStatusLabel(defaultStatusID);
-      return {
+      let theReturn = {
         sessionID,
         personID: attendeeDirectoryRecord.personID,
         name: attendeeDirectoryRecord.name,
@@ -471,7 +470,6 @@
         dateRangeStart: null,
         dateRangeEnd: null,
         dateRangeDisplay: this.buildAttendeeDateRangeDisplay(null, null, session),
-        dateRange: this.buildAttendeeDateRangeDisplay(null, null, session),
         certStatusID: defaultStatusID,
         certStatus: defaultStatusLabel,
         certStatusLabel: defaultStatusLabel,
@@ -481,6 +479,8 @@
         adminComment: String((_a = attendeeComments == null ? void 0 : attendeeComments.adminComment) != null ? _a : ""),
         memberComment: String((_b = attendeeComments == null ? void 0 : attendeeComments.memberComment) != null ? _b : "")
       };
+      console.log(theReturn);
+      return theReturn;
     }
     updateAttendeeRIDCertifications(value) {
       var _a, _b, _c, _d, _e;
@@ -1784,10 +1784,10 @@
         `;
     }
     buildDisplayDateRangeMarkup(attendee) {
-      var _a, _b;
+      var _a;
       const startDateValue = this.normalizeDateInputValue(attendee == null ? void 0 : attendee.dateRangeStart);
       const endDateValue = this.normalizeDateInputValue(attendee == null ? void 0 : attendee.dateRangeEnd);
-      const dateRangeDisplay = String((_b = (_a = attendee == null ? void 0 : attendee.dateRangeDisplay) != null ? _a : attendee == null ? void 0 : attendee.dateRange) != null ? _b : "").trim();
+      const dateRangeDisplay = String((_a = attendee == null ? void 0 : attendee.dateRangeDisplay) != null ? _a : "").trim();
       if (startDateValue === "" && endDateValue === "") {
         return `<p>Not started</p>`;
       }
@@ -1950,8 +1950,7 @@
         ...currentAttendee,
         dateRangeStart: normalizedStartDate,
         dateRangeEnd: normalizedEndDate,
-        dateRangeDisplay: null,
-        dateRange: null
+        dateRangeDisplay: null
       };
       return this.attendeeRIDState.attendeesDraft[attendeeIndex];
     }
@@ -2124,7 +2123,7 @@
       return mergedAttendees;
     }
     applyDraftStateToAttendee(baseAttendee, draftAttendee) {
-      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
       if (!draftAttendee) {
         return this.cloneAttendees([baseAttendee])[0];
       }
@@ -2135,10 +2134,9 @@
         dateRangeStart: (_b = (_a = draftAttendee == null ? void 0 : draftAttendee.dateRangeStart) != null ? _a : baseAttendee == null ? void 0 : baseAttendee.dateRangeStart) != null ? _b : null,
         dateRangeEnd: (_d = (_c = draftAttendee == null ? void 0 : draftAttendee.dateRangeEnd) != null ? _c : baseAttendee == null ? void 0 : baseAttendee.dateRangeEnd) != null ? _d : null,
         dateRangeDisplay: (_f = (_e = draftAttendee == null ? void 0 : draftAttendee.dateRangeDisplay) != null ? _e : baseAttendee == null ? void 0 : baseAttendee.dateRangeDisplay) != null ? _f : null,
-        dateRange: (_h = (_g = draftAttendee == null ? void 0 : draftAttendee.dateRange) != null ? _g : baseAttendee == null ? void 0 : baseAttendee.dateRange) != null ? _h : null,
         certStatusID: normalizedCertStatusID,
-        certStatus: (_j = (_i = draftAttendee == null ? void 0 : draftAttendee.certStatus) != null ? _i : baseAttendee == null ? void 0 : baseAttendee.certStatus) != null ? _j : "",
-        certStatusLabel: (_l = (_k = draftAttendee == null ? void 0 : draftAttendee.certStatusLabel) != null ? _k : baseAttendee == null ? void 0 : baseAttendee.certStatusLabel) != null ? _l : "",
+        certStatus: (_h = (_g = draftAttendee == null ? void 0 : draftAttendee.certStatus) != null ? _g : baseAttendee == null ? void 0 : baseAttendee.certStatus) != null ? _h : "",
+        certStatusLabel: (_j = (_i = draftAttendee == null ? void 0 : draftAttendee.certStatusLabel) != null ? _i : baseAttendee == null ? void 0 : baseAttendee.certStatusLabel) != null ? _j : "",
         ridCertified: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true,
         ridCertifiedAt: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.normalizeRIDDateTimeValue(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedAt) : null,
         ridCertifiedByUserID: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.getPositiveIntegerOrNull(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedByUserID) : null
@@ -3596,6 +3594,7 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
+        console.log(await dbC.get("attendee", { sessionID: 1, personID: 1 }));
       });
     }
   })();

@@ -208,7 +208,7 @@ export class attendee_table_renderer {
     buildDisplayDateRangeMarkup(attendee) {
         const startDateValue = this.normalizeDateInputValue(attendee?.dateRangeStart);
         const endDateValue = this.normalizeDateInputValue(attendee?.dateRangeEnd);
-        const dateRangeDisplay = String(attendee?.dateRangeDisplay ?? attendee?.dateRange ?? "").trim();
+        const dateRangeDisplay = String(attendee?.dateRangeDisplay ?? "").trim();
 
         if (startDateValue === "" && endDateValue === "") {
             return `<p>Not started</p>`;

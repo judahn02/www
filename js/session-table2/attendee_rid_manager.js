@@ -103,8 +103,7 @@ export class attendee_rid_manager {
             ...currentAttendee,
             dateRangeStart: normalizedStartDate,
             dateRangeEnd: normalizedEndDate,
-            dateRangeDisplay: null,
-            dateRange: null
+            dateRangeDisplay: null
         };
 
         return this.attendeeRIDState.attendeesDraft[attendeeIndex];
@@ -318,7 +317,6 @@ export class attendee_rid_manager {
             dateRangeStart: draftAttendee?.dateRangeStart ?? baseAttendee?.dateRangeStart ?? null,
             dateRangeEnd: draftAttendee?.dateRangeEnd ?? baseAttendee?.dateRangeEnd ?? null,
             dateRangeDisplay: draftAttendee?.dateRangeDisplay ?? baseAttendee?.dateRangeDisplay ?? null,
-            dateRange: draftAttendee?.dateRange ?? baseAttendee?.dateRange ?? null,
             certStatusID: normalizedCertStatusID,
             certStatus: draftAttendee?.certStatus ?? baseAttendee?.certStatus ?? "",
             certStatusLabel: draftAttendee?.certStatusLabel ?? baseAttendee?.certStatusLabel ?? "",
