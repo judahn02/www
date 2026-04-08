@@ -310,7 +310,8 @@ export class db_connection {
             try {
                 
                 const sessionPayload = await this.apiClient.get(`api/sessions/${sessionID}`);
-                return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
+                
+                return structuredClone(sessionPayload);
             
             } catch (error) {
                 console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
@@ -406,23 +407,6 @@ export class db_connection {
         }
 
         return sessions;
-    }
-
-    normalizeSingleSessionResponse(sessionPayload) {
-
-        const session = sessionPayload;
-
-        if (session === null) {
-            const payloadDescription = this.describePayloadShape(sessionPayload);
-            throw new Error(`Unsupported session response shape (${payloadDescription})`);
-        }
-
-        const normalizedSession = this.normalizeSessionRecordForRead(session);
-        if (normalizedSession === null) {
-            throw new Error("Unsupported session response record");
-        }
-
-        return normalizedSession;
     }
 
     parseStructuredPayload(payload) {

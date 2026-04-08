@@ -117,7 +117,7 @@
         util.assert(Number.isFinite(sessionID), "sessionID for the get session call was empty");
         try {
           const sessionPayload = await this.apiClient.get(`api/sessions/${sessionID}`);
-          return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
+          return structuredClone(sessionPayload);
         } catch (error) {
           console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
         }
@@ -194,31 +194,6 @@
         }
       }
       return sessions;
-    }
-    normalizeSingleSessionResponse(sessionPayload) {
-      const normalizedPayload = sessionPayload;
-      const session = normalizedPayload;
-      if (session === null) {
-        const payloadDescription = this.describePayloadShape(normalizedPayload);
-        throw new Error(`Unsupported session response shape (${payloadDescription})`);
-      }
-      const normalizedSession = this.normalizeSessionRecordForRead(session);
-      if (normalizedSession === null) {
-        throw new Error("Unsupported session response record");
-      }
-      return normalizedSession;
-    }
-    extractSessionRecord(sessionPayload) {
-      const normalizedPayload = sessionPayload;
-      if (this.isSessionRecord(normalizedPayload)) {
-        return normalizedPayload;
-      }
-      console.log("It got past the point.");
-      util.assert(Array.isArray(normalizedPayload), "normalizedPayload needs to be an array.");
-      if (Array.isArray(normalizedPayload)) {
-        const sessionRecord = normalizedPayload.find((candidate) => this.isSessionRecord(candidate));
-        return sessionRecord != null ? sessionRecord : null;
-      }
     }
     parseStructuredPayload(payload) {
       if (typeof payload !== "string") {
