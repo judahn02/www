@@ -125,11 +125,7 @@
         if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
           return null;
         }
-        const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-        if (!session) {
-          return null;
-        }
-        return structuredClone(this.buildSessionAttendeeCandidate(session, personID));
+        return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}`));
       } else if (resource === "attendees") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
         if (!Number.isFinite(sessionID)) {
@@ -1087,6 +1083,16 @@
   });
   var db_connection = _db_connection;
 
+  // js/session-table2/assets.js
+  function getSpeechBubbleIconURL() {
+    var _a, _b;
+    const configuredURL = String((_b = (_a = globalThis == null ? void 0 : globalThis.PDTSessionTableAssets) == null ? void 0 : _a.speechBubbleIconUrl) != null ? _b : "").trim();
+    if (configuredURL !== "") {
+      return configuredURL;
+    }
+    return "../assets/speech-bubble-1130.svg";
+  }
+
   // js/session-table2/host_connection.js
   var host_connection = class {
     constructor(config = {}) {
@@ -1196,7 +1202,7 @@
           return normalizedCandidate;
         }
       }
-      return "../assets/speech-bubble-1130.svg";
+      return getSpeechBubbleIconURL();
     }
     normalizeUserID(value) {
       const numericUserID = Number(value);
@@ -1454,8 +1460,8 @@
       if (typeof this.commentIconURL === "string" && this.commentIconURL.trim() !== "") {
         return this.commentIconURL;
       }
-      const hostCommentIconURL = typeof ((_a = this.host) == null ? void 0 : _a.getComment) === "function" ? await this.host.getComment() : "../assets/speech-bubble-1130.svg";
-      this.commentIconURL = String(hostCommentIconURL != null ? hostCommentIconURL : "").trim() || "../assets/speech-bubble-1130.svg";
+      const hostCommentIconURL = typeof ((_a = this.host) == null ? void 0 : _a.getComment) === "function" ? await this.host.getComment() : getSpeechBubbleIconURL();
+      this.commentIconURL = String(hostCommentIconURL != null ? hostCommentIconURL : "").trim() || getSpeechBubbleIconURL();
       return this.commentIconURL;
     }
     getSessionLockView(session) {
@@ -1613,7 +1619,7 @@
       const showSelfPacedDateRangeColumn = (options == null ? void 0 : options.showSelfPacedDateRangeColumn) === true;
       const dateRangeRenderMode = (options == null ? void 0 : options.dateRangeRenderMode) === "edit" ? "edit" : "display";
       const attendeeStatuses = (_a = options == null ? void 0 : options.attendeeStatuses) != null ? _a : {};
-      const commentIconURL = String((_b = options == null ? void 0 : options.commentIconURL) != null ? _b : "../assets/speech-bubble-1130.svg");
+      const commentIconURL = String((_b = options == null ? void 0 : options.commentIconURL) != null ? _b : getSpeechBubbleIconURL());
       const buildAttendeeSearchText = typeof (options == null ? void 0 : options.buildAttendeeSearchText) === "function" ? options.buildAttendeeSearchText : () => "";
       const visibleColumnLabels = this.getVisibleColumnLabels({
         showRIDColumn,
@@ -2735,8 +2741,8 @@
       if (typeof this.commentIconURL === "string" && this.commentIconURL.trim() !== "") {
         return this.commentIconURL;
       }
-      const hostCommentIconURL = typeof ((_a = this.host) == null ? void 0 : _a.getComment) === "function" ? await this.host.getComment() : "../assets/speech-bubble-1130.svg";
-      this.commentIconURL = String(hostCommentIconURL != null ? hostCommentIconURL : "").trim() || "../assets/speech-bubble-1130.svg";
+      const hostCommentIconURL = typeof ((_a = this.host) == null ? void 0 : _a.getComment) === "function" ? await this.host.getComment() : getSpeechBubbleIconURL();
+      this.commentIconURL = String(hostCommentIconURL != null ? hostCommentIconURL : "").trim() || getSpeechBubbleIconURL();
       return this.commentIconURL;
     }
   };
@@ -3583,7 +3589,7 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
-        console.log(await dbC.get("attendee", { sessionID: 1, personID: 1 }));
+        console.log(await dbC.get("attendee", { sessionID: 1, personID: 5 }));
       });
     }
   })();

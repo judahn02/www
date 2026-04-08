@@ -3,6 +3,7 @@ import { attendee_table_renderer } from "./attendee_table_renderer.js";
 import { attendee_rid_manager } from "./attendee_rid_manager.js";
 import { attendee_filter_manager } from "./attendee_filter_manager.js";
 import { attendee_add_manager } from "./attendee_add_manager.js";
+import { getSpeechBubbleIconURL } from "./assets.js";
 
 export class show_attendees {
     constructor(db = null, host = null) {
@@ -394,8 +395,8 @@ export class show_attendees {
 
         const hostCommentIconURL = typeof this.host?.getComment === "function"
             ? await this.host.getComment()
-            : "../assets/speech-bubble-1130.svg";
-        this.commentIconURL = String(hostCommentIconURL ?? "").trim() || "../assets/speech-bubble-1130.svg";
+            : getSpeechBubbleIconURL();
+        this.commentIconURL = String(hostCommentIconURL ?? "").trim() || getSpeechBubbleIconURL();
         return this.commentIconURL;
     }
 }

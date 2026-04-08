@@ -1,4 +1,5 @@
 import { session_state } from "./state.js";
+import { getSpeechBubbleIconURL } from "./assets.js";
 export class host_connection {
     constructor(config = {}) {
         this.config = config;
@@ -129,7 +130,7 @@ export class host_connection {
             }
         }
 
-        return "../assets/speech-bubble-1130.svg";
+        return getSpeechBubbleIconURL();
     }
 
     normalizeUserID(value) {

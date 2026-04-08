@@ -1,5 +1,6 @@
 import { session_state } from "./state.js";
 import { comment_manager } from "./comment_manager.js";
+import { getSpeechBubbleIconURL } from "./assets.js";
 export class main_page {
 
     constructor(db, host, showAttendees, addEditSession) {
@@ -176,8 +177,8 @@ export class main_page {
 
         const hostCommentIconURL = typeof this.host?.getComment === "function"
             ? await this.host.getComment()
-            : "../assets/speech-bubble-1130.svg";
-        this.commentIconURL = String(hostCommentIconURL ?? "").trim() || "../assets/speech-bubble-1130.svg";
+            : getSpeechBubbleIconURL();
+        this.commentIconURL = String(hostCommentIconURL ?? "").trim() || getSpeechBubbleIconURL();
         return this.commentIconURL;
     }
 

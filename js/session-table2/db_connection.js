@@ -320,13 +320,7 @@ export class db_connection {
             if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
                 return null;
             }
-
-            const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-            if (!session) {
-                return null;
-            }
-
-            return structuredClone(this.buildSessionAttendeeCandidate(session, personID));
+            return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}`));
         }
 
 

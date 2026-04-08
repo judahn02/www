@@ -1,3 +1,5 @@
+import { getSpeechBubbleIconURL } from "./assets.js";
+
 export class attendee_table_renderer {
     render(tableHead, tableBody, options = {}) {
         if (!tableHead || tableHead.length === 0 || !tableBody || tableBody.length === 0) {
@@ -9,7 +11,7 @@ export class attendee_table_renderer {
         const showSelfPacedDateRangeColumn = options?.showSelfPacedDateRangeColumn === true;
         const dateRangeRenderMode = options?.dateRangeRenderMode === "edit" ? "edit" : "display";
         const attendeeStatuses = options?.attendeeStatuses ?? {};
-        const commentIconURL = String(options?.commentIconURL ?? "../assets/speech-bubble-1130.svg");
+        const commentIconURL = String(options?.commentIconURL ?? getSpeechBubbleIconURL());
         const buildAttendeeSearchText = typeof options?.buildAttendeeSearchText === "function"
             ? options.buildAttendeeSearchText
             : () => "";
