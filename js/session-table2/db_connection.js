@@ -360,34 +360,14 @@ export class db_connection {
 
 
         else if (resource === "EventTypes")
-            return structuredClone(db_connection.data.EventTypes);
+            return await this.apiClient.get(`api/lookups/event-types`);
 
 
         else if (resource === "CEUTypes")
             return structuredClone(db_connection.data.CEUTypes);
 
-        
+
         return null;
-    }
-
-    // Currently Trying to depricate
-    normalizeSessionsResponse(sessionsPayload) {
-        // const normalizedPayload = sessionsPayload;
-        
-        const sessions = sessionsPayload["sessions"];
-       
-
-        for (const session of sessions) {
-            const normalizedSession = this.normalizeSessionRecordForRead(session);
-            if (JSON.stringify(session) !== JSON.stringify(normalizedSession)) {
-                console.log("normalizeSessionRecordForRead changed a session:", {
-                    before: session,
-                    after: normalizedSession
-                });
-            }
-        }
-
-        return sessions;
     }
 
     parseStructuredPayload(payload) {

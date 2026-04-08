@@ -150,7 +150,7 @@
       } else if (resource === "sessionTypes")
         return await this.apiClient.get(`api/lookups/session-types`);
       else if (resource === "EventTypes")
-        return structuredClone(_db_connection.data.EventTypes);
+        return await this.apiClient.get(`api/lookups/event-types`);
       else if (resource === "CEUTypes")
         return structuredClone(_db_connection.data.CEUTypes);
       return null;
@@ -3571,8 +3571,6 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
-        console.log("sessionTypes: ", await dbC.get("sessionTypes"));
-        console.log("sessionTypes dir: ", await dbC.apiClient.get(`api/lookups/session-types`));
       });
     }
   })();
