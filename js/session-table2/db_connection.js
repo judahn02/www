@@ -329,11 +329,20 @@ export class db_connection {
             return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees`));
             
         }
-        
+
+        // These are hardcoded as an Enum in the Database, if needing to change
+        // these, make sure to update there as well. 
         else if (resource === "attendeeStatuses")
-            return structuredClone(db_connection.data.attendeeStatuses);
+            return {
+            1 : "Certified",
+            2 : "Master",
+            3 : "None",
+            4 : "Not Assigned",
+            };
+
         else if (resource === "flags")
             return structuredClone(db_connection.data.flags);
+        
         else if (resource === "presenters")
             return structuredClone(
                 db_connection.data.members.filter((member) => member[3] === 1)
