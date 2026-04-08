@@ -355,6 +355,8 @@ export class db_connection {
             return await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}/comments`);
         }
 
+// These need to be cached better. 
+
         else if (resource === "sessionTypes")
             return await this.apiClient.get(`api/lookups/session-types`);
 
@@ -364,61 +366,24 @@ export class db_connection {
 
 
         else if (resource === "CEUTypes")
-            return structuredClone(db_connection.data.CEUTypes);
+            return await this.apiClient.get(`api/lookups/ceu-types`);
 
 
         return null;
     }
 
+    // This should most likely be removed when at final verison.
     parseStructuredPayload(payload) {
-        // console.log("parseStructuredPayload")
-        if (typeof payload !== "string") {
-            // console.log("It's not a string");
-            return payload;
-        }
-        throw new Error("parseStructuredPayload: A string was passed in here. Not sure why. BackEnd Fix?");
-        
+        throw Error("parseStructuredPayload should not be called.");
     }
-
     describePayloadShape(payload) {
-        if (payload && typeof payload === "object") {
-            return `keys: ${Object.keys(payload).join(", ")}`;
-        }
-
-        if (typeof payload === "string") {
-            const preview = payload.trim().slice(0, 80).replace(/\s+/g, " ");
-            return preview === ""
-                ? "type: string (empty)"
-                : `type: string, preview: ${preview}`;
-        }
-
-        return `type: ${typeof payload}`;
+        throw Error("describePayloadShape should not be called.");
     }
-
     normalizeSessionRecordForRead(session) {
-
-        const normalizedSession = structuredClone(session);
-
-        normalizedSession.AttendeesCt = Number(normalizedSession.AttendeesCt);
-
-        return {
-            ...structuredClone(session),
-            IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
-            IsSelfPacedSession: this.isSelfPacedSession(session),
-            Attendees: this.normalizeSessionAttendees(session?.Attendees, session)
-        };
+        throw Error("normalizeSessionRecordForRead should not be called.")
     }
-
     isSessionRecord(value) {
-        if (!value || typeof value !== "object" || Array.isArray(value)) {
-            return false;
-        }
-
-        return Number.isFinite(Number(value.sessionID))
-            || typeof value.SessionTitle === "string"
-            || typeof value.Date === "string"
-            || Array.isArray(value.Attendees)
-            || Array.isArray(value.attendees);
+        throw Error("isSessionRecord should not be called.");
     }
 
     async set(resource, value) {

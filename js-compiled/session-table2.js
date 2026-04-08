@@ -152,55 +152,49 @@
       else if (resource === "EventTypes")
         return await this.apiClient.get(`api/lookups/event-types`);
       else if (resource === "CEUTypes")
-        return structuredClone(_db_connection.data.CEUTypes);
+        return await this.apiClient.get(`api/lookups/ceu-types`);
       return null;
     }
-    // Currently Trying to depricate
-    normalizeSessionsResponse(sessionsPayload) {
-      const sessions = sessionsPayload["sessions"];
-      for (const session of sessions) {
-        const normalizedSession = this.normalizeSessionRecordForRead(session);
-        if (JSON.stringify(session) !== JSON.stringify(normalizedSession)) {
-          console.log("normalizeSessionRecordForRead changed a session:", {
-            before: session,
-            after: normalizedSession
-          });
-        }
-      }
-      return sessions;
-    }
-    parseStructuredPayload(payload) {
-      if (typeof payload !== "string") {
-        return payload;
-      }
-      throw new Error("parseStructuredPayload: A string was passed in here. Not sure why. BackEnd Fix?");
-    }
-    describePayloadShape(payload) {
-      if (payload && typeof payload === "object") {
-        return `keys: ${Object.keys(payload).join(", ")}`;
-      }
-      if (typeof payload === "string") {
-        const preview = payload.trim().slice(0, 80).replace(/\s+/g, " ");
-        return preview === "" ? "type: string (empty)" : `type: string, preview: ${preview}`;
-      }
-      return `type: ${typeof payload}`;
-    }
-    normalizeSessionRecordForRead(session) {
-      const normalizedSession = structuredClone(session);
-      normalizedSession.AttendeesCt = Number(normalizedSession.AttendeesCt);
-      return {
-        ...structuredClone(session),
-        IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
-        IsSelfPacedSession: this.isSelfPacedSession(session),
-        Attendees: this.normalizeSessionAttendees(session == null ? void 0 : session.Attendees, session)
-      };
-    }
-    isSessionRecord(value) {
-      if (!value || typeof value !== "object" || Array.isArray(value)) {
-        return false;
-      }
-      return Number.isFinite(Number(value.sessionID)) || typeof value.SessionTitle === "string" || typeof value.Date === "string" || Array.isArray(value.Attendees) || Array.isArray(value.attendees);
-    }
+    // parseStructuredPayload(payload) {
+    //     // console.log("parseStructuredPayload")
+    //     if (typeof payload !== "string") {
+    //         // console.log("It's not a string");
+    //         return payload;
+    //     }
+    //     throw new Error("parseStructuredPayload: A string was passed in here. Not sure why. BackEnd Fix?");
+    // }
+    // describePayloadShape(payload) {
+    //     if (payload && typeof payload === "object") {
+    //         return `keys: ${Object.keys(payload).join(", ")}`;
+    //     }
+    //     if (typeof payload === "string") {
+    //         const preview = payload.trim().slice(0, 80).replace(/\s+/g, " ");
+    //         return preview === ""
+    //             ? "type: string (empty)"
+    //             : `type: string, preview: ${preview}`;
+    //     }
+    //     return `type: ${typeof payload}`;
+    // }
+    // normalizeSessionRecordForRead(session) {
+    //     const normalizedSession = structuredClone(session);
+    //     normalizedSession.AttendeesCt = Number(normalizedSession.AttendeesCt);
+    //     return {
+    //         ...structuredClone(session),
+    //         IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
+    //         IsSelfPacedSession: this.isSelfPacedSession(session),
+    //         Attendees: this.normalizeSessionAttendees(session?.Attendees, session)
+    //     };
+    // }
+    // isSessionRecord(value) {
+    //     if (!value || typeof value !== "object" || Array.isArray(value)) {
+    //         return false;
+    //     }
+    //     return Number.isFinite(Number(value.sessionID))
+    //         || typeof value.SessionTitle === "string"
+    //         || typeof value.Date === "string"
+    //         || Array.isArray(value.Attendees)
+    //         || Array.isArray(value.attendees);
+    // }
     async set(resource, value) {
       var _a, _b;
       if (resource === "sessionLock") {
@@ -3571,6 +3565,8 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
+        console.log("ceuTypes: ", await dbC.get("CEUTypes"));
+        console.log("ceuTypes api: ", await dbC.apiClient.get(`api/lookups/ceu-types`));
       });
     }
   })();
