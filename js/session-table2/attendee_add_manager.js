@@ -6,12 +6,12 @@ export class attendee_add_manager {
     }
 
     async init() {
-        await this.load();
+        // await this.load();
     }
 
-    async load() {
-        this.setDirectory(await this.db.get("attendees"));
-    }
+    // async load() {
+    //     this.setDirectory(await this.db.get("attendees"));
+    // }
 
     setDirectory(attendeeDirectory = []) {
         this.attendeeDirectory = Array.isArray(attendeeDirectory) ? attendeeDirectory : [];

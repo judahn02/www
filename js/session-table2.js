@@ -26,6 +26,7 @@ if (typeof $ !== "function") {
         await mainPage.init();
         // console.log("attendee: ", await dbC.get("attendee", { sessionID: 1, personID: 5 }));
         // console.log("attendees: ", await dbC.apiClient.get(`api/sessions/1/attendees`));
+        console.log("flags", await dbC.apiClient.get("api/lookups/flags"));
 
     });
 }

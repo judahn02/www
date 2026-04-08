@@ -325,7 +325,7 @@ export class db_connection {
 
         else if (resource === "attendees") {
             const sessionID = Number(query?.sessionID);
-            util.assert(Number.isInteger(sessionID), "sessionID for get(\"attendees\" needs to be an int.");
+            util.assert(Number.isInteger(sessionID), `sessionID for get(\"attendees\" needs to be an int. sessionID: ${query?.sessionID}`);
             return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees`));
             
         }
@@ -341,7 +341,7 @@ export class db_connection {
             };
 
         else if (resource === "flags")
-            return structuredClone(db_connection.data.flags);
+            return structuredClone(await this.apiClient.get(`api/lookups/flags`));
         
         else if (resource === "presenters")
             return structuredClone(

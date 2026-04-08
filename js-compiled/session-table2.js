@@ -113,7 +113,7 @@
         }
       } else if (resource === "session") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
-        util.assert(Number.isFinite(sessionID), "sessionID for the get session call is invalid");
+        util.assert(Number.isInteger(sessionID), "sessionID for the get session call is invalid");
         try {
           return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}`));
         } catch (error) {
@@ -122,24 +122,23 @@
       } else if (resource === "attendee") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
         const personID = Number(query == null ? void 0 : query.personID);
-        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+        if (!Number.isInteger(sessionID) || !Number.isInteger(personID)) {
           return null;
         }
         return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}`));
       } else if (resource === "attendees") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
-        if (!Number.isFinite(sessionID)) {
-          return structuredClone(this.buildAttendeeDirectoryRecords());
-        }
-        const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-        if (!session) {
-          return [];
-        }
-        return structuredClone(this.buildAttendeeRecords(session));
+        util.assert(Number.isInteger(sessionID), `sessionID for get("attendees" needs to be an int. sessionID: ${query == null ? void 0 : query.sessionID}`);
+        return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees`));
       } else if (resource === "attendeeStatuses")
-        return structuredClone(_db_connection.data.attendeeStatuses);
+        return {
+          1: "Certified",
+          2: "Master",
+          3: "None",
+          4: "Not Assigned"
+        };
       else if (resource === "flags")
-        return structuredClone(_db_connection.data.flags);
+        return structuredClone(await this.apiClient.get(`api/lookups/flags`));
       else if (resource === "presenters")
         return structuredClone(
           _db_connection.data.members.filter((member) => member[3] === 1)
@@ -2312,11 +2311,10 @@
       this.attendeeDirectory = [];
     }
     async init() {
-      await this.load();
     }
-    async load() {
-      this.setDirectory(await this.db.get("attendees"));
-    }
+    // async load() {
+    //     this.setDirectory(await this.db.get("attendees"));
+    // }
     setDirectory(attendeeDirectory = []) {
       this.attendeeDirectory = Array.isArray(attendeeDirectory) ? attendeeDirectory : [];
     }
@@ -3589,8 +3587,7 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
-        console.log("attendee: ", await dbC.get("attendee", { sessionID: 1, personID: 5 }));
-        console.log("attendees: ", await dbC.apiClient.get(`api/sessions/1/attendees`));
+        console.log("flags", await dbC.apiClient.get("api/lookups/flags"));
       });
     }
   })();
