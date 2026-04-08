@@ -302,32 +302,20 @@ export class db_connection {
         }
         else if (resource === "session") {
             const sessionID = Number(query?.sessionID);
-            if (!Number.isFinite(sessionID)) {
-                return null;
-            }
-
+            // if (!Number.isFinite(sessionID)) {
+            //     return null;
+            // }
+            // console.assert(Number.isFinite(sessionID), "sessionID for the get session call was empty");
+            util.assert(Number.isFinite(sessionID), "sessionID for the get session call was empty");
             try {
-                const apiClient = await this.getApiClient();
-                if (apiClient) {
-                    const sessionPayload = await apiClient.get(`api/sessions/${sessionID}`);
-                    return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
-                }
-
-                if (this.apiBaseUrl) {
-                    const response = await fetch(`${this.apiBaseUrl}/api/sessions/${sessionID}`);
-                    if (!response.ok) {
-                        throw new Error(`Request failed with status ${response.status}`);
-                    }
-
-                    const sessionPayload = await response.json();
-                    return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
-                }
+                
+                const sessionPayload = await this.apiClient.get(`api/sessions/${sessionID}`);
+                return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
+            
             } catch (error) {
                 console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
             }
 
-            const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-            return structuredClone(session ? this.normalizeSessionForRead(session) : null);
         }
         else if (resource === "attendee") {
             const sessionID = Number(query?.sessionID);
@@ -421,13 +409,11 @@ export class db_connection {
     }
 
     normalizeSingleSessionResponse(sessionPayload) {
-        const normalizedPayload = sessionPayload;
-        
-        const session = this.extractSessionRecord(normalizedPayload);
 
+        const session = sessionPayload;
 
         if (session === null) {
-            const payloadDescription = this.describePayloadShape(normalizedPayload);
+            const payloadDescription = this.describePayloadShape(sessionPayload);
             throw new Error(`Unsupported session response shape (${payloadDescription})`);
         }
 
@@ -437,44 +423,6 @@ export class db_connection {
         }
 
         return normalizedSession;
-    }
-
-    extractSessionRecord(sessionPayload) {
-        const normalizedPayload = this.parseStructuredPayload(sessionPayload);
-        if (normalizedPayload !== sessionPayload) {
-            return this.extractSessionRecord(normalizedPayload);
-        }
-
-        if (this.isSessionRecord(normalizedPayload)) {
-            return normalizedPayload;
-        }
-
-        if (Array.isArray(normalizedPayload)) {
-            const sessionRecord = normalizedPayload.find((candidate) => this.isSessionRecord(candidate));
-            return sessionRecord ?? null;
-        }
-
-        if (!normalizedPayload || typeof normalizedPayload !== "object") {
-            return null;
-        }
-
-        for (const key of ["session", "data", "result", "item", "record", "row", "payload"]) {
-            const candidate = normalizedPayload[key];
-            if (this.isSessionRecord(candidate)) {
-                return candidate;
-            }
-
-            if (candidate && typeof candidate === "object") {
-                const nestedRecord = this.extractSessionRecord(candidate);
-                if (nestedRecord !== null) {
-                    return nestedRecord;
-                }
-            }
-        }
-
-        const objectValues = Object.values(normalizedPayload);
-        const sessionRecord = objectValues.find((candidate) => this.isSessionRecord(candidate));
-        return sessionRecord ?? null;
     }
 
     parseStructuredPayload(payload) {

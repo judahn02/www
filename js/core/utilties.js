@@ -3,6 +3,12 @@ export default class util {
         
     }
 
+    static assert(condition, message = "Assertion failed") {
+        if (!condition) {
+            throw new Error(message);
+        }
+    }
+
     
     /**
      * Normalizing to the standard date format or returns null if the value cannot be parsed.

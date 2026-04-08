@@ -44,6 +44,11 @@
   var util = class {
     constructor(parameters) {
     }
+    static assert(condition, message = "Assertion failed") {
+      if (!condition) {
+        throw new Error(message);
+      }
+    }
     /**
      * Normalizing to the standard date format or returns null if the value cannot be parsed.
      * @param {string} dateValue - A date string in YYYY-MM-DD or M/D/YYYY format.
@@ -109,28 +114,13 @@
         }
       } else if (resource === "session") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
-        if (!Number.isFinite(sessionID)) {
-          return null;
-        }
+        util.assert(Number.isFinite(sessionID), "sessionID for the get session call was empty");
         try {
-          const apiClient = await this.getApiClient();
-          if (apiClient) {
-            const sessionPayload = await apiClient.get(`api/sessions/${sessionID}`);
-            return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
-          }
-          if (this.apiBaseUrl) {
-            const response = await fetch(`${this.apiBaseUrl}/api/sessions/${sessionID}`);
-            if (!response.ok) {
-              throw new Error(`Request failed with status ${response.status}`);
-            }
-            const sessionPayload = await response.json();
-            return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
-          }
+          const sessionPayload = await this.apiClient.get(`api/sessions/${sessionID}`);
+          return structuredClone(this.normalizeSingleSessionResponse(sessionPayload));
         } catch (error) {
           console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
         }
-        const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-        return structuredClone(session ? this.normalizeSessionForRead(session) : null);
       } else if (resource === "attendee") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
         const personID = Number(query == null ? void 0 : query.personID);
@@ -207,7 +197,7 @@
     }
     normalizeSingleSessionResponse(sessionPayload) {
       const normalizedPayload = sessionPayload;
-      const session = this.extractSessionRecord(normalizedPayload);
+      const session = normalizedPayload;
       if (session === null) {
         const payloadDescription = this.describePayloadShape(normalizedPayload);
         throw new Error(`Unsupported session response shape (${payloadDescription})`);
@@ -219,35 +209,16 @@
       return normalizedSession;
     }
     extractSessionRecord(sessionPayload) {
-      const normalizedPayload = this.parseStructuredPayload(sessionPayload);
-      if (normalizedPayload !== sessionPayload) {
-        return this.extractSessionRecord(normalizedPayload);
-      }
+      const normalizedPayload = sessionPayload;
       if (this.isSessionRecord(normalizedPayload)) {
         return normalizedPayload;
       }
+      console.log("It got past the point.");
+      util.assert(Array.isArray(normalizedPayload), "normalizedPayload needs to be an array.");
       if (Array.isArray(normalizedPayload)) {
-        const sessionRecord2 = normalizedPayload.find((candidate) => this.isSessionRecord(candidate));
-        return sessionRecord2 != null ? sessionRecord2 : null;
+        const sessionRecord = normalizedPayload.find((candidate) => this.isSessionRecord(candidate));
+        return sessionRecord != null ? sessionRecord : null;
       }
-      if (!normalizedPayload || typeof normalizedPayload !== "object") {
-        return null;
-      }
-      for (const key of ["session", "data", "result", "item", "record", "row", "payload"]) {
-        const candidate = normalizedPayload[key];
-        if (this.isSessionRecord(candidate)) {
-          return candidate;
-        }
-        if (candidate && typeof candidate === "object") {
-          const nestedRecord = this.extractSessionRecord(candidate);
-          if (nestedRecord !== null) {
-            return nestedRecord;
-          }
-        }
-      }
-      const objectValues = Object.values(normalizedPayload);
-      const sessionRecord = objectValues.find((candidate) => this.isSessionRecord(candidate));
-      return sessionRecord != null ? sessionRecord : null;
     }
     parseStructuredPayload(payload) {
       if (typeof payload !== "string") {
