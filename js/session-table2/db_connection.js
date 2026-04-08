@@ -291,13 +291,9 @@ export class db_connection {
     async get(resource, query = null) {
         if (resource === "sessions") {
             try {
-                const apiClient = await this.getApiClient();
-
-                // Trying with toke system
-                // if (apiClient) { // construcutor enforces this to exist.
-                const sessionsPayload = await apiClient.get("api/sessions");
-                return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
-                // }
+                
+                return structuredClone((await this.apiClient.get("api/sessions"))["sessions"]);
+                
 
             } catch (error) {
                 console.warn("Falling back to local session data for get(\"sessions\").", error);
@@ -404,23 +400,32 @@ export class db_connection {
         return db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session));
     }
 
+    // Currently Trying to depricate
     normalizeSessionsResponse(sessionsPayload) {
-        const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
-        // const sessions = this.extractSessionsArray(normalizedPayload);
-        const sessions = normalizedPayload["sessions"];
-        if (!Array.isArray(sessions)) {
-            const payloadDescription = this.describePayloadShape(normalizedPayload);
-            throw new Error(`Unsupported sessions response shape (${payloadDescription})`);
+        // const normalizedPayload = sessionsPayload;
+        
+        const sessions = sessionsPayload["sessions"];
+       
+
+        for (const session of sessions) {
+            const normalizedSession = this.normalizeSessionRecordForRead(session);
+            if (JSON.stringify(session) !== JSON.stringify(normalizedSession)) {
+                console.log("normalizeSessionRecordForRead changed a session:", {
+                    before: session,
+                    after: normalizedSession
+                });
+            }
         }
 
-        return sessions
-            .map((session) => this.normalizeSessionRecordForRead(session))
-            .filter((session) => session !== null);
+        return sessions;
     }
 
     normalizeSingleSessionResponse(sessionPayload) {
-        const normalizedPayload = this.parseStructuredPayload(sessionPayload);
+        const normalizedPayload = sessionPayload;
+        
         const session = this.extractSessionRecord(normalizedPayload);
+
+
         if (session === null) {
             const payloadDescription = this.describePayloadShape(normalizedPayload);
             throw new Error(`Unsupported session response shape (${payloadDescription})`);
@@ -498,21 +503,17 @@ export class db_connection {
     }
 
     normalizeSessionRecordForRead(session) {
-        if (!this.isSessionRecord(session)) {
-            return null;
-        }
 
         const normalizedSession = structuredClone(session);
-        if (!Array.isArray(normalizedSession.Attendees) && Array.isArray(normalizedSession.attendees)) {
-            normalizedSession.Attendees = normalizedSession.attendees;
-        }
 
-        const attendeeCount = Number(normalizedSession.AttendeesCt);
-        normalizedSession.AttendeesCt = Number.isFinite(attendeeCount)
-            ? attendeeCount
-            : (Array.isArray(normalizedSession.Attendees) ? normalizedSession.Attendees.length : 0);
+        normalizedSession.AttendeesCt = Number(normalizedSession.AttendeesCt);
 
-        return this.normalizeSessionForRead(normalizedSession);
+        return {
+            ...structuredClone(session),
+            IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
+            IsSelfPacedSession: this.isSelfPacedSession(session),
+            Attendees: this.normalizeSessionAttendees(session?.Attendees, session)
+        };
     }
 
     isSessionRecord(value) {

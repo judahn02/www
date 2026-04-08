@@ -50,7 +50,6 @@
      * @returns {string|null} A date string in YYYY-MM-DD format, or null if invalid.
      */
     static enfDate(dateValue) {
-      console.warn("This should not be called because the backend should take care of this.");
       const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
       if (normalizedDateValue === "") {
         return null;
@@ -60,8 +59,10 @@
       }
       const displayDateMatch = normalizedDateValue.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
       if (!displayDateMatch) {
+        console.log(normalizedDateValue);
         return null;
       }
+      console.warn("enfDate: more than trim was needed.");
       const [, month, day, year] = displayDateMatch;
       return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
     }
@@ -101,9 +102,7 @@
     async get(resource, query = null) {
       if (resource === "sessions") {
         try {
-          const apiClient = await this.getApiClient();
-          const sessionsPayload = await apiClient.get("api/sessions");
-          return structuredClone(this.normalizeSessionsResponse(sessionsPayload));
+          return structuredClone((await this.apiClient.get("api/sessions"))["sessions"]);
         } catch (error) {
           console.warn('Falling back to local session data for get("sessions").', error);
           return structuredClone(this.getLocalSessions());
@@ -192,17 +191,22 @@
     getLocalSessions() {
       return _db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session));
     }
+    // Currently Trying to depricate
     normalizeSessionsResponse(sessionsPayload) {
-      const normalizedPayload = this.parseStructuredPayload(sessionsPayload);
-      const sessions = normalizedPayload["sessions"];
-      if (!Array.isArray(sessions)) {
-        const payloadDescription = this.describePayloadShape(normalizedPayload);
-        throw new Error(`Unsupported sessions response shape (${payloadDescription})`);
+      const sessions = sessionsPayload["sessions"];
+      for (const session of sessions) {
+        const normalizedSession = this.normalizeSessionRecordForRead(session);
+        if (JSON.stringify(session) !== JSON.stringify(normalizedSession)) {
+          console.log("normalizeSessionRecordForRead changed a session:", {
+            before: session,
+            after: normalizedSession
+          });
+        }
       }
-      return sessions.map((session) => this.normalizeSessionRecordForRead(session)).filter((session) => session !== null);
+      return sessions;
     }
     normalizeSingleSessionResponse(sessionPayload) {
-      const normalizedPayload = this.parseStructuredPayload(sessionPayload);
+      const normalizedPayload = sessionPayload;
       const session = this.extractSessionRecord(normalizedPayload);
       if (session === null) {
         const payloadDescription = this.describePayloadShape(normalizedPayload);
@@ -213,10 +217,6 @@
         throw new Error("Unsupported session response record");
       }
       return normalizedSession;
-    }
-    extractSessionsArray(sessionsPayload) {
-      if (Array.isArray(sessionsPayload["sessions"])) return sessionsPayload["sessions"];
-      throw Error("extractSessionsArray should not reach this far.");
     }
     extractSessionRecord(sessionPayload) {
       const normalizedPayload = this.parseStructuredPayload(sessionPayload);
@@ -266,16 +266,14 @@
       return `type: ${typeof payload}`;
     }
     normalizeSessionRecordForRead(session) {
-      if (!this.isSessionRecord(session)) {
-        return null;
-      }
       const normalizedSession = structuredClone(session);
-      if (!Array.isArray(normalizedSession.Attendees) && Array.isArray(normalizedSession.attendees)) {
-        normalizedSession.Attendees = normalizedSession.attendees;
-      }
-      const attendeeCount = Number(normalizedSession.AttendeesCt);
-      normalizedSession.AttendeesCt = Number.isFinite(attendeeCount) ? attendeeCount : Array.isArray(normalizedSession.Attendees) ? normalizedSession.Attendees.length : 0;
-      return this.normalizeSessionForRead(normalizedSession);
+      normalizedSession.AttendeesCt = Number(normalizedSession.AttendeesCt);
+      return {
+        ...structuredClone(session),
+        IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
+        IsSelfPacedSession: this.isSelfPacedSession(session),
+        Attendees: this.normalizeSessionAttendees(session == null ? void 0 : session.Attendees, session)
+      };
     }
     isSessionRecord(value) {
       if (!value || typeof value !== "object" || Array.isArray(value)) {
