@@ -109,17 +109,15 @@
         try {
           return structuredClone((await this.apiClient.get("api/sessions"))["sessions"]);
         } catch (error) {
-          console.warn('Falling back to local session data for get("sessions").', error);
-          return structuredClone(this.getLocalSessions());
+          throw Error("api/sessions is not available");
         }
       } else if (resource === "session") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
-        util.assert(Number.isFinite(sessionID), "sessionID for the get session call was empty");
+        util.assert(Number.isFinite(sessionID), "sessionID for the get session call is invalid");
         try {
-          const sessionPayload = await this.apiClient.get(`api/sessions/${sessionID}`);
-          return structuredClone(sessionPayload);
+          return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}`));
         } catch (error) {
-          console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
+          throw Error(`api/sessions/${sessionID} is not available`);
         }
       } else if (resource === "attendee") {
         const sessionID = Number(query == null ? void 0 : query.sessionID);
@@ -177,9 +175,6 @@
       else if (resource === "CEUTypes")
         return structuredClone(_db_connection.data.CEUTypes);
       return null;
-    }
-    getLocalSessions() {
-      return _db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session));
     }
     // Currently Trying to depricate
     normalizeSessionsResponse(sessionsPayload) {

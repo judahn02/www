@@ -296,25 +296,19 @@ export class db_connection {
                 
 
             } catch (error) {
-                console.warn("Falling back to local session data for get(\"sessions\").", error);
-                return structuredClone(this.getLocalSessions());
+                throw Error("api/sessions is not available");
             }
         }
         else if (resource === "session") {
             const sessionID = Number(query?.sessionID);
-            // if (!Number.isFinite(sessionID)) {
-            //     return null;
-            // }
-            // console.assert(Number.isFinite(sessionID), "sessionID for the get session call was empty");
-            util.assert(Number.isFinite(sessionID), "sessionID for the get session call was empty");
+            
+            util.assert(Number.isFinite(sessionID), "sessionID for the get session call is invalid");
             try {
-                
-                const sessionPayload = await this.apiClient.get(`api/sessions/${sessionID}`);
-                
-                return structuredClone(sessionPayload);
+
+                return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}`));
             
             } catch (error) {
-                console.warn(`Falling back to local session data for get("session", { sessionID: ${sessionID} }).`, error);
+                throw Error(`api/sessions/${sessionID} is not available`);
             }
 
         }
@@ -383,10 +377,6 @@ export class db_connection {
         else if (resource === "CEUTypes")
             return structuredClone(db_connection.data.CEUTypes);
         return null;
-    }
-
-    getLocalSessions() {
-        return db_connection.data.sessions.map((session) => this.normalizeSessionForRead(session));
     }
 
     // Currently Trying to depricate
