@@ -354,13 +354,19 @@ export class db_connection {
 
             return await this.apiClient.get(`api/sessions/${sessionID}/attendees/${personID}/comments`);
         }
-        
+
         else if (resource === "sessionTypes")
-            return structuredClone(db_connection.data.sessionTypes);
+            return await this.apiClient.get(`api/lookups/session-types`);
+
+
         else if (resource === "EventTypes")
             return structuredClone(db_connection.data.EventTypes);
+
+
         else if (resource === "CEUTypes")
             return structuredClone(db_connection.data.CEUTypes);
+
+        
         return null;
     }
 

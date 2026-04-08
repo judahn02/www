@@ -34,6 +34,8 @@ if (typeof $ !== "function") {
         // console.log("comments: ", await dbC.get("comments", { sessionID: 1, personID: 5 }));
         // console.log("comments og: ", await dbC.apiClient.get(`api/sessions/1/attendees/5/comments`));
    
+        console.log("sessionTypes: ", await dbC.get("sessionTypes"));
+        console.log("sessionTypes dir: ", await dbC.apiClient.get(`api/lookups/session-types`));
     });
 }
 })();
