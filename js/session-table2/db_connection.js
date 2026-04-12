@@ -333,8 +333,10 @@ export class db_connection {
             const sessionID = Number(query?.sessionID);
             util.assert(Number.isInteger(sessionID), `sessionID for get(\"attendees\" needs to be an int. sessionID: ${query?.sessionID}`);
             return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees`));
-            
         }
+
+        else if (resource === "attendeesDir")
+            return structuredClone(await this.apiClient.get(`api/attendees/directory`));
 
         // These are hardcoded as an Enum in the Database, if needing to change
         // these, make sure to update there as well. 

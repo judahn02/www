@@ -179,7 +179,7 @@ export class show_attendees {
             this.db.get("session", { sessionID }),
             this.db.get("attendees", { sessionID }),
             this.db.get("attendeeStatuses"),
-            this.db.get("attendees")
+            this.db.get("attendeesDir")
         ]);
 
         if (!sessionData) {

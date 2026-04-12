@@ -10,7 +10,7 @@ export class attendee_add_manager {
     }
 
     // async load() {
-    //     this.setDirectory(await this.db.get("attendees"));
+    //     this.setDirectory(await this.db.get("attendeesDir"));
     // }
 
     setDirectory(attendeeDirectory = []) {
@@ -106,7 +106,7 @@ export class attendee_add_manager {
                 personID: Number(attendeeEntry?.personID),
                 name: String(attendeeEntry?.name ?? "").trim(),
                 email: String(attendeeEntry?.email ?? "").trim(),
-                label: String(attendeeEntry?.label ?? "").trim()
+                label: String(attendeeEntry?.label ?? `${String(attendeeEntry?.name ?? "").trim()} (${String(attendeeEntry?.email ?? "").trim()})`).trim()
             }))
             .filter((attendeeOption) => {
                 return Number.isFinite(attendeeOption.id)

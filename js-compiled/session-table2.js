@@ -212,7 +212,9 @@
         const sessionID = Number(query == null ? void 0 : query.sessionID);
         util.assert(Number.isInteger(sessionID), `sessionID for get("attendees" needs to be an int. sessionID: ${query == null ? void 0 : query.sessionID}`);
         return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees`));
-      } else if (resource === "attendeeStatuses")
+      } else if (resource === "attendeesDir")
+        return structuredClone(await this.apiClient.get(`api/attendees/directory`));
+      else if (resource === "attendeeStatuses")
         return {
           1: "Certified",
           2: "Master",
@@ -325,6 +327,7 @@
     }
     async put(resource, value) {
       if (resource === "sessionAttendees") {
+        console.log("sessionAttendees", value);
         return structuredClone(this.updateSessionAttendees(value));
       }
       if (resource === "attendeeRIDCertifications") {
@@ -564,6 +567,7 @@
       _db_connection.data.ridCertificates = _db_connection.data.ridCertificates.filter((certificationEntry) => certificationEntry.sessionID !== sessionID).concat(nextRIDCertificates);
       return this.buildAttendeeRecords(session);
     }
+    // working on now.
     updateSessionAttendees(value) {
       var _a, _b, _c, _d, _e;
       const sessionID = Number(value == null ? void 0 : value.sessionID);
@@ -604,6 +608,7 @@
       _db_connection.data.ridCertificates = _db_connection.data.ridCertificates.filter((certificationEntry) => certificationEntry.sessionID !== sessionID).concat(nextRIDCertificates);
       return this.buildAttendeeRecords(session);
     }
+    // working above
     normalizeSessionForRead(session) {
       return {
         ...structuredClone(session),
@@ -2363,7 +2368,7 @@
     async init() {
     }
     // async load() {
-    //     this.setDirectory(await this.db.get("attendees"));
+    //     this.setDirectory(await this.db.get("attendeesDir"));
     // }
     setDirectory(attendeeDirectory = []) {
       this.attendeeDirectory = Array.isArray(attendeeDirectory) ? attendeeDirectory : [];
@@ -2440,13 +2445,13 @@
       return this.attendeeDirectory.filter((attendeeEntry) => {
         return !excludedPersonIDSet.has(Number(attendeeEntry == null ? void 0 : attendeeEntry.personID));
       }).map((attendeeEntry) => {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         return {
           id: Number(attendeeEntry == null ? void 0 : attendeeEntry.personID),
           personID: Number(attendeeEntry == null ? void 0 : attendeeEntry.personID),
           name: String((_a = attendeeEntry == null ? void 0 : attendeeEntry.name) != null ? _a : "").trim(),
           email: String((_b = attendeeEntry == null ? void 0 : attendeeEntry.email) != null ? _b : "").trim(),
-          label: String((_c = attendeeEntry == null ? void 0 : attendeeEntry.label) != null ? _c : "").trim()
+          label: String((_e = attendeeEntry == null ? void 0 : attendeeEntry.label) != null ? _e : `${String((_c = attendeeEntry == null ? void 0 : attendeeEntry.name) != null ? _c : "").trim()} (${String((_d = attendeeEntry == null ? void 0 : attendeeEntry.email) != null ? _d : "").trim()})`).trim()
         };
       }).filter((attendeeOption) => {
         return Number.isFinite(attendeeOption.id) && attendeeOption.name !== "" && attendeeOption.email !== "" && attendeeOption.label !== "";
@@ -2606,7 +2611,7 @@
         this.db.get("session", { sessionID }),
         this.db.get("attendees", { sessionID }),
         this.db.get("attendeeStatuses"),
-        this.db.get("attendees")
+        this.db.get("attendeesDir")
       ]);
       if (!sessionData) {
         alert("That session could not be found. Please refresh the page and try again.");
