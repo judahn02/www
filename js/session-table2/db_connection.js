@@ -397,7 +397,6 @@ export class db_connection {
             return structuredClone(await this.updateSessionLock(value));
         }
 
-// Currently Working in
         if (resource === "comments") {
             const sessionID = Number(value?.sessionID);
             const personID = Number(value?.personID);
@@ -427,7 +426,6 @@ export class db_connection {
             console.log("put comments", savedComment);
             return normalizedComment;
         }
-// Working Above
 
         if (!["sessionTypes", "EventTypes", "CEUTypes"].includes(resource)) {
             return -1;
@@ -438,20 +436,27 @@ export class db_connection {
             return -1;
         }
 
-        const resourceData = db_connection.data[resource];
-        for (const existingLabel of Object.values(resourceData)) {
-            if (String(existingLabel).trim().toLowerCase() === label.toLowerCase()) {
-                return -1;
-            }
+        let lookupEndpoint = "";
+        if (resource === "sessionTypes") {
+            lookupEndpoint = "api/lookups/session-types";
+        } else if (resource === "EventTypes") {
+            lookupEndpoint = "api/lookups/event-types";
+        } else {
+            lookupEndpoint = "api/lookups/ceu-types";
         }
 
-        const nextId = Object.keys(resourceData)
-            .map((optionId) => Number(optionId))
-            .filter((optionId) => Number.isFinite(optionId))
-            .reduce((maxId, optionId) => Math.max(maxId, optionId), 0) + 1;
+        const response = await this.apiClient.post(
+            lookupEndpoint,
+            { "Content-Type": "text/plain" },
+            JSON.stringify({ value: label })
+        );
 
-        resourceData[nextId] = label;
-        return nextId;
+        const newID = Number(response?.newID);
+        if (!Number.isFinite(newID)) {
+            return -1;
+        }
+
+        return newID;
     }
 
     // kiuytfrdc

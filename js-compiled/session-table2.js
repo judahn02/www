@@ -90,6 +90,35 @@
       }
       return responseBody;
     }
+    async post(path, extraHeaders = {}, body = void 0) {
+      const url = `${this.baseUrl}/${path.replace(/^\/+/, "")}`;
+      const headers = {
+        "ASLTA-PDT-JWT": `Bearer ${this.jwt}`,
+        Accept: "application/json",
+        ...extraHeaders
+      };
+      const hasContentType = Object.keys(headers).some((key) => key.toLowerCase() === "content-type");
+      if (body !== void 0 && body !== null && !hasContentType) {
+        headers["Content-Type"] = typeof body === "string" ? "text/plain" : "application/json";
+      }
+      const response = await fetch(url, {
+        method: "POST",
+        headers,
+        body: body === void 0 || body === null ? void 0 : typeof body === "string" ? body : JSON.stringify(body)
+      });
+      const contentType = response.headers.get("content-type") || "";
+      if (response.status === 204) {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return null;
+      }
+      const responseBody = contentType.includes("application/json") ? await response.json() : await response.text();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${typeof responseBody === "string" ? responseBody : JSON.stringify(responseBody)}`);
+      }
+      return responseBody;
+    }
   };
 
   // js/core/utilties.js
@@ -259,15 +288,24 @@
       if (label === "") {
         return -1;
       }
-      const resourceData = _db_connection.data[resource];
-      for (const existingLabel of Object.values(resourceData)) {
-        if (String(existingLabel).trim().toLowerCase() === label.toLowerCase()) {
-          return -1;
-        }
+      let lookupEndpoint = "";
+      if (resource === "sessionTypes") {
+        lookupEndpoint = "api/lookups/session-types";
+      } else if (resource === "EventTypes") {
+        lookupEndpoint = "api/lookups/event-types";
+      } else {
+        lookupEndpoint = "api/lookups/ceu-types";
       }
-      const nextId = Object.keys(resourceData).map((optionId) => Number(optionId)).filter((optionId) => Number.isFinite(optionId)).reduce((maxId, optionId) => Math.max(maxId, optionId), 0) + 1;
-      resourceData[nextId] = label;
-      return nextId;
+      const response = await this.apiClient.post(
+        lookupEndpoint,
+        { "Content-Type": "text/plain" },
+        JSON.stringify({ value: label })
+      );
+      const newID = Number(response == null ? void 0 : response.newID);
+      if (!Number.isFinite(newID)) {
+        return -1;
+      }
+      return newID;
     }
     // kiuytfrdc
     async updateSessionLock(value) {
