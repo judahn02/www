@@ -14,8 +14,8 @@ if (typeof $ !== "function") {
 
         const apiBaseUrl = "https://aslta-api-v3.judahsbase.com";
         const jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjIsImV4cCI6MTUxNjIzOTMyMn0.r_yhCUsRyPFYNP5oQVT4EpS6Aojmhah0aMQQL_IPQg9DDQeADEVyUx84QlJt6rTx2S2QSjuxmI3xB2ftl7WE4UoFCgYOT-RW3ehU0tDcU_1RnMCW3NqBfMtaIHXDd_u3er0BiQm25nEiCWF8JtQcQWOASRHuRb5dox6wJO5C-Jm7iQlwJGsAnlXTGqTUqfH_AhPAm35CJO8omtpMX7lgfhdmvivMDtsdwW5sLXmeKm0JhrNKcpPQjZJ_HkTXJRP_LD80dgA1n1qQFSgbQint4giRITNeTMk6pqUUXXgkduJUUW_v1qqZoMwt85CkPNkyb7E9Fcc7gBj9IdTrrl_aXw"; // Paste the JWT here once it's available.
-        const dbC = new db_connection(apiBaseUrl, jwt);
         const hostC = new host_connection();
+        const dbC = new db_connection(apiBaseUrl, jwt, hostC);
         const mainPage = new main_page(
             dbC,
             hostC,

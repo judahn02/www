@@ -256,13 +256,14 @@ export class db_connection {
      *  Can't have trailing '/'
      * @param {string} jwt 
      */
-    constructor(apiBaseUrl = null, jwt = null) {
+    constructor(apiBaseUrl = null, jwt = null, hostC = null) {
         
         this.apiBaseUrl = apiBaseUrl;
         this.jwt = jwt;
+        this.hostC = hostC;
 
-        if (!apiBaseUrl || !jwt) {
-            throw new Error("API Base URL and or JWT are not present.");
+        if (!apiBaseUrl || !jwt || !hostC) {
+            throw new Error("API Base URL, JWT, and or hostC are not present.");
         }
         this.apiClient = new JwtApiClient(apiBaseUrl, jwt);
 // This is my stopping point
@@ -289,6 +290,7 @@ export class db_connection {
     }
 
     async get(resource, query = null) {
+// These will need to do another API call to WP
         if (resource === "sessions") {
             try {
                 
@@ -299,6 +301,7 @@ export class db_connection {
                 throw Error("api/sessions is not available");
             }
         }
+// These will need to do another API call to WP
         else if (resource === "session") {
             const sessionID = Number(query?.sessionID);
             
@@ -388,7 +391,7 @@ export class db_connection {
 
     async set(resource, value) {
         if (resource === "sessionLock") {
-            return structuredClone(this.updateSessionLock(value));
+            return structuredClone(await this.updateSessionLock(value));
         }
 
         if (resource === "comments") {
@@ -443,11 +446,12 @@ export class db_connection {
         return nextId;
     }
 
-    updateSessionLock(value) {
+    // kiuytfrdc
+    async updateSessionLock(value) {
         const sessionID = Number(value?.sessionID);
-        if (!Number.isFinite(sessionID)) {
-            return null;
-        }
+        util.assert(Number.isInteger(sessionID), "updateSessionLock: sessionID needs to be an Int.");
+        const userID = await this.hostC.get("userID");
+        
 
         const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
         if (!session) {

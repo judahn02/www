@@ -4,3 +4,4 @@ node_modules/
 spam.js
 spam2.js
 redundant_js.js
+js-compiled/

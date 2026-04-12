@@ -17,14 +17,45 @@ export default class JwtApiClient {
     });
 
     const contentType = response.headers.get("content-type") || "";
-    const body = contentType.includes("application/json")
+    const responseBody = contentType.includes("application/json")
       ? await response.json()
       : await response.text();
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${typeof body === "string" ? body : JSON.stringify(body)}`);
+      throw new Error(`HTTP ${response.status}: ${typeof responseBody === "string" ? responseBody : JSON.stringify(responseBody)}`);
     }
 
-    return body;
+    return responseBody;
+  }
+
+  async patch(path, extraHeaders = {}, body = undefined) {
+    const url = `${this.baseUrl}/${path.replace(/^\/+/, "")}`;
+    const headers = {
+      "ASLTA-PDT-JWT": `Bearer ${this.jwt}`,
+      Accept: "application/json",
+      ...extraHeaders,
+    };
+
+    const hasContentType = Object.keys(headers).some((key) => key.toLowerCase() === "content-type");
+    if (body !== undefined && body !== null && !hasContentType) {
+      headers["Content-Type"] = typeof body === "string" ? "text/plain" : "application/json";
+    }
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers,
+      body: body === undefined || body === null ? undefined : (typeof body === "string" ? body : JSON.stringify(body)),
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+    const responseBody = contentType.includes("application/json")
+      ? await response.json()
+      : await response.text();
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${typeof responseBody === "string" ? responseBody : JSON.stringify(responseBody)}`);
+    }
+
+    return responseBody;
   }
 }

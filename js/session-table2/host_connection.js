@@ -50,7 +50,7 @@ export class host_connection {
         }
 
         // Temporary fallback while this host wrapper stands in for WordPress.
-        return 1;
+        return 405;
     }
 
     resolveUserName() {
