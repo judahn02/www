@@ -29,6 +29,9 @@ export class db_connection {
 
     static attendeeDateRangesNormalized = false;
 
+    // Temporary local fallback data.
+    // Do not add new product logic that depends on db_connection.data; it is
+    // slated for removal once the backend endpoints fully cover this surface.
     static data = {
         "sessions" : [
             {
@@ -394,6 +397,7 @@ export class db_connection {
             return structuredClone(await this.updateSessionLock(value));
         }
 
+// Currently Working in
         if (resource === "comments") {
             const sessionID = Number(value?.sessionID);
             const personID = Number(value?.personID);
@@ -408,18 +412,22 @@ export class db_connection {
                 memberComment: String(value?.memberComment ?? "")
             };
 
-            const existingCommentIndex = db_connection.data.comments.findIndex((entry) => {
-                return entry.sessionID === sessionID && entry.personID === personID;
-            });
+            const savedComment = await this.apiClient.put(
+                `api/sessions/${sessionID}/attendees/${personID}/comments`,
+                { "Content-Type": "text/plain" },
+                JSON.stringify(commentData)
+            );
 
-            if (existingCommentIndex >= 0) {
-                db_connection.data.comments[existingCommentIndex] = commentData;
-            } else {
-                db_connection.data.comments.push(commentData);
-            }
-
-            return commentData;
+            const normalizedComment = {
+                sessionID,
+                personID,
+                adminComment: String(savedComment?.adminComment ?? commentData.adminComment ?? ""),
+                memberComment: String(savedComment?.memberComment ?? commentData.memberComment ?? "")
+            };
+            console.log("put comments", savedComment);
+            return normalizedComment;
         }
+// Working Above
 
         if (!["sessionTypes", "EventTypes", "CEUTypes"].includes(resource)) {
             return -1;
@@ -450,20 +458,20 @@ export class db_connection {
     async updateSessionLock(value) {
         const sessionID = Number(value?.sessionID);
         util.assert(Number.isInteger(sessionID), "updateSessionLock: sessionID needs to be an Int.");
-        const userID = await this.hostC.get("userID");
-        
+        const userID = Number(await this.hostC.get("userID"));
+        util.assert(Number.isInteger(userID), "updateSessionLock: userID needs to be an Int.");
 
-        const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-        if (!session) {
-            return null;
+        const updatedSession = await this.apiClient.patch(
+            `api/sessions/${sessionID}/lock`,
+            { "Content-Type": "text/plain" },
+            { lockerWPID: userID }
+        );
+
+        if (updatedSession && typeof updatedSession === "object") {
+            return this.normalizeSessionForRead(updatedSession);
         }
 
-        session.Lock = Number(value?.lock) === 1 ? 1 : 0;
-
-        const lockerName = String(value?.locker ?? "").trim();
-        session.Locker = lockerName === "" ? null : lockerName;
-
-        return this.normalizeSessionForRead(session);
+        return updatedSession;
     }
 
     async put(resource, value) {

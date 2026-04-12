@@ -32,11 +32,63 @@
         }
       });
       const contentType = response.headers.get("content-type") || "";
-      const body = contentType.includes("application/json") ? await response.json() : await response.text();
+      const responseBody = contentType.includes("application/json") ? await response.json() : await response.text();
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${typeof body === "string" ? body : JSON.stringify(body)}`);
+        throw new Error(`HTTP ${response.status}: ${typeof responseBody === "string" ? responseBody : JSON.stringify(responseBody)}`);
       }
-      return body;
+      return responseBody;
+    }
+    async patch(path, extraHeaders = {}, body = void 0) {
+      const url = `${this.baseUrl}/${path.replace(/^\/+/, "")}`;
+      const headers = {
+        "ASLTA-PDT-JWT": `Bearer ${this.jwt}`,
+        Accept: "application/json",
+        ...extraHeaders
+      };
+      const hasContentType = Object.keys(headers).some((key) => key.toLowerCase() === "content-type");
+      if (body !== void 0 && body !== null && !hasContentType) {
+        headers["Content-Type"] = typeof body === "string" ? "text/plain" : "application/json";
+      }
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers,
+        body: body === void 0 || body === null ? void 0 : typeof body === "string" ? body : JSON.stringify(body)
+      });
+      const contentType = response.headers.get("content-type") || "";
+      const responseBody = contentType.includes("application/json") ? await response.json() : await response.text();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${typeof responseBody === "string" ? responseBody : JSON.stringify(responseBody)}`);
+      }
+      return responseBody;
+    }
+    async put(path, extraHeaders = {}, body = void 0) {
+      const url = `${this.baseUrl}/${path.replace(/^\/+/, "")}`;
+      const headers = {
+        "ASLTA-PDT-JWT": `Bearer ${this.jwt}`,
+        Accept: "application/json",
+        ...extraHeaders
+      };
+      const hasContentType = Object.keys(headers).some((key) => key.toLowerCase() === "content-type");
+      if (body !== void 0 && body !== null && !hasContentType) {
+        headers["Content-Type"] = typeof body === "string" ? "text/plain" : "application/json";
+      }
+      const response = await fetch(url, {
+        method: "PUT",
+        headers,
+        body: body === void 0 || body === null ? void 0 : typeof body === "string" ? body : JSON.stringify(body)
+      });
+      const contentType = response.headers.get("content-type") || "";
+      if (response.status === 204) {
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        return null;
+      }
+      const responseBody = contentType.includes("application/json") ? await response.json() : await response.text();
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${typeof responseBody === "string" ? responseBody : JSON.stringify(responseBody)}`);
+      }
+      return responseBody;
     }
   };
 
@@ -81,11 +133,12 @@
      *  Can't have trailing '/'
      * @param {string} jwt 
      */
-    constructor(apiBaseUrl = null, jwt = null) {
+    constructor(apiBaseUrl = null, jwt = null, hostC = null) {
       this.apiBaseUrl = apiBaseUrl;
       this.jwt = jwt;
-      if (!apiBaseUrl || !jwt) {
-        throw new Error("API Base URL and or JWT are not present.");
+      this.hostC = hostC;
+      if (!apiBaseUrl || !jwt || !hostC) {
+        throw new Error("API Base URL, JWT, and or hostC are not present.");
       }
       this.apiClient = new JwtApiClient(apiBaseUrl, jwt);
       this.ensureNormalizedAttendeeDateRanges();
@@ -155,50 +208,23 @@
         return await this.apiClient.get(`api/lookups/ceu-types`);
       return null;
     }
-    // parseStructuredPayload(payload) {
-    //     // console.log("parseStructuredPayload")
-    //     if (typeof payload !== "string") {
-    //         // console.log("It's not a string");
-    //         return payload;
-    //     }
-    //     throw new Error("parseStructuredPayload: A string was passed in here. Not sure why. BackEnd Fix?");
-    // }
-    // describePayloadShape(payload) {
-    //     if (payload && typeof payload === "object") {
-    //         return `keys: ${Object.keys(payload).join(", ")}`;
-    //     }
-    //     if (typeof payload === "string") {
-    //         const preview = payload.trim().slice(0, 80).replace(/\s+/g, " ");
-    //         return preview === ""
-    //             ? "type: string (empty)"
-    //             : `type: string, preview: ${preview}`;
-    //     }
-    //     return `type: ${typeof payload}`;
-    // }
-    // normalizeSessionRecordForRead(session) {
-    //     const normalizedSession = structuredClone(session);
-    //     normalizedSession.AttendeesCt = Number(normalizedSession.AttendeesCt);
-    //     return {
-    //         ...structuredClone(session),
-    //         IsRIDQualifiedSession: this.isRIDQualifiedSession(session),
-    //         IsSelfPacedSession: this.isSelfPacedSession(session),
-    //         Attendees: this.normalizeSessionAttendees(session?.Attendees, session)
-    //     };
-    // }
-    // isSessionRecord(value) {
-    //     if (!value || typeof value !== "object" || Array.isArray(value)) {
-    //         return false;
-    //     }
-    //     return Number.isFinite(Number(value.sessionID))
-    //         || typeof value.SessionTitle === "string"
-    //         || typeof value.Date === "string"
-    //         || Array.isArray(value.Attendees)
-    //         || Array.isArray(value.attendees);
-    // }
+    // This should most likely be removed when at final verison.
+    parseStructuredPayload(payload) {
+      throw Error("parseStructuredPayload should not be called.");
+    }
+    describePayloadShape(payload) {
+      throw Error("describePayloadShape should not be called.");
+    }
+    normalizeSessionRecordForRead(session) {
+      throw Error("normalizeSessionRecordForRead should not be called.");
+    }
+    isSessionRecord(value) {
+      throw Error("isSessionRecord should not be called.");
+    }
     async set(resource, value) {
-      var _a, _b;
+      var _a, _b, _c, _d, _e, _f;
       if (resource === "sessionLock") {
-        return structuredClone(this.updateSessionLock(value));
+        return structuredClone(await this.updateSessionLock(value));
       }
       if (resource === "comments") {
         const sessionID = Number(value == null ? void 0 : value.sessionID);
@@ -212,15 +238,19 @@
           adminComment: String((_a = value == null ? void 0 : value.adminComment) != null ? _a : ""),
           memberComment: String((_b = value == null ? void 0 : value.memberComment) != null ? _b : "")
         };
-        const existingCommentIndex = _db_connection.data.comments.findIndex((entry) => {
-          return entry.sessionID === sessionID && entry.personID === personID;
-        });
-        if (existingCommentIndex >= 0) {
-          _db_connection.data.comments[existingCommentIndex] = commentData;
-        } else {
-          _db_connection.data.comments.push(commentData);
-        }
-        return commentData;
+        const savedComment = await this.apiClient.put(
+          `api/sessions/${sessionID}/attendees/${personID}/comments`,
+          { "Content-Type": "text/plain" },
+          JSON.stringify(commentData)
+        );
+        const normalizedComment = {
+          sessionID,
+          personID,
+          adminComment: String((_d = (_c = savedComment == null ? void 0 : savedComment.adminComment) != null ? _c : commentData.adminComment) != null ? _d : ""),
+          memberComment: String((_f = (_e = savedComment == null ? void 0 : savedComment.memberComment) != null ? _e : commentData.memberComment) != null ? _f : "")
+        };
+        console.log("put comments", savedComment);
+        return normalizedComment;
       }
       if (!["sessionTypes", "EventTypes", "CEUTypes"].includes(resource)) {
         return -1;
@@ -239,20 +269,21 @@
       resourceData[nextId] = label;
       return nextId;
     }
-    updateSessionLock(value) {
-      var _a;
+    // kiuytfrdc
+    async updateSessionLock(value) {
       const sessionID = Number(value == null ? void 0 : value.sessionID);
-      if (!Number.isFinite(sessionID)) {
-        return null;
+      util.assert(Number.isInteger(sessionID), "updateSessionLock: sessionID needs to be an Int.");
+      const userID = Number(await this.hostC.get("userID"));
+      util.assert(Number.isInteger(userID), "updateSessionLock: userID needs to be an Int.");
+      const updatedSession = await this.apiClient.patch(
+        `api/sessions/${sessionID}/lock`,
+        { "Content-Type": "text/plain" },
+        { lockerWPID: userID }
+      );
+      if (updatedSession && typeof updatedSession === "object") {
+        return this.normalizeSessionForRead(updatedSession);
       }
-      const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-      if (!session) {
-        return null;
-      }
-      session.Lock = Number(value == null ? void 0 : value.lock) === 1 ? 1 : 0;
-      const lockerName = String((_a = value == null ? void 0 : value.locker) != null ? _a : "").trim();
-      session.Locker = lockerName === "" ? null : lockerName;
-      return this.normalizeSessionForRead(session);
+      return updatedSession;
     }
     async put(resource, value) {
       if (resource === "sessionAttendees") {
@@ -838,6 +869,9 @@
   Note, if date is not self paced, then attendee start/end dates are null
   */
   __publicField(_db_connection, "attendeeDateRangesNormalized", false);
+  // Temporary local fallback data.
+  // Do not add new product logic that depends on db_connection.data; it is
+  // slated for removal once the backend endpoints fully cover this surface.
   __publicField(_db_connection, "data", {
     "sessions": [
       {
@@ -1111,7 +1145,7 @@
           return normalizedCandidate;
         }
       }
-      return 1;
+      return 405;
     }
     resolveUserName() {
       var _a, _b, _c, _d, _e, _f, _g;
@@ -3555,8 +3589,8 @@
         "use strict";
         const apiBaseUrl = "https://aslta-api-v3.judahsbase.com";
         const jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjIsImV4cCI6MTUxNjIzOTMyMn0.r_yhCUsRyPFYNP5oQVT4EpS6Aojmhah0aMQQL_IPQg9DDQeADEVyUx84QlJt6rTx2S2QSjuxmI3xB2ftl7WE4UoFCgYOT-RW3ehU0tDcU_1RnMCW3NqBfMtaIHXDd_u3er0BiQm25nEiCWF8JtQcQWOASRHuRb5dox6wJO5C-Jm7iQlwJGsAnlXTGqTUqfH_AhPAm35CJO8omtpMX7lgfhdmvivMDtsdwW5sLXmeKm0JhrNKcpPQjZJ_HkTXJRP_LD80dgA1n1qQFSgbQint4giRITNeTMk6pqUUXXgkduJUUW_v1qqZoMwt85CkPNkyb7E9Fcc7gBj9IdTrrl_aXw";
-        const dbC = new db_connection(apiBaseUrl, jwt);
         const hostC = new host_connection();
+        const dbC = new db_connection(apiBaseUrl, jwt, hostC);
         const mainPage = new main_page(
           dbC,
           hostC,
