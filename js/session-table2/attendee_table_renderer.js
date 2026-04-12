@@ -266,7 +266,9 @@ export class attendee_table_renderer {
             return null;
         }
 
-        const parsedTimestamp = Date.parse(normalizedValue);
+        const parsedTimestamp = Date.parse(normalizedValue.includes(" ")
+            ? normalizedValue.replace(" ", "T")
+            : normalizedValue);
         if (Number.isNaN(parsedTimestamp)) {
             return null;
         }

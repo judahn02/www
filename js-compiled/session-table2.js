@@ -327,8 +327,19 @@
     }
     async put(resource, value) {
       if (resource === "sessionAttendees") {
-        console.log("sessionAttendees", value);
-        return structuredClone(this.updateSessionAttendees(value));
+        const sessionID2 = Number(value == null ? void 0 : value.sessionID);
+        if (!Number.isInteger(sessionID2)) {
+          return [];
+        }
+        await this.apiClient.put(
+          `api/sessions/${sessionID2}/attendees`,
+          { "Content-Type": "text/plain" },
+          {
+            certifiedByUserID: this.normalizePositiveInteger(value == null ? void 0 : value.certifiedByUserID),
+            attendees: Array.isArray(value == null ? void 0 : value.attendees) ? structuredClone(value.attendees) : []
+          }
+        );
+        return structuredClone(await this.apiClient.get(`api/sessions/${sessionID2}/attendees`));
       }
       if (resource === "attendeeRIDCertifications") {
         return structuredClone(this.updateAttendeeRIDCertifications(value));
@@ -518,7 +529,6 @@
         adminComment: String((_a = attendeeComments == null ? void 0 : attendeeComments.adminComment) != null ? _a : ""),
         memberComment: String((_b = attendeeComments == null ? void 0 : attendeeComments.memberComment) != null ? _b : "")
       };
-      console.log(theReturn);
       return theReturn;
     }
     updateAttendeeRIDCertifications(value) {
@@ -567,48 +577,6 @@
       _db_connection.data.ridCertificates = _db_connection.data.ridCertificates.filter((certificationEntry) => certificationEntry.sessionID !== sessionID).concat(nextRIDCertificates);
       return this.buildAttendeeRecords(session);
     }
-    // working on now.
-    updateSessionAttendees(value) {
-      var _a, _b, _c, _d, _e;
-      const sessionID = Number(value == null ? void 0 : value.sessionID);
-      if (!Number.isFinite(sessionID)) {
-        return [];
-      }
-      const session = _db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-      if (!session) {
-        return [];
-      }
-      const certifiedByUserID = this.normalizePositiveInteger(value == null ? void 0 : value.certifiedByUserID);
-      const attendeePayload = Array.isArray(value == null ? void 0 : value.attendees) ? value.attendees : [];
-      const nextAttendeeEntries = [];
-      const nextRIDCertificates = [];
-      const seenPersonIDs = /* @__PURE__ */ new Set();
-      for (const attendeeEntry of attendeePayload) {
-        const normalizedAttendeeEntry = this.normalizeSessionAttendeePayloadEntry(attendeeEntry, session);
-        if (!normalizedAttendeeEntry || seenPersonIDs.has(normalizedAttendeeEntry.personID)) {
-          continue;
-        }
-        seenPersonIDs.add(normalizedAttendeeEntry.personID);
-        nextAttendeeEntries.push(this.buildStoredAttendeeEntry(normalizedAttendeeEntry));
-        if (!normalizedAttendeeEntry.ridCertified) {
-          continue;
-        }
-        const existingCertification = this.getRIDCertificationRecord(sessionID, normalizedAttendeeEntry.personID);
-        const certifiedAt = (_b = (_a = normalizedAttendeeEntry.ridCertifiedAt) != null ? _a : existingCertification == null ? void 0 : existingCertification.certifiedAt) != null ? _b : (/* @__PURE__ */ new Date()).toISOString();
-        const certificationChanged = !existingCertification || existingCertification.certifiedAt !== certifiedAt;
-        nextRIDCertificates.push({
-          sessionID,
-          personID: normalizedAttendeeEntry.personID,
-          certifiedAt,
-          certifiedByUserID: certificationChanged ? (_c = certifiedByUserID != null ? certifiedByUserID : existingCertification == null ? void 0 : existingCertification.certifiedByUserID) != null ? _c : null : (_e = (_d = existingCertification == null ? void 0 : existingCertification.certifiedByUserID) != null ? _d : certifiedByUserID) != null ? _e : null
-        });
-      }
-      session.Attendees = nextAttendeeEntries;
-      session.AttendeesCt = nextAttendeeEntries.length;
-      _db_connection.data.ridCertificates = _db_connection.data.ridCertificates.filter((certificationEntry) => certificationEntry.sessionID !== sessionID).concat(nextRIDCertificates);
-      return this.buildAttendeeRecords(session);
-    }
-    // working above
     normalizeSessionForRead(session) {
       return {
         ...structuredClone(session),
@@ -691,44 +659,6 @@
         ridCertified,
         ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry == null ? void 0 : attendeeEntry.ridCertifiedAt) : null
       };
-    }
-    normalizeSessionAttendeePayloadEntry(attendeeEntry, session) {
-      const personID = Number(attendeeEntry == null ? void 0 : attendeeEntry.personID);
-      if (!Number.isFinite(personID)) {
-        return null;
-      }
-      const attendeeDirectoryRecord = this.getAttendeeDirectoryRecord(personID);
-      if (!attendeeDirectoryRecord) {
-        return null;
-      }
-      const certStatusID = this.normalizeAttendeeStatusId(attendeeEntry == null ? void 0 : attendeeEntry.certStatusID);
-      const isRIDQualifiedSession = this.isRIDQualifiedSession(session);
-      const ridCertified = isRIDQualifiedSession && (attendeeEntry == null ? void 0 : attendeeEntry.ridCertified) === true;
-      const normalizedDateRange = this.normalizeSessionAttendeeDateRange(attendeeEntry, session);
-      return {
-        personID,
-        name: attendeeDirectoryRecord.name,
-        email: attendeeDirectoryRecord.email,
-        dateRangeStart: normalizedDateRange.dateRangeStart,
-        dateRangeEnd: normalizedDateRange.dateRangeEnd,
-        certStatusID,
-        ridCertified,
-        ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry == null ? void 0 : attendeeEntry.ridCertifiedAt) : null
-      };
-    }
-    normalizeSessionAttendeeDateRange(attendeeEntry, session) {
-      if (attendeeEntry.length != 6) throw Error("Attendee Entry using wrong count of indexes.");
-      if (!this.isSelfPacedSession(session)) {
-        return {
-          dateRangeStart: null,
-          dateRangeEnd: null
-        };
-      }
-      const normalizedSeparatedDateRange = {
-        dateRangeStart: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry.dateRangeStart),
-        dateRangeEnd: util.enfDate(attendeeEntry == null ? void 0 : attendeeEntry.dateRangeEnd)
-      };
-      return normalizedSeparatedDateRange;
     }
     /**
      * 
@@ -1335,7 +1265,7 @@
     }
     async loadComments(commentFields, context) {
       var _a, _b;
-      const commentData = await this.db.get("comments", {
+      const commentData = typeof (context == null ? void 0 : context.loadComments) === "function" ? await context.loadComments() : await this.db.get("comments", {
         sessionID: context.sessionID,
         personID: context.personID
       });
@@ -1343,20 +1273,28 @@
       commentFields.member.val(String((_b = commentData == null ? void 0 : commentData.memberComment) != null ? _b : ""));
     }
     async saveComments(commentFields) {
-      var _a, _b, _c;
+      var _a, _b, _c, _d;
       if (this.activeCommentContext === null) {
         return;
       }
       const onSave = (_a = this.activeCommentContext) == null ? void 0 : _a.onSave;
-      await this.db.set("comments", {
-        sessionID: this.activeCommentContext.sessionID,
-        personID: this.activeCommentContext.personID,
+      const nextCommentData = {
         adminComment: String((_b = commentFields.admin.val()) != null ? _b : ""),
         memberComment: String((_c = commentFields.member.val()) != null ? _c : "")
-      });
+      };
+      if (typeof ((_d = this.activeCommentContext) == null ? void 0 : _d.saveComments) === "function") {
+        await this.activeCommentContext.saveComments(nextCommentData);
+      } else {
+        await this.db.set("comments", {
+          sessionID: this.activeCommentContext.sessionID,
+          personID: this.activeCommentContext.personID,
+          adminComment: nextCommentData.adminComment,
+          memberComment: nextCommentData.memberComment
+        });
+      }
       this.close(commentFields);
       if (typeof onSave === "function") {
-        await onSave();
+        await onSave(nextCommentData);
       }
     }
     close(commentFields) {
@@ -1887,7 +1825,7 @@
       if (normalizedValue === "") {
         return null;
       }
-      const parsedTimestamp = Date.parse(normalizedValue);
+      const parsedTimestamp = Date.parse(normalizedValue.includes(" ") ? normalizedValue.replace(" ", "T") : normalizedValue);
       if (Number.isNaN(parsedTimestamp)) {
         return null;
       }
@@ -1943,6 +1881,16 @@
     getDraftAttendees() {
       return this.attendeeRIDState.attendeesDraft;
     }
+    getDraftAttendee(personID) {
+      var _a;
+      const normalizedPersonID = this.getSafePersonID(personID);
+      if (normalizedPersonID <= 0) {
+        return null;
+      }
+      return (_a = this.attendeeRIDState.attendeesDraft.find((attendee) => {
+        return this.getSafePersonID(attendee == null ? void 0 : attendee.personID) === normalizedPersonID;
+      })) != null ? _a : null;
+    }
     getDraftPersonIDs() {
       return this.attendeeRIDState.attendeesDraft.map((attendee) => this.getSafePersonID(attendee == null ? void 0 : attendee.personID)).filter((personID) => personID > 0);
     }
@@ -1971,7 +1919,7 @@
         return;
       }
       const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
-      const normalizedStatusID = this.getPositiveIntegerOrDefault(nextCertStatusID, 4);
+      const normalizedStatusID = this.normalizeDraftCertStatusID(nextCertStatusID);
       this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
         ...currentAttendee,
         certStatusID: normalizedStatusID
@@ -2002,6 +1950,22 @@
         dateRangeStart: normalizedStartDate,
         dateRangeEnd: normalizedEndDate,
         dateRangeDisplay: null
+      };
+      return this.attendeeRIDState.attendeesDraft[attendeeIndex];
+    }
+    updateAttendeeComments(personID, nextComments = {}) {
+      var _a, _b, _c, _d;
+      const attendeeIndex = this.attendeeRIDState.attendeesDraft.findIndex((attendee) => {
+        return this.getSafePersonID(attendee == null ? void 0 : attendee.personID) === personID;
+      });
+      if (attendeeIndex < 0) {
+        return null;
+      }
+      const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
+      this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
+        ...currentAttendee,
+        adminComment: String((_b = (_a = nextComments == null ? void 0 : nextComments.adminComment) != null ? _a : currentAttendee == null ? void 0 : currentAttendee.adminComment) != null ? _b : ""),
+        memberComment: String((_d = (_c = nextComments == null ? void 0 : nextComments.memberComment) != null ? _c : currentAttendee == null ? void 0 : currentAttendee.memberComment) != null ? _d : "")
       };
       return this.attendeeRIDState.attendeesDraft[attendeeIndex];
     }
@@ -2130,16 +2094,18 @@
     }
     buildSessionAttendeePayload() {
       return this.attendeeRIDState.attendeesDraft.map((attendee) => {
-        var _a, _b;
+        var _a, _b, _c, _d;
         const personID = this.getSafePersonID(attendee == null ? void 0 : attendee.personID);
         const isRIDCertified = (attendee == null ? void 0 : attendee.ridCertified) === true;
         return {
           personID,
-          certStatusID: Number(attendee == null ? void 0 : attendee.certStatusID),
+          certStatusID: this.serializeCertStatusID(attendee == null ? void 0 : attendee.certStatusID),
           dateRangeStart: (_a = attendee == null ? void 0 : attendee.dateRangeStart) != null ? _a : null,
           dateRangeEnd: (_b = attendee == null ? void 0 : attendee.dateRangeEnd) != null ? _b : null,
           ridCertified: isRIDCertified,
-          ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee == null ? void 0 : attendee.ridCertifiedAt) : null
+          ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee == null ? void 0 : attendee.ridCertifiedAt) : null,
+          adminComment: String((_c = attendee == null ? void 0 : attendee.adminComment) != null ? _c : ""),
+          memberComment: String((_d = attendee == null ? void 0 : attendee.memberComment) != null ? _d : "")
         };
       });
     }
@@ -2174,34 +2140,39 @@
       return mergedAttendees;
     }
     applyDraftStateToAttendee(baseAttendee, draftAttendee) {
-      var _a, _b, _c, _d, _e, _f;
+      var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
       if (!draftAttendee) {
         return this.cloneAttendees([baseAttendee])[0];
       }
-      const certStatusID = Number(draftAttendee == null ? void 0 : draftAttendee.certStatusID);
-      const normalizedCertStatusID = Number.isFinite(certStatusID) ? certStatusID : Number(baseAttendee == null ? void 0 : baseAttendee.certStatusID);
+      const normalizedCertStatusID = this.normalizeDraftCertStatusID(
+        (_a = draftAttendee == null ? void 0 : draftAttendee.certStatusID) != null ? _a : baseAttendee == null ? void 0 : baseAttendee.certStatusID
+      );
       return {
         ...this.cloneAttendees([baseAttendee])[0],
-        dateRangeStart: (_b = (_a = draftAttendee == null ? void 0 : draftAttendee.dateRangeStart) != null ? _a : baseAttendee == null ? void 0 : baseAttendee.dateRangeStart) != null ? _b : null,
-        dateRangeEnd: (_d = (_c = draftAttendee == null ? void 0 : draftAttendee.dateRangeEnd) != null ? _c : baseAttendee == null ? void 0 : baseAttendee.dateRangeEnd) != null ? _d : null,
-        dateRangeDisplay: (_f = (_e = draftAttendee == null ? void 0 : draftAttendee.dateRangeDisplay) != null ? _e : baseAttendee == null ? void 0 : baseAttendee.dateRangeDisplay) != null ? _f : null,
+        dateRangeStart: (_c = (_b = draftAttendee == null ? void 0 : draftAttendee.dateRangeStart) != null ? _b : baseAttendee == null ? void 0 : baseAttendee.dateRangeStart) != null ? _c : null,
+        dateRangeEnd: (_e = (_d = draftAttendee == null ? void 0 : draftAttendee.dateRangeEnd) != null ? _d : baseAttendee == null ? void 0 : baseAttendee.dateRangeEnd) != null ? _e : null,
+        dateRangeDisplay: (_g = (_f = draftAttendee == null ? void 0 : draftAttendee.dateRangeDisplay) != null ? _f : baseAttendee == null ? void 0 : baseAttendee.dateRangeDisplay) != null ? _g : null,
         certStatusID: normalizedCertStatusID,
         ridCertified: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true,
         ridCertifiedAt: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.normalizeRIDDateTimeValue(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedAt) : null,
-        ridCertifiedByUserID: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.getPositiveIntegerOrNull(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedByUserID) : null
+        ridCertifiedByUserID: (draftAttendee == null ? void 0 : draftAttendee.ridCertified) === true ? this.getPositiveIntegerOrNull(draftAttendee == null ? void 0 : draftAttendee.ridCertifiedByUserID) : null,
+        adminComment: String((_i = (_h = draftAttendee == null ? void 0 : draftAttendee.adminComment) != null ? _h : baseAttendee == null ? void 0 : baseAttendee.adminComment) != null ? _i : ""),
+        memberComment: String((_k = (_j = draftAttendee == null ? void 0 : draftAttendee.memberComment) != null ? _j : baseAttendee == null ? void 0 : baseAttendee.memberComment) != null ? _k : "")
       };
     }
     buildComparableAttendeeState(attendees = []) {
       return (Array.isArray(attendees) ? attendees : []).map((attendee) => {
-        var _a, _b;
+        var _a, _b, _c, _d;
         const isRIDCertified = (attendee == null ? void 0 : attendee.ridCertified) === true;
         return {
           personID: this.getSafePersonID(attendee == null ? void 0 : attendee.personID),
-          certStatusID: Number(attendee == null ? void 0 : attendee.certStatusID),
+          certStatusID: this.normalizeDraftCertStatusID(attendee == null ? void 0 : attendee.certStatusID),
           dateRangeStart: String((_a = attendee == null ? void 0 : attendee.dateRangeStart) != null ? _a : ""),
           dateRangeEnd: String((_b = attendee == null ? void 0 : attendee.dateRangeEnd) != null ? _b : ""),
           ridCertified: isRIDCertified,
-          ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee == null ? void 0 : attendee.ridCertifiedAt) : null
+          ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee == null ? void 0 : attendee.ridCertifiedAt) : null,
+          adminComment: String((_c = attendee == null ? void 0 : attendee.adminComment) != null ? _c : ""),
+          memberComment: String((_d = attendee == null ? void 0 : attendee.memberComment) != null ? _d : "")
         };
       }).sort((leftAttendee, rightAttendee) => leftAttendee.personID - rightAttendee.personID);
     }
@@ -2226,18 +2197,30 @@
       if (Number.isNaN(localDate.getTime())) {
         return null;
       }
-      return localDate.toISOString();
+      return this.formatRIDDateTimeValue(localDate);
     }
     normalizeRIDDateTimeValue(value) {
       const normalizedValue = String(value != null ? value : "").trim();
       if (normalizedValue === "") {
         return null;
       }
-      const parsedTimestamp = Date.parse(normalizedValue);
+      const parsedTimestamp = Date.parse(normalizedValue.includes(" ") ? normalizedValue.replace(" ", "T") : normalizedValue);
       if (Number.isNaN(parsedTimestamp)) {
         return null;
       }
-      return new Date(parsedTimestamp).toISOString();
+      return this.formatRIDDateTimeValue(new Date(parsedTimestamp));
+    }
+    formatRIDDateTimeValue(date) {
+      if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+        return null;
+      }
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
     normalizeDateInputValue(dateValue) {
       const normalizedDateValue = String(dateValue != null ? dateValue : "").trim();
@@ -2252,6 +2235,17 @@
     getSafePersonID(personID) {
       const numericPersonID = Number(personID);
       return Number.isFinite(numericPersonID) ? numericPersonID : 0;
+    }
+    normalizeDraftCertStatusID(value) {
+      const numericValue = Number(value);
+      if (Number.isInteger(numericValue) && numericValue >= 1 && numericValue <= 3) {
+        return numericValue;
+      }
+      return 4;
+    }
+    serializeCertStatusID(value) {
+      const normalizedStatusID = this.normalizeDraftCertStatusID(value);
+      return normalizedStatusID === 4 ? null : normalizedStatusID;
     }
     getPositiveIntegerOrNull(value) {
       const numericValue = Number(value);
@@ -2650,8 +2644,20 @@
         sessionID,
         personID,
         personName,
+        loadComments: async () => {
+          var _a2, _b;
+          const attendee = this.attendeeRIDManager.getDraftAttendee(personID);
+          return {
+            adminComment: String((_a2 = attendee == null ? void 0 : attendee.adminComment) != null ? _a2 : ""),
+            memberComment: String((_b = attendee == null ? void 0 : attendee.memberComment) != null ? _b : "")
+          };
+        },
+        saveComments: async (nextCommentData) => {
+          this.attendeeRIDManager.updateAttendeeComments(personID, nextCommentData);
+        },
         onSave: async () => {
-          await this.refreshAttendees();
+          this.renderAttendeeRows();
+          this.updateSubmitButtonState();
         }
       });
     }
@@ -2716,11 +2722,10 @@
     }
     async addAttendeeToDraft(attendeeDirectoryEntry) {
       const sessionID = Number(this.attendeeModalState.activeSessionID);
-      const personID = Number(attendeeDirectoryEntry == null ? void 0 : attendeeDirectoryEntry.personID);
-      if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+      if (!Number.isFinite(sessionID)) {
         return;
       }
-      const attendeeCandidate = await this.db.get("attendee", { sessionID, personID });
+      const attendeeCandidate = this.buildDraftAttendee(attendeeDirectoryEntry);
       if (!attendeeCandidate) {
         alert("That attendee could not be loaded. Please refresh the page and try again.");
         return;
@@ -2731,6 +2736,31 @@
       }
       this.renderAttendeeRows();
       this.updateSubmitButtonState();
+    }
+    buildDraftAttendee(attendeeDirectoryEntry) {
+      var _a, _b;
+      const sessionID = Number(this.attendeeModalState.activeSessionID);
+      const personID = Number(attendeeDirectoryEntry == null ? void 0 : attendeeDirectoryEntry.personID);
+      const name = String((_a = attendeeDirectoryEntry == null ? void 0 : attendeeDirectoryEntry.name) != null ? _a : "").trim();
+      const email = String((_b = attendeeDirectoryEntry == null ? void 0 : attendeeDirectoryEntry.email) != null ? _b : "").trim();
+      if (!Number.isFinite(sessionID) || !Number.isFinite(personID) || name === "" || email === "") {
+        return null;
+      }
+      return {
+        sessionID,
+        personID,
+        name,
+        email,
+        dateRangeStart: null,
+        dateRangeEnd: null,
+        dateRangeDisplay: this.attendeeModalState.showSelfPacedDateRangeColumn ? "Not started" : null,
+        certStatusID: 4,
+        ridCertified: false,
+        ridCertifiedAt: null,
+        ridCertifiedByUserID: null,
+        adminComment: "",
+        memberComment: ""
+      };
     }
     renderAttendeeRows() {
       if (!this.modalRefs || this.modalRefs.tableHead.length === 0 || this.modalRefs.tableBody.length === 0) {
@@ -3642,8 +3672,6 @@
         );
         session_state.state = "mainPage";
         await mainPage.init();
-        console.log("ceuTypes: ", await dbC.get("CEUTypes"));
-        console.log("ceuTypes api: ", await dbC.apiClient.get(`api/lookups/ceu-types`));
       });
     }
   })();

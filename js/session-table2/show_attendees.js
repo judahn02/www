@@ -223,8 +223,19 @@ export class show_attendees {
             sessionID,
             personID,
             personName,
+            loadComments: async () => {
+                const attendee = this.attendeeRIDManager.getDraftAttendee(personID);
+                return {
+                    adminComment: String(attendee?.adminComment ?? ""),
+                    memberComment: String(attendee?.memberComment ?? "")
+                };
+            },
+            saveComments: async (nextCommentData) => {
+                this.attendeeRIDManager.updateAttendeeComments(personID, nextCommentData);
+            },
             onSave: async () => {
-                await this.refreshAttendees();
+                this.renderAttendeeRows();
+                this.updateSubmitButtonState();
             }
         });
     }
@@ -303,12 +314,11 @@ export class show_attendees {
 
     async addAttendeeToDraft(attendeeDirectoryEntry) {
         const sessionID = Number(this.attendeeModalState.activeSessionID);
-        const personID = Number(attendeeDirectoryEntry?.personID);
-        if (!Number.isFinite(sessionID) || !Number.isFinite(personID)) {
+        if (!Number.isFinite(sessionID)) {
             return;
         }
 
-        const attendeeCandidate = await this.db.get("attendee", { sessionID, personID });
+        const attendeeCandidate = this.buildDraftAttendee(attendeeDirectoryEntry);
         if (!attendeeCandidate) {
             alert("That attendee could not be loaded. Please refresh the page and try again.");
             return;
@@ -321,6 +331,32 @@ export class show_attendees {
 
         this.renderAttendeeRows();
         this.updateSubmitButtonState();
+    }
+
+    buildDraftAttendee(attendeeDirectoryEntry) {
+        const sessionID = Number(this.attendeeModalState.activeSessionID);
+        const personID = Number(attendeeDirectoryEntry?.personID);
+        const name = String(attendeeDirectoryEntry?.name ?? "").trim();
+        const email = String(attendeeDirectoryEntry?.email ?? "").trim();
+        if (!Number.isFinite(sessionID) || !Number.isFinite(personID) || name === "" || email === "") {
+            return null;
+        }
+
+        return {
+            sessionID,
+            personID,
+            name,
+            email,
+            dateRangeStart: null,
+            dateRangeEnd: null,
+            dateRangeDisplay: this.attendeeModalState.showSelfPacedDateRangeColumn ? "Not started" : null,
+            certStatusID: 4,
+            ridCertified: false,
+            ridCertifiedAt: null,
+            ridCertifiedByUserID: null,
+            adminComment: "",
+            memberComment: ""
+        };
     }
 
     renderAttendeeRows() {

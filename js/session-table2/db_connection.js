@@ -482,24 +482,23 @@ export class db_connection {
     }
 
     async put(resource, value) {
-        /*
-            {
-            sessionID: 3,
-            certifiedByUserID: 1,
-            attendees: [
-                {
-                personID: 10,
-                certStatusID: 1,
-                dateRangeStart: "2026-03-24", // or null
-                dateRangeEnd: null,           // or "2026-03-30"
-                ridCertified: false,
-                ridCertifiedAt: null          // or ISO datetime string
-                }
-            ]
-            }
-        */
+
         if (resource === "sessionAttendees") {
-            return structuredClone(this.updateSessionAttendees(value));
+            const sessionID = Number(value?.sessionID);
+            if (!Number.isInteger(sessionID)) {
+                return [];
+            }
+
+            await this.apiClient.put(
+                `api/sessions/${sessionID}/attendees`,
+                { "Content-Type": "text/plain" },
+                {
+                    certifiedByUserID: this.normalizePositiveInteger(value?.certifiedByUserID),
+                    attendees: Array.isArray(value?.attendees) ? structuredClone(value.attendees) : []
+                }
+            );
+
+            return structuredClone(await this.apiClient.get(`api/sessions/${sessionID}/attendees`));
         }
 
         if (resource === "attendeeRIDCertifications") {
@@ -743,7 +742,6 @@ export class db_connection {
             adminComment: String(attendeeComments?.adminComment ?? ""),
             memberComment: String(attendeeComments?.memberComment ?? "")
         };
-        console.log(theReturn);
         return theReturn;
     }
 
@@ -814,61 +812,6 @@ export class db_connection {
         return this.buildAttendeeRecords(session);
     }
 
-    updateSessionAttendees(value) {
-        const sessionID = Number(value?.sessionID);
-        if (!Number.isFinite(sessionID)) {
-            return [];
-        }
-
-        const session = db_connection.data.sessions.find((entry) => entry.sessionID === sessionID);
-        if (!session) {
-            return [];
-        }
-
-        const certifiedByUserID = this.normalizePositiveInteger(value?.certifiedByUserID);
-        const attendeePayload = Array.isArray(value?.attendees) ? value.attendees : [];
-        const nextAttendeeEntries = [];
-        const nextRIDCertificates = [];
-        const seenPersonIDs = new Set();
-
-        for (const attendeeEntry of attendeePayload) {
-            const normalizedAttendeeEntry = this.normalizeSessionAttendeePayloadEntry(attendeeEntry, session);
-            if (!normalizedAttendeeEntry || seenPersonIDs.has(normalizedAttendeeEntry.personID)) {
-                continue;
-            }
-
-            seenPersonIDs.add(normalizedAttendeeEntry.personID);
-            nextAttendeeEntries.push(this.buildStoredAttendeeEntry(normalizedAttendeeEntry));
-
-            if (!normalizedAttendeeEntry.ridCertified) {
-                continue;
-            }
-
-            const existingCertification = this.getRIDCertificationRecord(sessionID, normalizedAttendeeEntry.personID);
-            const certifiedAt = normalizedAttendeeEntry.ridCertifiedAt
-                ?? existingCertification?.certifiedAt
-                ?? new Date().toISOString();
-            const certificationChanged = !existingCertification
-                || existingCertification.certifiedAt !== certifiedAt;
-
-            nextRIDCertificates.push({
-                sessionID,
-                personID: normalizedAttendeeEntry.personID,
-                certifiedAt,
-                certifiedByUserID: certificationChanged
-                    ? (certifiedByUserID ?? existingCertification?.certifiedByUserID ?? null)
-                    : (existingCertification?.certifiedByUserID ?? certifiedByUserID ?? null)
-            });
-        }
-
-        session.Attendees = nextAttendeeEntries;
-        session.AttendeesCt = nextAttendeeEntries.length;
-        db_connection.data.ridCertificates = db_connection.data.ridCertificates
-            .filter((certificationEntry) => certificationEntry.sessionID !== sessionID)
-            .concat(nextRIDCertificates);
-
-        return this.buildAttendeeRecords(session);
-    }
 
     normalizeSessionForRead(session) {
         return {
@@ -963,53 +906,6 @@ export class db_connection {
             ridCertified,
             ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry?.ridCertifiedAt) : null
         };
-    }
-
-    normalizeSessionAttendeePayloadEntry(attendeeEntry, session) {
-        const personID = Number(attendeeEntry?.personID);
-        if (!Number.isFinite(personID)) {
-            return null;
-        }
-
-        const attendeeDirectoryRecord = this.getAttendeeDirectoryRecord(personID);
-        if (!attendeeDirectoryRecord) {
-            return null;
-        }
-
-        const certStatusID = this.normalizeAttendeeStatusId(attendeeEntry?.certStatusID);
-        const isRIDQualifiedSession = this.isRIDQualifiedSession(session);
-        const ridCertified = isRIDQualifiedSession && attendeeEntry?.ridCertified === true;
-        const normalizedDateRange = this.normalizeSessionAttendeeDateRange(attendeeEntry, session);
-
-        return {
-            personID,
-            name: attendeeDirectoryRecord.name,
-            email: attendeeDirectoryRecord.email,
-            dateRangeStart: normalizedDateRange.dateRangeStart,
-            dateRangeEnd: normalizedDateRange.dateRangeEnd,
-            certStatusID,
-            ridCertified,
-            ridCertifiedAt: ridCertified ? this.normalizeRIDCertificationDateTime(attendeeEntry?.ridCertifiedAt) : null
-        };
-    }
-
-    normalizeSessionAttendeeDateRange(attendeeEntry, session) {
-        if (attendeeEntry.length != 6) throw Error("Attendee Entry using wrong count of indexes.");
-
-        if (!this.isSelfPacedSession(session)) {
-            return {
-                dateRangeStart: null,
-                dateRangeEnd: null
-            };
-        }
-
-        const normalizedSeparatedDateRange = { 
-            dateRangeStart: util.enfDate(attendeeEntry?.dateRangeStart), 
-            dateRangeEnd: util.enfDate(attendeeEntry?.dateRangeEnd)
-        }
-
-        return normalizedSeparatedDateRange;
-
     }
 
     /**

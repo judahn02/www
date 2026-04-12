@@ -40,8 +40,8 @@ if (typeof $ !== "function") {
         // console.log("sessionTypes: ", await dbC.get("EventTypes"));
         // console.log("sessionTypes api: ", await dbC.apiClient.get(`api/lookups/event-types`));
 
-        console.log("ceuTypes: ", await dbC.get("CEUTypes"));
-        console.log("ceuTypes api: ", await dbC.apiClient.get(`api/lookups/ceu-types`));
+        // console.log("ceuTypes: ", await dbC.get("CEUTypes"));
+        // console.log("ceuTypes api: ", await dbC.apiClient.get(`api/lookups/ceu-types`));
         
     });
 }

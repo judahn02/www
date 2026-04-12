@@ -29,6 +29,17 @@ export class attendee_rid_manager {
         return this.attendeeRIDState.attendeesDraft;
     }
 
+    getDraftAttendee(personID) {
+        const normalizedPersonID = this.getSafePersonID(personID);
+        if (normalizedPersonID <= 0) {
+            return null;
+        }
+
+        return this.attendeeRIDState.attendeesDraft.find((attendee) => {
+            return this.getSafePersonID(attendee?.personID) === normalizedPersonID;
+        }) ?? null;
+    }
+
     getDraftPersonIDs() {
         return this.attendeeRIDState.attendeesDraft
             .map((attendee) => this.getSafePersonID(attendee?.personID))
@@ -66,7 +77,7 @@ export class attendee_rid_manager {
         }
 
         const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
-        const normalizedStatusID = this.getPositiveIntegerOrDefault(nextCertStatusID, 4);
+        const normalizedStatusID = this.normalizeDraftCertStatusID(nextCertStatusID);
         this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
             ...currentAttendee,
             certStatusID: normalizedStatusID
@@ -100,6 +111,24 @@ export class attendee_rid_manager {
             dateRangeStart: normalizedStartDate,
             dateRangeEnd: normalizedEndDate,
             dateRangeDisplay: null
+        };
+
+        return this.attendeeRIDState.attendeesDraft[attendeeIndex];
+    }
+
+    updateAttendeeComments(personID, nextComments = {}) {
+        const attendeeIndex = this.attendeeRIDState.attendeesDraft.findIndex((attendee) => {
+            return this.getSafePersonID(attendee?.personID) === personID;
+        });
+        if (attendeeIndex < 0) {
+            return null;
+        }
+
+        const currentAttendee = this.attendeeRIDState.attendeesDraft[attendeeIndex];
+        this.attendeeRIDState.attendeesDraft[attendeeIndex] = {
+            ...currentAttendee,
+            adminComment: String(nextComments?.adminComment ?? currentAttendee?.adminComment ?? ""),
+            memberComment: String(nextComments?.memberComment ?? currentAttendee?.memberComment ?? "")
         };
 
         return this.attendeeRIDState.attendeesDraft[attendeeIndex];
@@ -253,11 +282,13 @@ export class attendee_rid_manager {
             const isRIDCertified = attendee?.ridCertified === true;
             return {
                 personID,
-                certStatusID: Number(attendee?.certStatusID),
+                certStatusID: this.serializeCertStatusID(attendee?.certStatusID),
                 dateRangeStart: attendee?.dateRangeStart ?? null,
                 dateRangeEnd: attendee?.dateRangeEnd ?? null,
                 ridCertified: isRIDCertified,
-                ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee?.ridCertifiedAt) : null
+                ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee?.ridCertifiedAt) : null,
+                adminComment: String(attendee?.adminComment ?? ""),
+                memberComment: String(attendee?.memberComment ?? "")
             };
         });
     }
@@ -305,8 +336,9 @@ export class attendee_rid_manager {
             return this.cloneAttendees([baseAttendee])[0];
         }
 
-        const certStatusID = Number(draftAttendee?.certStatusID);
-        const normalizedCertStatusID = Number.isFinite(certStatusID) ? certStatusID : Number(baseAttendee?.certStatusID);
+        const normalizedCertStatusID = this.normalizeDraftCertStatusID(
+            draftAttendee?.certStatusID ?? baseAttendee?.certStatusID
+        );
 
         return {
             ...this.cloneAttendees([baseAttendee])[0],
@@ -316,7 +348,9 @@ export class attendee_rid_manager {
             certStatusID: normalizedCertStatusID,
             ridCertified: draftAttendee?.ridCertified === true,
             ridCertifiedAt: draftAttendee?.ridCertified === true ? this.normalizeRIDDateTimeValue(draftAttendee?.ridCertifiedAt) : null,
-            ridCertifiedByUserID: draftAttendee?.ridCertified === true ? this.getPositiveIntegerOrNull(draftAttendee?.ridCertifiedByUserID) : null
+            ridCertifiedByUserID: draftAttendee?.ridCertified === true ? this.getPositiveIntegerOrNull(draftAttendee?.ridCertifiedByUserID) : null,
+            adminComment: String(draftAttendee?.adminComment ?? baseAttendee?.adminComment ?? ""),
+            memberComment: String(draftAttendee?.memberComment ?? baseAttendee?.memberComment ?? "")
         };
     }
 
@@ -326,11 +360,13 @@ export class attendee_rid_manager {
                 const isRIDCertified = attendee?.ridCertified === true;
                 return {
                     personID: this.getSafePersonID(attendee?.personID),
-                    certStatusID: Number(attendee?.certStatusID),
+                    certStatusID: this.normalizeDraftCertStatusID(attendee?.certStatusID),
                     dateRangeStart: String(attendee?.dateRangeStart ?? ""),
                     dateRangeEnd: String(attendee?.dateRangeEnd ?? ""),
                     ridCertified: isRIDCertified,
-                    ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee?.ridCertifiedAt) : null
+                    ridCertifiedAt: isRIDCertified ? this.normalizeRIDDateTimeValue(attendee?.ridCertifiedAt) : null,
+                    adminComment: String(attendee?.adminComment ?? ""),
+                    memberComment: String(attendee?.memberComment ?? "")
                 };
             })
             .sort((leftAttendee, rightAttendee) => leftAttendee.personID - rightAttendee.personID);
@@ -361,7 +397,7 @@ export class attendee_rid_manager {
             return null;
         }
 
-        return localDate.toISOString();
+        return this.formatRIDDateTimeValue(localDate);
     }
 
     normalizeRIDDateTimeValue(value) {
@@ -370,12 +406,28 @@ export class attendee_rid_manager {
             return null;
         }
 
-        const parsedTimestamp = Date.parse(normalizedValue);
+        const parsedTimestamp = Date.parse(normalizedValue.includes(" ")
+            ? normalizedValue.replace(" ", "T")
+            : normalizedValue);
         if (Number.isNaN(parsedTimestamp)) {
             return null;
         }
 
-        return new Date(parsedTimestamp).toISOString();
+        return this.formatRIDDateTimeValue(new Date(parsedTimestamp));
+    }
+
+    formatRIDDateTimeValue(date) {
+        if (!(date instanceof Date) || Number.isNaN(date.getTime())) {
+            return null;
+        }
+
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
     }
 
     normalizeDateInputValue(dateValue) {
@@ -394,6 +446,20 @@ export class attendee_rid_manager {
     getSafePersonID(personID) {
         const numericPersonID = Number(personID);
         return Number.isFinite(numericPersonID) ? numericPersonID : 0;
+    }
+
+    normalizeDraftCertStatusID(value) {
+        const numericValue = Number(value);
+        if (Number.isInteger(numericValue) && numericValue >= 1 && numericValue <= 3) {
+            return numericValue;
+        }
+
+        return 4;
+    }
+
+    serializeCertStatusID(value) {
+        const normalizedStatusID = this.normalizeDraftCertStatusID(value);
+        return normalizedStatusID === 4 ? null : normalizedStatusID;
     }
 
     getPositiveIntegerOrNull(value) {

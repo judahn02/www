@@ -60,10 +60,12 @@ export class comment_manager {
     }
 
     async loadComments(commentFields, context) {
-        const commentData = await this.db.get("comments", {
-            sessionID: context.sessionID,
-            personID: context.personID
-        });
+        const commentData = typeof context?.loadComments === "function"
+            ? await context.loadComments()
+            : await this.db.get("comments", {
+                sessionID: context.sessionID,
+                personID: context.personID
+            });
 
         commentFields.admin.val(String(commentData?.adminComment ?? ""));
         commentFields.member.val(String(commentData?.memberComment ?? ""));
@@ -75,18 +77,26 @@ export class comment_manager {
         }
 
         const onSave = this.activeCommentContext?.onSave;
-
-        await this.db.set("comments", {
-            sessionID: this.activeCommentContext.sessionID,
-            personID: this.activeCommentContext.personID,
+        const nextCommentData = {
             adminComment: String(commentFields.admin.val() ?? ""),
             memberComment: String(commentFields.member.val() ?? "")
-        });
+        };
+
+        if (typeof this.activeCommentContext?.saveComments === "function") {
+            await this.activeCommentContext.saveComments(nextCommentData);
+        } else {
+            await this.db.set("comments", {
+                sessionID: this.activeCommentContext.sessionID,
+                personID: this.activeCommentContext.personID,
+                adminComment: nextCommentData.adminComment,
+                memberComment: nextCommentData.memberComment
+            });
+        }
 
         this.close(commentFields);
 
         if (typeof onSave === "function") {
-            await onSave();
+            await onSave(nextCommentData);
         }
     }
 
